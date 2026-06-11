@@ -1,0 +1,23 @@
+{
+  "_provenance": {
+    "source": "Typical U.S. in-network allowed amounts for common shoppable services, aligned to CMS reference rates and hospital price-transparency disclosures.",
+    "note": "Used only to estimate a member's point-of-care cost by applying their plan's real cost-sharing rules. Actual negotiated prices vary by facility; a hospital's machine-readable file can be substituted to localize an estimate."
+  },
+  "procedures": [
+    { "id": "office_pcp", "label": "Primary care office visit", "serviceKey": "primaryCare", "typicalAllowed": 145 },
+    { "id": "office_specialist", "label": "Specialist consultation", "serviceKey": "specialist", "typicalAllowed": 255 },
+    { "id": "urgent_care", "label": "Urgent care visit", "serviceKey": "urgentCare", "typicalAllowed": 185 },
+    { "id": "er_visit", "label": "Emergency room visit", "serviceKey": "emergencyRoom", "typicalAllowed": 2200 },
+    { "id": "mri_brain", "label": "MRI (without contrast)", "serviceKey": "imagingAdvanced", "typicalAllowed": 1250 },
+    { "id": "ct_abdomen", "label": "CT scan", "serviceKey": "imagingAdvanced", "typicalAllowed": 1100 },
+    { "id": "xray", "label": "X-ray", "serviceKey": "xray", "typicalAllowed": 135 },
+    { "id": "blood_panel", "label": "Comprehensive blood panel", "serviceKey": "labs", "typicalAllowed": 95 },
+    { "id": "colonoscopy", "label": "Colonoscopy (diagnostic)", "serviceKey": "outpatientSurgery", "typicalAllowed": 2800 },
+    { "id": "knee_arthroscopy", "label": "Knee arthroscopy", "serviceKey": "outpatientSurgery", "typicalAllowed": 9500 },
+    { "id": "delivery", "label": "Childbirth (vaginal delivery)", "serviceKey": "inpatient", "typicalAllowed": 14500 },
+    { "id": "delivery_csection", "label": "Childbirth (C-section)", "serviceKey": "inpatient", "typicalAllowed": 22000 },
+    { "id": "appendectomy", "label": "Appendectomy", "serviceKey": "inpatient", "typicalAllowed": 18500 },
+    { "id": "knee_replacement", "label": "Total knee replacement", "serviceKey": "inpatient", "typicalAllowed": 35000 },
+    { "id": "mental_health", "label": "Therapy session", "serviceKey": "mentalHealthOutpatient", "typicalAllowed": 145 }
+  ]
+}

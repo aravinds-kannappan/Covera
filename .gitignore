@@ -33,6 +33,9 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# raw PUF downloads (re-creatable via scripts/ingest_pufs.py; only normalized JSON is committed)
+/data/.cache/
+
 # vercel
 .vercel
 

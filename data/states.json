@@ -1,0 +1,93 @@
+{
+  "planYear": 2026,
+  "source": "CMS Health Insurance Exchange Public Use Files, PY2026 (data.healthcare.gov)",
+  "states": [
+    {
+      "state": "TX",
+      "planCount": 800,
+      "issuers": [
+        "Ambetter from Superior HealthPlan",
+        "Baylor Scott and White Health Plan",
+        "Blue Cross and Blue Shield of Texas",
+        "CHRISTUS Health Plan",
+        "Cigna Healthcare",
+        "Community First",
+        "Community Health Choice",
+        "Harbor Health",
+        "Imperial Insurance Companies, Inc.",
+        "Moda Health Plan, Inc.",
+        "Molina Healthcare",
+        "Oscar Insurance Company",
+        "Sendero Health Plans, Local Nonprofit",
+        "UnitedHealthcare",
+        "WellPoint"
+      ],
+      "premiumRange40": [
+        347,
+        1182
+      ]
+    },
+    {
+      "state": "FL",
+      "planCount": 391,
+      "issuers": [
+        "22 Health",
+        "Ambetter Health",
+        "AmeriHealth Caritas Next",
+        "AvMed",
+        "Capital Health Plan",
+        "Cigna HealthCare of Florida, Inc.",
+        "Cigna Healthcare",
+        "Florida Blue (BlueCross BlueShield FL)",
+        "Florida Blue HMO (a BlueCross BlueShield FL company)",
+        "Florida Health Care Plans",
+        "Health First Commercial Plans, Inc.",
+        "Molina Healthcare",
+        "Oscar Health Maintenance Organization of Florida",
+        "UnitedHealthcare",
+        "Wellpoint"
+      ],
+      "premiumRange40": [
+        314,
+        2066
+      ]
+    },
+    {
+      "state": "NC",
+      "planCount": 206,
+      "issuers": [
+        "Ambetter of North Carolina",
+        "AmeriHealth Caritas Next",
+        "Blue Cross and Blue Shield of NC",
+        "Cigna Healthcare",
+        "Oscar Health Plan of North Carolina, Inc",
+        "UnitedHealthcare"
+      ],
+      "premiumRange40": [
+        446,
+        1164
+      ]
+    },
+    {
+      "state": "OH",
+      "planCount": 189,
+      "issuers": [
+        "Ambetter from Buckeye Health Plan",
+        "Anthem Blue Cross and Blue Shield",
+        "Antidote Health Plan of Ohio, Inc.",
+        "CareSource",
+        "MedMutual",
+        "Molina Healthcare",
+        "Oscar Health Insurance",
+        "Oscar Insurance Corporation of Ohio",
+        "Paramount",
+        "SummaCare",
+        "UnitedHealthcare"
+      ],
+      "premiumRange40": [
+        388,
+        1002
+      ]
+    }
+  ]
+}
