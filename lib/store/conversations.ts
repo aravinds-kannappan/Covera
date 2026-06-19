@@ -38,6 +38,7 @@ export function newThread(id: string, channel: Thread["channel"]): Thread {
     // Start from the same defaults the web app uses so the simulation always has a
     // runnable profile; intake fills in the patient-specific fields over a few texts.
     profile: { ...defaultProfile() },
+    notes: [],
     messages: [],
     selectedPlanId: null,
     status: "intake",

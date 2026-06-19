@@ -73,6 +73,13 @@ export interface Thread {
   id: string; // E.164 phone number, or a demo session id
   channel: "loopmessage" | "sandbox";
   profile: Partial<PatientProfile>;
+  /**
+   * Free-form, human context the patient shares that doesn't fit the structured profile
+   * — fears, constraints, life details, preferences ("worried about a surprise ER bill",
+   * "self-employed, income swings", "wants to keep her oncologist"). The agent carries
+   * these across the whole conversation and tailors its advice and tone to them.
+   */
+  notes: string[];
   messages: ConvoMessage[];
   selectedPlanId: string | null;
   status: ConversationStatus;

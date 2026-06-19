@@ -16,7 +16,14 @@ const metalTone: Record<string, "amber" | "neutral" | "violet" | "sky" | "rose">
   Catastrophic: "rose",
 };
 
-export function FeaturePanel({ meta }: { meta: MessageMeta }) {
+export function FeaturePanel({
+  meta,
+  onAsk,
+}: {
+  meta: MessageMeta;
+  /** When provided (interactive console), plan cards become tappable follow-ups. */
+  onAsk?: (text: string) => void;
+}) {
   if (meta.kind === "profile") {
     const { filled, missing } = meta.data;
     return (
@@ -41,26 +48,38 @@ export function FeaturePanel({ meta }: { meta: MessageMeta }) {
     return (
       <Panel title={label}>
         <div className="space-y-2">
-          {topPlans.map((p, i) => (
-            <div key={p.name + i} className="rounded-xl border border-slate-100 bg-slate-50/70 p-2.5">
-              <div className="flex items-center justify-between gap-2">
-                <span className="truncate text-xs font-medium text-slate-800">{p.name}</span>
-                <Badge tone={metalTone[p.metal] ?? "neutral"}>{p.metal}</Badge>
-              </div>
-              <div className="mt-1.5 flex items-end justify-between">
-                <div>
-                  <div className="text-base font-semibold tabular-nums text-slate-900">
-                    {usd(p.expectedTotal)}
+          {topPlans.map((p, i) => {
+            const Tag = onAsk ? "button" : "div";
+            return (
+              <Tag
+                key={p.name + i}
+                {...(onAsk
+                  ? {
+                      type: "button" as const,
+                      onClick: () => onAsk(`Be honest — is ${p.name} the right call for me, and why?`),
+                      className:
+                        "w-full text-left rounded-xl border border-slate-100 bg-slate-50/70 p-2.5 transition-colors hover:border-emerald-300 hover:bg-emerald-50/60",
+                    }
+                  : { className: "rounded-xl border border-slate-100 bg-slate-50/70 p-2.5" })}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="truncate text-xs font-medium text-slate-800">{p.name}</span>
+                  <Badge tone={metalTone[p.metal] ?? "neutral"}>{p.metal}</Badge>
+                </div>
+                <div className="mt-1.5 flex items-end justify-between">
+                  <div>
+                    <div className="text-base font-semibold tabular-nums text-slate-900">{usd(p.expectedTotal)}</div>
+                    <div className="text-[10px] uppercase tracking-wide text-slate-400">expected / yr</div>
                   </div>
-                  <div className="text-[10px] uppercase tracking-wide text-slate-400">expected / yr</div>
+                  <div className="text-right text-[11px] text-slate-500">
+                    <div>bad year {usd(p.p90)}</div>
+                    <div>{p.probHitOOPMax}% hit OOP max</div>
+                  </div>
                 </div>
-                <div className="text-right text-[11px] text-slate-500">
-                  <div>bad year {usd(p.p90)}</div>
-                  <div>{p.probHitOOPMax}% hit OOP max</div>
-                </div>
-              </div>
-            </div>
-          ))}
+                {onAsk && <div className="mt-1.5 text-[10px] font-medium text-emerald-600">Tap to ask why →</div>}
+              </Tag>
+            );
+          })}
         </div>
         {subsidyMonthly > 0 && (
           <p className="mt-2 text-[11px] text-emerald-700">Includes {usd(subsidyMonthly)}/mo subsidy.</p>

@@ -6,7 +6,13 @@ import { cn } from "@/lib/utils";
 
 // A single chat row: a blue agent bubble or a gray patient bubble, with the optional
 // rich feature panel tucked underneath an agent message.
-export function MessageBubble({ message }: { message: ConvoMessage }) {
+export function MessageBubble({
+  message,
+  onAsk,
+}: {
+  message: ConvoMessage;
+  onAsk?: (text: string) => void;
+}) {
   const isAgent = message.role === "agent";
   return (
     <motion.div
@@ -32,7 +38,7 @@ export function MessageBubble({ message }: { message: ConvoMessage }) {
           transition={{ delay: 0.15, duration: 0.35 }}
           className="mt-2 w-full max-w-[92%]"
         >
-          <FeaturePanel meta={message.meta} />
+          <FeaturePanel meta={message.meta} onAsk={onAsk} />
         </motion.div>
       )}
     </motion.div>

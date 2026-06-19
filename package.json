@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "ingest": "python3 scripts/ingest_pufs.py"
+    "ingest": "python3 scripts/ingest_pufs.py",
+    "accuracy": "tsx scripts/accuracy/run.ts",
+    "benchmark": "tsx scripts/benchmark/run.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.104.1",

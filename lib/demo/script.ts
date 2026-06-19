@@ -30,26 +30,26 @@ export const DEMO_SCRIPT: ScriptStep[] = [
     message: {
       role: "patient",
       ts: t(1),
-      text: "I'm 34, in Texas, make about $48k. Type 2 diabetes, I take metformin daily.",
+      text: "I'm 34, in Texas, make about $48k. Type 2 diabetes, metformin daily. Honestly I'm scared of getting a bill I can't pay.",
     },
   },
   {
     message: {
       role: "agent",
       ts: t(2),
-      text: "Got it. A quick read of your situation — anything I'm missing, just tell me.",
+      text: "That fear is so common, and it's exactly what I'm here to protect you from — let's make a bad year survivable, not scary. Here's what I've got so far; tell me if I'm off.",
       meta: {
         kind: "profile",
         data: {
           filled: ["age 34", "Texas", "$48,000 income", "Type 2 diabetes", "1 medication"],
-          missing: ["planned procedures", "risk preference"],
+          missing: ["worried about a surprise bill", "planned procedures"],
         },
       },
     },
     caption: {
-      eyebrow: "Act 1 — Tell it about you",
-      title: "It listens and builds your profile",
-      body: "An intake agent turns your words into a structured health + financial picture. The reasoning model never guesses your facts.",
+      eyebrow: "Act 1 — It actually listens",
+      title: "It hears you, not just your data",
+      body: "Covera picks up the human stuff — your fears, your constraints, your life — and carries it through every recommendation. It's a companion, not a form.",
     },
   },
   {
@@ -89,7 +89,7 @@ export const DEMO_SCRIPT: ScriptStep[] = [
     message: {
       role: "agent",
       ts: t(6),
-      text: "Here are your top three by risk-adjusted all-in cost — premium plus what the simulation expects you'll actually pay.",
+      text: "Given that fear of a bad year, I'd lean you toward the Silver HMO — it keeps your typical year low but still caps the damage if things go sideways. Here are your top three so you can see the tradeoff.",
       meta: {
         kind: "plans",
         data: {

@@ -26,6 +26,19 @@ export const CONCIERGE_TOOLS = [
     },
   },
   {
+    name: "remember_context",
+    description:
+      "Save a qualitative detail about the patient's life, fears, constraints, or preferences that doesn't fit the structured profile (e.g. 'worried about a surprise ER bill', 'self-employed with variable income', 'wants to keep her oncologist', 'travels abroad often'). Use this whenever they reveal something human that should shape your advice and tone.",
+    input_schema: {
+      type: "object",
+      properties: {
+        note: { type: "string", description: "One concise sentence capturing the detail, in the third person." },
+      },
+      required: ["note"],
+      additionalProperties: false,
+    },
+  },
+  {
     name: "recommend_plans",
     description:
       "Run the real Monte-Carlo optimizer over real CMS plans for this patient and return the top-ranked plans. Use for the first recommendation, a re-rank, or any 'what if' (pass only the changed fields in whatif).",
@@ -116,6 +129,14 @@ export async function dispatchTool(
       thread.profile = { ...thread.profile, ...patch };
       const { filled, missing } = describeProfile(thread.profile);
       return { result: { captured: filled, stillUseful: missing }, meta: { kind: "profile", data: { filled, missing } } };
+    }
+    case "remember_context": {
+      const note = String(input.note ?? "").trim();
+      if (note && !thread.notes.includes(note)) {
+        thread.notes.push(note);
+        if (thread.notes.length > 20) thread.notes = thread.notes.slice(-20);
+      }
+      return { result: { remembered: note, allContext: thread.notes } };
     }
     case "recommend_plans": {
       const whatif = (input.whatif as WhatIfPatch) ?? undefined;

@@ -7,6 +7,7 @@ const NAV = [
   { href: "/patient", label: "Patients" },
   { href: "/employer", label: "Employers" },
   { href: "/hospital", label: "Hospitals" },
+  { href: "/benchmark", label: "Benchmarks" },
 ];
 
 export function SiteHeader() {

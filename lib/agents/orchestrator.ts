@@ -69,7 +69,7 @@ export async function runConcierge(thread: Thread, patientText: string): Promise
     const params: any = {
       model: MODELS.reason,
       max_tokens: 1024,
-      system: conciergeSystemPrompt(thread.profile, plansSummaryFor(thread, plans), thread.status),
+      system: conciergeSystemPrompt(thread.profile, plansSummaryFor(thread, plans), thread.status, thread.notes),
       tools: CONCIERGE_TOOLS,
       messages,
     };

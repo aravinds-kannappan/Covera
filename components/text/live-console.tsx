@@ -5,18 +5,30 @@ import type { ConvoMessage } from "@/lib/agents/types";
 import { PhoneFrame } from "@/components/text/phone-frame";
 import { MessageBubble, TypingBubble } from "@/components/text/message-bubble";
 
-const SUGGESTIONS = [
-  "I'm 29 in Florida, $35k, healthy",
-  "What if I have a baby next year?",
-  "My job's plan is $380/mo — worth it?",
-  "How much is an MRI?",
+const OPENERS = [
+  "I'm 29 in Florida, $35k, pretty healthy",
+  "Honestly I'm scared of a huge surprise bill",
+  "My job's plan is $380/mo — is that a rip-off?",
+  "I'm self-employed and my income jumps around",
 ];
 
 const GREETING: ConvoMessage = {
   role: "agent",
   ts: Date.now(),
-  text: "I'm the real Covera agent — same one that texts you. Tell me your age, state, income, and any conditions, and I'll find your plan. Try a prompt below.",
+  text: "Hey, I'm the real Covera agent — the same one that texts you. Tell me about yourself and what worries you about health costs, and we'll figure out the right plan together. No forms, just talk.",
 };
+
+// Pick follow-up chips that match where the conversation is, so it feels like a real
+// back-and-forth instead of a fixed menu.
+function suggestionsFor(last: ConvoMessage | undefined, status: string): string[] {
+  const kind = last?.meta?.kind;
+  if (status === "finalized") return ["Message my employer about it", "What would a hospital visit cost me?", "Why is this the right one for me?"];
+  if (kind === "plans" || kind === "whatif") return ["Which one would you pick for me?", "I'm nervous about a bad year", "What if I get pregnant?", "Compare to my job's plan"];
+  if (kind === "marketplace") return ["Okay, show me the best plans", "Why is the marketplace cheaper?"];
+  if (kind === "hospital") return ["Show me my best plans", "What if I need surgery?"];
+  if (kind === "profile") return ["What worries me is affording a bad year", "Show me my options", "I take a daily medication too"];
+  return OPENERS;
+}
 
 /** The interactive "try it" console. Drives the genuine multi-agent loop via /api/sms/send. */
 export function LiveConsole() {
@@ -24,11 +36,11 @@ export function LiveConsole() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<string>("intake");
   const sessionId = useRef<string>("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Generate the session id on the client only (kept out of render to stay pure).
     if (!sessionId.current) sessionId.current = Math.random().toString(36).slice(2);
   }, []);
 
@@ -55,6 +67,7 @@ export function LiveConsole() {
         setError(data.error ?? "The live agent is unavailable right now.");
       } else {
         setMessages((m) => [...m, ...(data.replies as ConvoMessage[])]);
+        if (data.status) setStatus(data.status);
       }
     } catch {
       setError("Network hiccup — try again.");
@@ -63,12 +76,15 @@ export function LiveConsole() {
     }
   }
 
+  const lastAgent = [...messages].reverse().find((m) => m.role === "agent");
+  const suggestions = suggestionsFor(lastAgent, status);
+
   return (
     <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,360px)_1fr]">
       <PhoneFrame>
         <div ref={scrollRef} className="scroll-thin h-[460px] space-y-3 overflow-y-auto bg-slate-50/60 px-3 py-4">
           {messages.map((m, i) => (
-            <MessageBubble key={i} message={m} />
+            <MessageBubble key={i} message={m} onAsk={send} />
           ))}
           <AnimatePresence>{busy && <TypingBubble />}</AnimatePresence>
         </div>
@@ -82,7 +98,7 @@ export function LiveConsole() {
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Text Covera…"
+            placeholder="Text Covera anything…"
             className="h-9 flex-1 rounded-full border border-slate-200 bg-slate-50 px-3.5 text-[13px] outline-none focus:border-emerald-400"
           />
           <button
@@ -99,13 +115,14 @@ export function LiveConsole() {
       </PhoneFrame>
 
       <div>
-        <h3 className="text-2xl font-semibold tracking-tight text-slate-900">Try the real agent</h3>
+        <h3 className="text-2xl font-semibold tracking-tight text-slate-900">Talk to the real agent</h3>
         <p className="mt-2 max-w-md text-slate-600">
-          This is the genuine multi-agent system — the same one that texts patients. It reads your
-          profile, runs the real CMS-data simulation, and answers any what-if. No sign-up.
+          This is the genuine multi-agent system — the same one that texts patients. It listens, asks
+          about your life, runs the real CMS-data simulation, and tells you which plan fits you and
+          why. Tell it more and it tailors. Tap any plan to ask why. No sign-up.
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
-          {SUGGESTIONS.map((s) => (
+          {suggestions.map((s) => (
             <button
               key={s}
               onClick={() => send(s)}

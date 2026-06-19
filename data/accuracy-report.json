@@ -1,0 +1,128 @@
+{
+  "generatedAt": "2026-06-19T05:49:52.714Z",
+  "source": "Calibrated to the AHRQ Medical Expenditure Panel Survey (MEPS), Household Component.",
+  "scenarioCount": 80000,
+  "populationSize": 80000,
+  "ageBandCalibration": [
+    {
+      "label": "Age 0-17 mean spend",
+      "target": 2300,
+      "actual": 3044,
+      "unit": "$",
+      "pass": false
+    },
+    {
+      "label": "Age 18-44 mean spend",
+      "target": 3700,
+      "actual": 4334,
+      "unit": "$",
+      "pass": true
+    },
+    {
+      "label": "Age 45-64 mean spend",
+      "target": 8400,
+      "actual": 8856,
+      "unit": "$",
+      "pass": true
+    },
+    {
+      "label": "Age 65+ mean spend",
+      "target": 13800,
+      "actual": 15951,
+      "unit": "$",
+      "pass": true
+    }
+  ],
+  "concentration": [
+    {
+      "label": "Top 1% share of spend",
+      "target": 22,
+      "actual": 14,
+      "unit": "%",
+      "pass": false
+    },
+    {
+      "label": "Top 5% share of spend",
+      "target": 50,
+      "actual": 37,
+      "unit": "%",
+      "pass": false
+    },
+    {
+      "label": "Top 10% share of spend",
+      "target": 66,
+      "actual": 51,
+      "unit": "%",
+      "pass": false
+    },
+    {
+      "label": "Bottom 50% share of spend",
+      "target": 3,
+      "actual": 11,
+      "unit": "%",
+      "pass": false
+    },
+    {
+      "label": "Population mean annual spend",
+      "target": 6700,
+      "actual": 7141,
+      "unit": "$",
+      "pass": true
+    },
+    {
+      "label": "Population median annual spend",
+      "target": 1300,
+      "actual": 3387,
+      "unit": "$",
+      "pass": false
+    }
+  ],
+  "subsidy": [
+    {
+      "label": "FPL, household of 1",
+      "target": 15650,
+      "actual": 15650,
+      "unit": "$",
+      "pass": true
+    },
+    {
+      "label": "FPL, household of 4",
+      "target": 32150,
+      "actual": 32150,
+      "unit": "$",
+      "pass": true
+    },
+    {
+      "label": "Applicable % at 150% FPL",
+      "target": 0,
+      "actual": 0,
+      "unit": "%",
+      "pass": true
+    },
+    {
+      "label": "Applicable % at 250% FPL",
+      "target": 4,
+      "actual": 4,
+      "unit": "%",
+      "pass": true
+    },
+    {
+      "label": "Applicable % at 400% FPL",
+      "target": 8.5,
+      "actual": 8.5,
+      "unit": "%",
+      "pass": true
+    },
+    {
+      "label": "Applicable % above 400% FPL (capped)",
+      "target": 8.5,
+      "actual": 8.5,
+      "unit": "%",
+      "pass": true
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "total": 16
+  }
+}
