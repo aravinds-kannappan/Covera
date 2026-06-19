@@ -3,22 +3,9 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { PatientProfile } from "@/lib/types";
 import type { OptimizeResult } from "@/lib/sim/optimize";
+import { defaultProfile } from "@/lib/profile-defaults";
 
-export function defaultProfile(): PatientProfile {
-  return {
-    age: 35,
-    sex: "female",
-    state: "TX",
-    householdSize: 1,
-    annualIncome: 45000,
-    tobacco: false,
-    conditions: [],
-    prescriptions: [],
-    plannedEvents: [],
-    providers: [],
-    riskTolerance: "medium",
-  };
-}
+export { defaultProfile };
 
 interface CoveraState {
   profile: PatientProfile | null;

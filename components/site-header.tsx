@@ -3,10 +3,10 @@ import { Logo } from "@/components/brand";
 import { buttonVariants } from "@/components/ui/button";
 
 const NAV = [
-  { href: "/patient", label: "For patients" },
-  { href: "/employer", label: "For employers" },
-  { href: "/hospital", label: "For hospitals" },
-  { href: "/#how", label: "How it works" },
+  { href: "/#how", label: "Marketplace" },
+  { href: "/patient", label: "Patients" },
+  { href: "/employer", label: "Employers" },
+  { href: "/hospital", label: "Hospitals" },
 ];
 
 export function SiteHeader() {
@@ -25,8 +25,8 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
-        <Link href="/patient" className={buttonVariants({ size: "sm" })}>
-          Find my plan
+        <Link href="/#top" className={buttonVariants({ size: "sm" })}>
+          Text the agent
         </Link>
       </div>
     </header>

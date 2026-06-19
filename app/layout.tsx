@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Covera — Know what your care will actually cost",
+  title: "Covera — The insurance marketplace that texts you the right plan",
   description:
-    "Covera simulates every real insurance plan against your real health to find the coverage with the lowest risk-adjusted cost — then lets you carry it with you.",
+    "Text Covera your situation and a team of agents searches the entire health-insurance marketplace, simulates what you'd truly pay, answers any what-if, and reaches out to your employer or hospital once you choose.",
 };
 
 export default function RootLayout({

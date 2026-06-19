@@ -1,0 +1,81 @@
+import type { PatientProfile } from "@/lib/types";
+
+/** Where the patient is in the journey, which shapes how the concierge behaves. */
+export type ConversationStatus = "intake" | "advising" | "finalized";
+
+/**
+ * A structured payload attached to an agent message so the web UI can render a rich
+ * side panel (a chart, plan cards, an outreach draft) alongside the plain text that
+ * actually gets sent over iMessage. The text is always self-contained; `meta` is a
+ * progressive enhancement for the on-screen console and the results dashboard.
+ */
+export type MessageMeta =
+  | { kind: "profile"; data: ProfileMeta }
+  | { kind: "plans"; data: PlansMeta }
+  | { kind: "whatif"; data: PlansMeta }
+  | { kind: "marketplace"; data: MarketplaceMeta }
+  | { kind: "hospital"; data: HospitalMeta }
+  | { kind: "outreach"; data: OutreachMeta };
+
+export interface ProfileMeta {
+  filled: string[]; // human labels of fields captured so far, e.g. ["age 34", "Texas"]
+  missing: string[]; // what's still needed before advising
+}
+
+export interface PlanLine {
+  name: string;
+  metal: string;
+  expectedTotal: number;
+  p90: number;
+  annualPremium: number;
+  probHitOOPMax: number;
+}
+
+export interface PlansMeta {
+  label: string;
+  subsidyMonthly: number;
+  topPlans: PlanLine[];
+}
+
+export interface MarketplaceMeta {
+  state: string;
+  planCount: number;
+  issuers: number;
+  employerOfferMonthly: number | null; // what the employer offer would cost the patient
+  bestMarketplaceMonthly: number; // cheapest comparable marketplace option (net of subsidy)
+  verdict: string;
+}
+
+export interface HospitalMeta {
+  procedure: string;
+  state: string;
+  min: number;
+  median: number;
+  max: number;
+}
+
+export interface OutreachMeta {
+  target: "employer" | "hospital";
+  to: string | null;
+  subject: string;
+  body: string;
+  sent: boolean;
+}
+
+export interface ConvoMessage {
+  role: "patient" | "agent";
+  text: string;
+  ts: number;
+  meta?: MessageMeta;
+}
+
+export interface Thread {
+  id: string; // E.164 phone number, or a demo session id
+  channel: "loopmessage" | "sandbox";
+  profile: Partial<PatientProfile>;
+  messages: ConvoMessage[];
+  selectedPlanId: string | null;
+  status: ConversationStatus;
+  createdAt: number;
+  updatedAt: number;
+}
