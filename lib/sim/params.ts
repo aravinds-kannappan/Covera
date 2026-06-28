@@ -50,6 +50,8 @@ export interface MepsParams {
     top10pct: number;
     bottom50pct: number;
   };
+  /** Person-year frailty: a mean-1 latent multiplier on acute-care frequency. */
+  frailty: { sigma: number; note?: string };
   ageBands: { key: AgeBandKey; min: number; max: number; meanAnnualSpend: number }[];
   services: Record<ServiceKey, ServiceParam>;
   conditions: Record<ConditionKey, ConditionParam>;

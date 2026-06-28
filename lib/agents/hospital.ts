@@ -30,3 +30,24 @@ export function lookupProcedure(state: string, procedureId: string, plans: Plan[
 
 /** The procedure ids the agent may reference, for the tool schema + prompt. */
 export const PROCEDURE_CHOICES = PROCEDURES.map((p) => ({ id: p.id, label: p.label }));
+
+/** What a single procedure would cost THIS patient on ONE specific plan (their own). */
+export interface MyCostEstimate {
+  procedure: string;
+  planName: string;
+  allowed: number;
+  ifDeductibleUnmet: number;
+  ifDeductibleMet: number;
+}
+
+export function estimateOnPlan(plan: Plan, procedureId: string): MyCostEstimate {
+  const proc = PROCEDURES.find((p) => p.id === procedureId) ?? PROCEDURES[0];
+  const est = estimateProcedure(plan, proc);
+  return {
+    procedure: proc.label,
+    planName: plan.marketingName,
+    allowed: proc.typicalAllowed,
+    ifDeductibleUnmet: est.beforeDeductible,
+    ifDeductibleMet: est.afterDeductible,
+  };
+}

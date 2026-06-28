@@ -7,7 +7,8 @@ import type {
 import { ageBandKey, MEPS } from "@/lib/sim/params";
 import { hashSeed, makeRng } from "@/lib/sim/random";
 import { buildUtilization, sampleScenarios } from "@/lib/sim/utilization";
-import { meanOOP, summarize } from "@/lib/sim/montecarlo";
+import { summarize } from "@/lib/sim/montecarlo";
+import { buildSpendGrid, analyticMeanOOP } from "@/lib/sim/analytic";
 import {
   computeSubsidy,
   netPremium,
@@ -79,11 +80,14 @@ export function optimize(
   const rng = makeRng(profileSeed(profile));
 
   // --- Coarse pass: rank every plan by expected total cost ---
+  // One shared spend distribution, evaluated against every plan in closed form (no
+  // per-plan resampling). This shortlists; the Monte-Carlo fine pass below is still exact.
   const coarse = sampleScenarios(rng, model, nCoarse);
+  const spendGrid = buildSpendGrid(coarse);
   const coarseScore = new Map<string, number>();
   for (const p of plans) {
     const annualNet = netPremium(p, profile.age, subsidy.aptcMonthly) * 12;
-    coarseScore.set(p.id, annualNet + meanOOP(p, coarse));
+    coarseScore.set(p.id, annualNet + analyticMeanOOP(p, spendGrid));
   }
   const sortedByCoarse = [...plans].sort(
     (a, b) => coarseScore.get(a.id)! - coarseScore.get(b.id)!,

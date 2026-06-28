@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-19T05:49:52.714Z",
+  "generatedAt": "2026-06-28T11:53:48.496Z",
   "source": "Calibrated to the AHRQ Medical Expenditure Panel Survey (MEPS), Household Component.",
   "scenarioCount": 80000,
   "populationSize": 80000,
@@ -7,28 +7,28 @@
     {
       "label": "Age 0-17 mean spend",
       "target": 2300,
-      "actual": 3044,
+      "actual": 2438,
       "unit": "$",
-      "pass": false
+      "pass": true
     },
     {
       "label": "Age 18-44 mean spend",
       "target": 3700,
-      "actual": 4334,
+      "actual": 4237,
       "unit": "$",
       "pass": true
     },
     {
       "label": "Age 45-64 mean spend",
       "target": 8400,
-      "actual": 8856,
+      "actual": 8799,
       "unit": "$",
       "pass": true
     },
     {
       "label": "Age 65+ mean spend",
       "target": 13800,
-      "actual": 15951,
+      "actual": 15498,
       "unit": "$",
       "pass": true
     }
@@ -37,44 +37,44 @@
     {
       "label": "Top 1% share of spend",
       "target": 22,
-      "actual": 14,
+      "actual": 23,
       "unit": "%",
-      "pass": false
+      "pass": true
     },
     {
       "label": "Top 5% share of spend",
       "target": 50,
-      "actual": 37,
+      "actual": 53,
       "unit": "%",
-      "pass": false
+      "pass": true
     },
     {
       "label": "Top 10% share of spend",
       "target": 66,
-      "actual": 51,
+      "actual": 68,
       "unit": "%",
-      "pass": false
+      "pass": true
     },
     {
       "label": "Bottom 50% share of spend",
       "target": 3,
-      "actual": 11,
+      "actual": 4,
       "unit": "%",
-      "pass": false
+      "pass": true
     },
     {
       "label": "Population mean annual spend",
       "target": 6700,
-      "actual": 7141,
+      "actual": 6885,
       "unit": "$",
       "pass": true
     },
     {
       "label": "Population median annual spend",
       "target": 1300,
-      "actual": 3387,
+      "actual": 1814,
       "unit": "$",
-      "pass": false
+      "pass": true
     }
   ],
   "subsidy": [
@@ -122,7 +122,7 @@
     }
   ],
   "summary": {
-    "passed": 10,
+    "passed": 16,
     "total": 16
   }
 }

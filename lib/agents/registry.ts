@@ -1,10 +1,14 @@
-import type { Plan, PatientProfile } from "@/lib/types";
+import type { Plan, PatientProfile, ServiceKey } from "@/lib/types";
+import { SERVICE_KEYS } from "@/lib/types";
 import type { Thread, MessageMeta } from "@/lib/agents/types";
 import { extractProfilePatch, describeProfile } from "@/lib/agents/intake";
 import { recommendPlans, type WhatIfPatch } from "@/lib/agents/advisor";
 import { compareEmployerOffer } from "@/lib/agents/marketplace";
-import { lookupProcedure, PROCEDURE_CHOICES } from "@/lib/agents/hospital";
+import { lookupProcedure, estimateOnPlan, PROCEDURE_CHOICES } from "@/lib/agents/hospital";
 import { draftOutreach } from "@/lib/agents/outreach";
+import { draftAppeal } from "@/lib/agents/appeals";
+import { auditBill, type BillLine } from "@/lib/sim/billaudit";
+import { recheck } from "@/lib/sim/recheck";
 
 // The tools the Concierge can call, and a dispatcher that runs them. Some tools are
 // deterministic (the simulation advisor, marketplace, hospital); intake and outreach are
@@ -108,6 +112,66 @@ export const CONCIERGE_TOOLS = [
       additionalProperties: false,
     },
   },
+  {
+    name: "estimate_my_cost",
+    description: `Estimate what a specific procedure would cost THIS patient on their own plan (their finalized plan, or the current top recommendation) — both before and after their deductible is met. procedureId must be one of: ${procedureIds.join(", ")}.`,
+    input_schema: {
+      type: "object",
+      properties: { procedureId: { type: "string", enum: procedureIds } },
+      required: ["procedureId"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "audit_bill",
+    description:
+      "Audit a medical bill the patient received. Pass each line item; map its description to the closest serviceKey so it can be benchmarked against typical allowed amounts. Returns flagged overcharges and likely duplicates the patient should question.",
+    input_schema: {
+      type: "object",
+      properties: {
+        lines: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              description: { type: "string", description: "The line item as printed on the bill." },
+              serviceKey: { type: "string", enum: SERVICE_KEYS },
+              billed: { type: "number", description: "Dollar amount billed for this line." },
+              units: { type: "number" },
+            },
+            required: ["description", "billed"],
+            additionalProperties: false,
+          },
+        },
+      },
+      required: ["lines"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "draft_appeal",
+    description:
+      "Draft an appeal letter for a denied claim. Pass the denied service and the stated denial reason. Returns a draft to show the patient; it is never sent automatically.",
+    input_schema: {
+      type: "object",
+      properties: {
+        service: { type: "string", description: "The denied service, e.g. 'MRI of the knee'." },
+        denialReason: { type: "string", description: "The reason the insurer gave for the denial." },
+      },
+      required: ["service", "denialReason"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "recheck_savings",
+    description:
+      "Re-run the optimizer for the patient's current situation and compare their existing plan to this year's best option, surfacing the annual savings of switching. Use at open enrollment or whenever their health, meds, or income changed.",
+    input_schema: {
+      type: "object",
+      properties: {},
+      additionalProperties: false,
+    },
+  },
 ] as const;
 
 export interface DispatchOutput {
@@ -170,6 +234,48 @@ export async function dispatchTool(
         send: input.send === true,
       });
       return { result: meta, meta: { kind: "outreach", data: meta } };
+    }
+    case "estimate_my_cost": {
+      // The patient's own plan: their finalized choice, else this year's top recommendation.
+      let plan = thread.selectedPlanId
+        ? plans.find((p) => p.id === thread.selectedPlanId)
+        : undefined;
+      if (!plan) {
+        const { result } = recommendPlans(thread.profile as PatientProfile, plans);
+        plan = result.ranked[0]?.plan;
+      }
+      if (!plan) return { result: { error: "No plan available to estimate against yet." } };
+      return { result: estimateOnPlan(plan, String(input.procedureId)) };
+    }
+    case "audit_bill": {
+      const raw = Array.isArray(input.lines) ? (input.lines as unknown[]) : [];
+      const lines: BillLine[] = raw.map((r) => {
+        const o = (r ?? {}) as Record<string, unknown>;
+        return {
+          description: String(o.description ?? ""),
+          serviceKey:
+            typeof o.serviceKey === "string" ? (o.serviceKey as ServiceKey) : undefined,
+          billed: typeof o.billed === "number" ? o.billed : Number(o.billed) || 0,
+          units: typeof o.units === "number" ? o.units : undefined,
+        };
+      });
+      return { result: auditBill(lines) };
+    }
+    case "draft_appeal": {
+      const draft = await draftAppeal({
+        thread,
+        service: String(input.service ?? "the denied service"),
+        denialReason: String(input.denialReason ?? "not specified"),
+        planName: thread.selectedPlanId
+          ? plans.find((p) => p.id === thread.selectedPlanId)?.marketingName
+          : undefined,
+      });
+      return { result: draft };
+    }
+    case "recheck_savings": {
+      return {
+        result: recheck(thread.profile as PatientProfile, plans, thread.selectedPlanId),
+      };
     }
     default:
       return { result: { error: `Unknown tool ${name}` } };

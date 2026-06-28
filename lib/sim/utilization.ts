@@ -74,8 +74,17 @@ function push(scn: Scenario, service: ServiceKey, allowed: number) {
 export function sampleScenario(rng: Rng, model: UtilizationModel): Scenario {
   const scn: Scenario = { byService: {}, totalAllowed: 0 };
 
+  // Person-year frailty: one mean-1, right-skewed multiplier shared across every acute
+  // service this year. It makes a year's risk correlated (a bad year is bad across the
+  // board) instead of independent per service — the only way independent Poissons can
+  // reproduce the real MEPS concentration (top 5% of people ≈ 50% of spend) and the
+  // catastrophic tail. Mean 1 keeps age-band mean spend on target; sigma sets the skew.
+  // Parameterized by median so the lognormal's MEAN is exactly 1 (median = e^(-σ²/2)).
+  const fSigma = MEPS.frailty.sigma;
+  const frailty = lognormal(rng, Math.exp(-(fSigma * fSigma) / 2), fSigma);
+
   for (const s of SERVICE_KEYS) {
-    const count = poisson(rng, Math.max(0, model.expectedFreq[s]));
+    const count = poisson(rng, Math.max(0, model.expectedFreq[s] * frailty));
     if (count === 0) continue;
     const { allowedMedian, allowedSigma } = MEPS.services[s];
     for (let i = 0; i < count; i++)

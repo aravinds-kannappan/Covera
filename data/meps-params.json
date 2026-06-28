@@ -12,6 +12,10 @@
     "top10pct": 0.66,
     "bottom50pct": 0.03
   },
+  "frailty": {
+    "sigma": 1.5,
+    "note": "Person-year latent multiplier, mean 1 (lognormal). Drawn once per simulated year and applied to the Poisson rate of every acute service line, so a person's risk is correlated across services instead of independent. With mean fixed at 1 it preserves age-band mean spend, while sigma controls how skewed the population is — this is what reproduces the MEPS concentration (top 5% ~ 50% of spend) and the catastrophic-year tail that independent per-service draws cannot. Chronic meds and guaranteed planned events are exempt (they are known, not stochastic)."
+  },
   "ageBands": [
     { "key": "0-17", "min": 0, "max": 17, "meanAnnualSpend": 2300 },
     { "key": "18-44", "min": 18, "max": 44, "meanAnnualSpend": 3700 },
@@ -23,7 +27,7 @@
       "isDrug": false,
       "allowedMedian": 145,
       "allowedSigma": 0.35,
-      "freq": { "0-17": 2.2, "18-44": 1.5, "45-64": 2.6, "65+": 3.8 }
+      "freq": { "0-17": 1.8, "18-44": 1.5, "45-64": 2.6, "65+": 3.8 }
     },
     "specialist": {
       "isDrug": false,
@@ -41,19 +45,19 @@
       "isDrug": false,
       "allowedMedian": 1350,
       "allowedSigma": 0.7,
-      "freq": { "0-17": 0.18, "18-44": 0.2, "45-64": 0.18, "65+": 0.3 }
+      "freq": { "0-17": 0.14, "18-44": 0.2, "45-64": 0.18, "65+": 0.3 }
     },
     "inpatient": {
       "isDrug": false,
       "allowedMedian": 16500,
       "allowedSigma": 0.8,
-      "freq": { "0-17": 0.03, "18-44": 0.05, "45-64": 0.09, "65+": 0.2 }
+      "freq": { "0-17": 0.018, "18-44": 0.05, "45-64": 0.09, "65+": 0.2 }
     },
     "outpatientSurgery": {
       "isDrug": false,
       "allowedMedian": 6200,
       "allowedSigma": 0.8,
-      "freq": { "0-17": 0.03, "18-44": 0.05, "45-64": 0.1, "65+": 0.15 }
+      "freq": { "0-17": 0.02, "18-44": 0.05, "45-64": 0.1, "65+": 0.15 }
     },
     "labs": {
       "isDrug": false,
@@ -101,7 +105,7 @@
       "isDrug": true,
       "allowedMedian": 3200,
       "allowedSigma": 0.7,
-      "freq": { "0-17": 0.01, "18-44": 0.02, "45-64": 0.05, "65+": 0.08 }
+      "freq": { "0-17": 0.006, "18-44": 0.02, "45-64": 0.05, "65+": 0.08 }
     }
   },
   "conditions": {
