@@ -117,6 +117,87 @@ export function FeaturePanel({
     );
   }
 
+  if (meta.kind === "estimate") {
+    const d = meta.data;
+    return (
+      <Panel title={`${d.procedure} — your cost`}>
+        <div className="grid grid-cols-2 gap-2 text-center">
+          <Stat label="Deductible not met" value={usd(d.ifDeductibleUnmet)} highlight />
+          <Stat label="Deductible met" value={usd(d.ifDeductibleMet)} />
+        </div>
+        <p className="mt-2 text-[11px] text-slate-400">
+          On {d.planName}. Typical allowed amount {usd(d.allowed)} — your share depends on where you are in your deductible.
+        </p>
+      </Panel>
+    );
+  }
+
+  if (meta.kind === "billaudit") {
+    const d = meta.data;
+    return (
+      <Panel title="Bill audit">
+        <div className="grid grid-cols-2 gap-2 text-center">
+          <Stat label="Total billed" value={usd(d.totalBilled)} />
+          <Stat label="Possible overcharge" value={usd(d.potentialOvercharge)} highlight />
+        </div>
+        {d.flaggedLines.length > 0 ? (
+          <div className="mt-2 space-y-1.5">
+            {d.flaggedLines.map((l, i) => (
+              <div key={l.description + i} className="rounded-xl border border-slate-100 bg-slate-50/70 p-2">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="truncate text-xs font-medium text-slate-800">{l.description}</span>
+                  <span className="text-xs tabular-nums text-slate-900">{usd(l.billed)}</span>
+                </div>
+                <div className="mt-1 flex flex-wrap gap-1">
+                  {l.flags.map((f) => (
+                    <Badge key={f} tone={f === "overcharge" ? "rose" : "amber"}>
+                      {f}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-2 text-[11px] text-emerald-700">{d.summary.join(" · ")}</p>
+        )}
+      </Panel>
+    );
+  }
+
+  if (meta.kind === "appeal") {
+    const d = meta.data;
+    return (
+      <Panel title={`Appeal draft — ${d.service}`}>
+        <div className="rounded-xl border border-slate-100 bg-white p-2.5">
+          <div className="text-xs font-medium text-slate-800">{d.subject}</div>
+          <p className="mt-1 whitespace-pre-wrap text-[11px] leading-relaxed text-slate-600">{d.letter}</p>
+        </div>
+        <div className="mt-2">
+          <Badge tone="amber">Draft — review before sending</Badge>
+        </div>
+      </Panel>
+    );
+  }
+
+  if (meta.kind === "recheck") {
+    const d = meta.data;
+    return (
+      <Panel title="Annual recheck">
+        <div className="grid grid-cols-2 gap-2 text-center">
+          <Stat label="Your plan" value={d.currentExpectedTotal != null ? usd(d.currentExpectedTotal) : "—"} />
+          <Stat label="Best this year" value={usd(d.bestExpectedTotal)} highlight />
+        </div>
+        <p className="mt-2 text-[11px] text-slate-500">{d.reason}</p>
+        {d.shouldSwitch && d.annualSavings != null && (
+          <p className="mt-1 text-[11px] font-medium text-emerald-700">
+            Switch to {d.bestPlanName} → save {usd(d.annualSavings)}/yr
+          </p>
+        )}
+      </Panel>
+    );
+  }
+
   // outreach
   const d = meta.data;
   return (

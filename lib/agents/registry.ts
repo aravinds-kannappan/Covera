@@ -245,7 +245,8 @@ export async function dispatchTool(
         plan = result.ranked[0]?.plan;
       }
       if (!plan) return { result: { error: "No plan available to estimate against yet." } };
-      return { result: estimateOnPlan(plan, String(input.procedureId)) };
+      const est = estimateOnPlan(plan, String(input.procedureId));
+      return { result: est, meta: { kind: "estimate", data: est } };
     }
     case "audit_bill": {
       const raw = Array.isArray(input.lines) ? (input.lines as unknown[]) : [];
@@ -259,7 +260,26 @@ export async function dispatchTool(
           units: typeof o.units === "number" ? o.units : undefined,
         };
       });
-      return { result: auditBill(lines) };
+      const audit = auditBill(lines);
+      return {
+        result: audit,
+        meta: {
+          kind: "billaudit",
+          data: {
+            totalBilled: audit.totalBilled,
+            potentialOvercharge: audit.potentialOvercharge,
+            flaggedLines: audit.lines
+              .filter((l) => l.flags.length > 0)
+              .map((l) => ({
+                description: l.description,
+                billed: l.billed,
+                referenceAllowed: l.referenceAllowed,
+                flags: l.flags,
+              })),
+            summary: audit.flags,
+          },
+        },
+      };
     }
     case "draft_appeal": {
       const draft = await draftAppeal({
@@ -270,12 +290,11 @@ export async function dispatchTool(
           ? plans.find((p) => p.id === thread.selectedPlanId)?.marketingName
           : undefined,
       });
-      return { result: draft };
+      return { result: draft, meta: { kind: "appeal", data: draft } };
     }
     case "recheck_savings": {
-      return {
-        result: recheck(thread.profile as PatientProfile, plans, thread.selectedPlanId),
-      };
+      const res = recheck(thread.profile as PatientProfile, plans, thread.selectedPlanId);
+      return { result: res, meta: { kind: "recheck", data: res } };
     }
     default:
       return { result: { error: `Unknown tool ${name}` } };

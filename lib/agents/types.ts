@@ -15,6 +15,10 @@ export type MessageMeta =
   | { kind: "whatif"; data: PlansMeta }
   | { kind: "marketplace"; data: MarketplaceMeta }
   | { kind: "hospital"; data: HospitalMeta }
+  | { kind: "estimate"; data: EstimateMeta }
+  | { kind: "billaudit"; data: BillAuditMeta }
+  | { kind: "appeal"; data: AppealMeta }
+  | { kind: "recheck"; data: RecheckMeta }
   | { kind: "outreach"; data: OutreachMeta };
 
 export interface ProfileMeta {
@@ -60,6 +64,50 @@ export interface OutreachMeta {
   subject: string;
   body: string;
   sent: boolean;
+}
+
+/** A procedure's cost on the patient's own plan (Use). */
+export interface EstimateMeta {
+  procedure: string;
+  planName: string;
+  allowed: number;
+  ifDeductibleUnmet: number;
+  ifDeductibleMet: number;
+}
+
+export interface BillAuditLineMeta {
+  description: string;
+  billed: number;
+  referenceAllowed: number | null;
+  flags: string[];
+}
+
+/** A medical-bill audit result (Defend). */
+export interface BillAuditMeta {
+  totalBilled: number;
+  potentialOvercharge: number;
+  flaggedLines: BillAuditLineMeta[];
+  summary: string[];
+}
+
+/** A denial-appeal draft (Defend). */
+export interface AppealMeta {
+  service: string;
+  denialReason: string;
+  subject: string;
+  letter: string;
+  sent: boolean;
+}
+
+/** An annual re-rank comparing the current plan to this year's best (Optimize). */
+export interface RecheckMeta {
+  currentPlanName: string | null;
+  currentExpectedTotal: number | null;
+  bestPlanName: string;
+  bestExpectedTotal: number;
+  annualSavings: number | null;
+  shouldSwitch: boolean;
+  reason: string;
 }
 
 export interface ConvoMessage {
