@@ -167,7 +167,7 @@ npm run ingest    # rebuild data/plans.*.json from the CMS PUFs (~700MB download
 | Plans, premiums, deductibles, OOP max, cost-sharing | **CMS Health Insurance Exchange Public Use Files, PY2026** (data.healthcare.gov) |
 | Care utilization & expenditure calibration | **AHRQ Medical Expenditure Panel Survey (MEPS)** |
 | Premium subsidies | ACA **APTC** via the second-lowest-cost silver benchmark |
-| Procedure prices | Typical allowed amounts aligned to CMS reference rates |
+| Procedure prices (billed & Medicare-allowed) | **CMS Medicare Physician & Other Practitioners — by Geography and Service** (data.cms.gov), via `npm run ingest:prices` |
 
 Bundled states: **TX, FL, NC, OH** (federal-exchange markets, ~1,600 real plans).
 

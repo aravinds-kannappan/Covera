@@ -1,23 +1,176 @@
 {
   "_provenance": {
-    "source": "Typical U.S. in-network allowed amounts for common shoppable services, aligned to CMS reference rates and hospital price-transparency disclosures.",
-    "note": "Used only to estimate a member's point-of-care cost by applying their plan's real cost-sharing rules. Actual negotiated prices vary by facility; a hospital's machine-readable file can be substituted to localize an estimate."
+    "source": "Medicare Physician & Other Practitioners - by Geography and Service, data year 2024 \u2014 CMS open data (data.cms.gov). Real national average submitted charges and Medicare allowed amounts per HCPCS code.",
+    "api": "https://data.cms.gov/data-api/v1/dataset/6fea9d79-0129-4e4c-b1b8-23cd86a4f435/data",
+    "extractedAt": "2026-06-28",
+    "commercialMultiplier": 1.8,
+    "method": "avgSubmittedCharge and medicareAllowed are real CMS national averages for the mapped HCPCS code. For ambulatory services, typicalAllowed is estimated as medicareAllowed x commercialMultiplier (commercial allowed amounts run roughly 1.5-3x Medicare). Facility-dominated procedures are marked facility:true and keep a curated commercial estimate, because this physician/practitioner dataset captures only the professional fee, not the hospital/ASC facility fee."
   },
   "procedures": [
-    { "id": "office_pcp", "label": "Primary care office visit", "serviceKey": "primaryCare", "typicalAllowed": 145 },
-    { "id": "office_specialist", "label": "Specialist consultation", "serviceKey": "specialist", "typicalAllowed": 255 },
-    { "id": "urgent_care", "label": "Urgent care visit", "serviceKey": "urgentCare", "typicalAllowed": 185 },
-    { "id": "er_visit", "label": "Emergency room visit", "serviceKey": "emergencyRoom", "typicalAllowed": 2200 },
-    { "id": "mri_brain", "label": "MRI (without contrast)", "serviceKey": "imagingAdvanced", "typicalAllowed": 1250 },
-    { "id": "ct_abdomen", "label": "CT scan", "serviceKey": "imagingAdvanced", "typicalAllowed": 1100 },
-    { "id": "xray", "label": "X-ray", "serviceKey": "xray", "typicalAllowed": 135 },
-    { "id": "blood_panel", "label": "Comprehensive blood panel", "serviceKey": "labs", "typicalAllowed": 95 },
-    { "id": "colonoscopy", "label": "Colonoscopy (diagnostic)", "serviceKey": "outpatientSurgery", "typicalAllowed": 2800 },
-    { "id": "knee_arthroscopy", "label": "Knee arthroscopy", "serviceKey": "outpatientSurgery", "typicalAllowed": 9500 },
-    { "id": "delivery", "label": "Childbirth (vaginal delivery)", "serviceKey": "inpatient", "typicalAllowed": 14500 },
-    { "id": "delivery_csection", "label": "Childbirth (C-section)", "serviceKey": "inpatient", "typicalAllowed": 22000 },
-    { "id": "appendectomy", "label": "Appendectomy", "serviceKey": "inpatient", "typicalAllowed": 18500 },
-    { "id": "knee_replacement", "label": "Total knee replacement", "serviceKey": "inpatient", "typicalAllowed": 35000 },
-    { "id": "mental_health", "label": "Therapy session", "serviceKey": "mentalHealthOutpatient", "typicalAllowed": 145 }
+    {
+      "id": "office_pcp",
+      "label": "Primary care office visit",
+      "serviceKey": "primaryCare",
+      "typicalAllowed": 216,
+      "hcpcs": "99214",
+      "hcpcsDesc": "Established patient office or other outpatient visit with moderate level of decision making, if using time, 30 minutes or more",
+      "medicareAllowed": 120,
+      "avgSubmittedCharge": 276,
+      "facility": false
+    },
+    {
+      "id": "office_specialist",
+      "label": "Specialist consultation",
+      "serviceKey": "specialist",
+      "typicalAllowed": 288,
+      "hcpcs": "99204",
+      "hcpcsDesc": "New patient office or other outpatient visit with moderate level of medical decision making, if using time, 45 minutes or more",
+      "medicareAllowed": 160,
+      "avgSubmittedCharge": 411,
+      "facility": false
+    },
+    {
+      "id": "urgent_care",
+      "label": "Urgent care visit",
+      "serviceKey": "urgentCare",
+      "typicalAllowed": 216,
+      "hcpcs": "99214",
+      "hcpcsDesc": "Established patient office or other outpatient visit with moderate level of decision making, if using time, 30 minutes or more",
+      "medicareAllowed": 120,
+      "avgSubmittedCharge": 276,
+      "facility": false
+    },
+    {
+      "id": "er_visit",
+      "label": "Emergency room visit",
+      "serviceKey": "emergencyRoom",
+      "typicalAllowed": 2200,
+      "hcpcs": "99284",
+      "hcpcsDesc": "Emergency department visit with moderate level of medical decision making",
+      "medicareAllowed": 113,
+      "avgSubmittedCharge": 415,
+      "facility": true
+    },
+    {
+      "id": "mri_brain",
+      "label": "MRI (without contrast)",
+      "serviceKey": "imagingAdvanced",
+      "typicalAllowed": 279,
+      "hcpcs": "70551",
+      "hcpcsDesc": "Mri scan of brain without contrast",
+      "medicareAllowed": 155,
+      "avgSubmittedCharge": 1291,
+      "facility": false
+    },
+    {
+      "id": "ct_abdomen",
+      "label": "CT scan",
+      "serviceKey": "imagingAdvanced",
+      "typicalAllowed": 245,
+      "hcpcs": "74176",
+      "hcpcsDesc": "Ct scan of abdomen and pelvis without contrast",
+      "medicareAllowed": 136,
+      "avgSubmittedCharge": 814,
+      "facility": false
+    },
+    {
+      "id": "xray",
+      "label": "X-ray",
+      "serviceKey": "xray",
+      "typicalAllowed": 41,
+      "hcpcs": "71046",
+      "hcpcsDesc": "X-ray of chest, 2 views",
+      "medicareAllowed": 23,
+      "avgSubmittedCharge": 89,
+      "facility": false
+    },
+    {
+      "id": "blood_panel",
+      "label": "Comprehensive blood panel",
+      "serviceKey": "labs",
+      "typicalAllowed": 18,
+      "hcpcs": "80053",
+      "hcpcsDesc": "Blood test, comprehensive group of blood chemicals",
+      "medicareAllowed": 10,
+      "avgSubmittedCharge": 61,
+      "facility": false
+    },
+    {
+      "id": "colonoscopy",
+      "label": "Colonoscopy (diagnostic)",
+      "serviceKey": "outpatientSurgery",
+      "typicalAllowed": 2800,
+      "hcpcs": "45380",
+      "hcpcsDesc": "Biopsy of large bowel using a flexible endoscope",
+      "medicareAllowed": 241,
+      "avgSubmittedCharge": 1793,
+      "facility": true
+    },
+    {
+      "id": "knee_arthroscopy",
+      "label": "Knee arthroscopy",
+      "serviceKey": "outpatientSurgery",
+      "typicalAllowed": 9500,
+      "hcpcs": "29881",
+      "hcpcsDesc": "Removal of knee cartilage using an endoscope",
+      "medicareAllowed": 763,
+      "avgSubmittedCharge": 4957,
+      "facility": true
+    },
+    {
+      "id": "delivery",
+      "label": "Childbirth (vaginal delivery)",
+      "serviceKey": "inpatient",
+      "typicalAllowed": 14500,
+      "hcpcs": "59400",
+      "hcpcsDesc": "Vaginal delivery with care before and after delivery",
+      "medicareAllowed": 2264,
+      "avgSubmittedCharge": 5984,
+      "facility": true
+    },
+    {
+      "id": "delivery_csection",
+      "label": "Childbirth (C-section)",
+      "serviceKey": "inpatient",
+      "typicalAllowed": 22000,
+      "hcpcs": "59510",
+      "hcpcsDesc": "Cesarean delivery with care before and after delivery",
+      "medicareAllowed": 2514,
+      "avgSubmittedCharge": 6734,
+      "facility": true
+    },
+    {
+      "id": "appendectomy",
+      "label": "Appendectomy",
+      "serviceKey": "inpatient",
+      "typicalAllowed": 18500,
+      "hcpcs": "44970",
+      "hcpcsDesc": "Removal of appendix using an endoscope",
+      "medicareAllowed": 525,
+      "avgSubmittedCharge": 2174,
+      "facility": true
+    },
+    {
+      "id": "knee_replacement",
+      "label": "Total knee replacement",
+      "serviceKey": "inpatient",
+      "typicalAllowed": 35000,
+      "hcpcs": "27447",
+      "hcpcsDesc": "Replacement of knee joint, both sides of knee",
+      "medicareAllowed": 1487,
+      "avgSubmittedCharge": 8878,
+      "facility": true
+    },
+    {
+      "id": "mental_health",
+      "label": "Therapy session",
+      "serviceKey": "mentalHealthOutpatient",
+      "typicalAllowed": 225,
+      "hcpcs": "90837",
+      "hcpcsDesc": "Psychotherapy, 1 hour",
+      "medicareAllowed": 125,
+      "avgSubmittedCharge": 208,
+      "facility": false
+    }
   ]
 }

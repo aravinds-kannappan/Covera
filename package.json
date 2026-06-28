@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "ingest": "python3 scripts/ingest_pufs.py",
+    "ingest:prices": "python3 scripts/ingest_prices.py",
     "accuracy": "tsx scripts/accuracy/run.ts",
     "benchmark": "tsx scripts/benchmark/run.ts"
   },

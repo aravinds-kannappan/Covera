@@ -39,12 +39,21 @@ export interface BillAudit {
   flags: string[];
 }
 
-/** Average reference allowed amount per service line, from the bundled reference prices. */
+/**
+ * Reference *billed* amount per service line — the right benchmark for an audit, since a
+ * bill shows submitted charges, not allowed amounts. Uses real CMS national average
+ * submitted charges (scripts/ingest_prices.py) for the procedures we can benchmark
+ * completely. Facility-dominated procedures are skipped: the CMS physician dataset carries
+ * only their professional fee, not the hospital/ASC charge, so we lack a complete billed
+ * benchmark for those lines (they await a hospital price-transparency source).
+ */
 function referenceByService(): Partial<Record<ServiceKey, number>> {
   const sum: Partial<Record<ServiceKey, number>> = {};
   const count: Partial<Record<ServiceKey, number>> = {};
   for (const p of PROCEDURES) {
-    sum[p.serviceKey] = (sum[p.serviceKey] ?? 0) + p.typicalAllowed;
+    if (p.facility) continue;
+    const billed = typeof p.avgSubmittedCharge === "number" ? p.avgSubmittedCharge : p.typicalAllowed;
+    sum[p.serviceKey] = (sum[p.serviceKey] ?? 0) + billed;
     count[p.serviceKey] = (count[p.serviceKey] ?? 0) + 1;
   }
   const out: Partial<Record<ServiceKey, number>> = {};

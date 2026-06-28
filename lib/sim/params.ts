@@ -62,7 +62,17 @@ export interface ProcedurePrice {
   id: string;
   label: string;
   serviceKey: ServiceKey;
+  /** Commercial allowed-amount estimate the cost engine applies plan cost-sharing to. */
   typicalAllowed: number;
+  /** Real CMS fields (present once scripts/ingest_prices.py has run). */
+  hcpcs?: string;
+  hcpcsDesc?: string;
+  /** Real CMS national average Medicare allowed amount for the code. */
+  medicareAllowed?: number;
+  /** Real CMS national average submitted charge (what providers bill). */
+  avgSubmittedCharge?: number;
+  /** Facility-dominated procedure: CMS physician data is professional-fee only here. */
+  facility?: boolean;
 }
 
 export const MEPS = mepsJson as unknown as MepsParams;
