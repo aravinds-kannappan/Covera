@@ -155,9 +155,9 @@ export default function HospitalPage() {
           <div className="space-y-4 lg:sticky lg:top-20 lg:h-fit">
             <CardReader />
             <p className="px-1 text-xs text-slate-400">
-              Costs apply each plan&apos;s real CMS cost-sharing to a typical allowed
-              amount. Drop in your facility&apos;s machine-readable price file to
-              localize these to your negotiated rates.
+              Costs apply each plan&apos;s real CMS cost-sharing to allowed amounts
+              from CMS Medicare physician pricing. Drop in your facility&apos;s
+              machine-readable price file to localize these to your negotiated rates.
             </p>
           </div>
         </div>

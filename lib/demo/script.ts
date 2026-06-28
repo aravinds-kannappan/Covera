@@ -175,6 +175,87 @@ export const DEMO_SCRIPT: ScriptStep[] = [
       body: "Once you choose, Covera drafts outreach to your employer or hospital — and sends it on your behalf when you approve.",
     },
   },
+  {
+    message: { role: "patient", ts: t(13), text: "That's the thing though — what happens after I enroll? Last year I got blindsided by bills." },
+  },
+  {
+    message: {
+      role: "agent",
+      ts: t(14),
+      text: "I don't disappear once you pick. Forward me any bill and I'll check each line against what providers actually charge. Here's one a member sent me.",
+      meta: {
+        kind: "billaudit",
+        data: {
+          totalBilled: 2330,
+          potentialOvercharge: 1499,
+          flaggedLines: [
+            { description: "ER visit, level 4 (99284)", billed: 1850, referenceAllowed: 415, flags: ["overcharge"] },
+            { description: "Metabolic panel (80053)", billed: 240, referenceAllowed: 61, flags: ["overcharge"] },
+            { description: "Metabolic panel (80053)", billed: 240, referenceAllowed: 61, flags: ["possible duplicate"] },
+          ],
+          summary: ["2 lines billed well above typical charges", "1 line looks duplicated"],
+        },
+      },
+    },
+    caption: {
+      eyebrow: "Act 5 — It stays all year",
+      title: "Catches a bad bill",
+      body: "Up to 80% of medical bills contain errors. Covera benchmarks each line against real CMS submitted charges and flags overcharges and duplicates worth questioning.",
+    },
+  },
+  {
+    message: { role: "patient", ts: t(15), text: "And my knee MRI got denied — they said 'not medically necessary.'" },
+  },
+  {
+    message: {
+      role: "agent",
+      ts: t(16),
+      text: "That's appealable, and most people never try. I drafted an appeal from your plan and situation — review it and it's ready to send.",
+      meta: {
+        kind: "appeal",
+        data: {
+          service: "MRI of the right knee",
+          denialReason: "Not medically necessary",
+          subject: "Appeal of denied claim — MRI of the right knee",
+          letter:
+            "To the appeals department,\n\nI am formally appealing the denial of my claim for an MRI of the right knee, denied as \"not medically necessary.\" The imaging was ordered after persistent pain and an inconclusive exam, and is a covered benefit under my plan. I request a full review and a written determination with my further appeal rights.\n\nThank you,\n[Member name] · [Member ID] · [Claim number]\nSent via Covera on behalf of the member.",
+          sent: false,
+        },
+      },
+    },
+    caption: {
+      eyebrow: "Defend",
+      title: "Fights a denial in minutes",
+      body: "Insurers deny about 19% of in-network claims and fewer than 1% are ever appealed. Covera drafts the appeal from your own policy so you actually push back.",
+    },
+  },
+  {
+    message: { role: "patient", ts: t(17), text: "It's open enrollment again. Am I still on the best plan? My meds changed." },
+  },
+  {
+    message: {
+      role: "agent",
+      ts: t(18),
+      text: "Re-ran everything with your new prescription. You've drifted off your best fit — switching saves you real money this year.",
+      meta: {
+        kind: "recheck",
+        data: {
+          currentPlanName: "Oscar Gold Classic",
+          currentExpectedTotal: 6180,
+          bestPlanName: "Blue Advantage Silver HMO",
+          bestExpectedTotal: 5240,
+          annualSavings: 940,
+          shouldSwitch: true,
+          reason: "Your new medication shifts the math — a Silver plan now covers it for less all-in.",
+        },
+      },
+    },
+    caption: {
+      eyebrow: "Act 6 — Every open enrollment",
+      title: "Re-checks so you don't overpay",
+      body: "Most people never switch, overpaying out of pure inertia. Covera re-ranks every year as your health, meds, and income change — and nudges you only when it's worth it.",
+    },
+  },
 ];
 
 export const DEMO_MESSAGES: ConvoMessage[] = DEMO_SCRIPT.map((s) => s.message);

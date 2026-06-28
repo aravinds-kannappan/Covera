@@ -120,6 +120,7 @@ function TrustBand() {
   const items = [
     "CMS Marketplace Public Use Files",
     "AHRQ MEPS expenditure data",
+    "CMS Medicare physician prices",
     "ACA subsidy (APTC) benchmark",
   ];
   return (
@@ -156,8 +157,8 @@ function Lenses() {
       icon: Stethoscope,
       tone: "emerald" as const,
       eyebrow: "For patients",
-      title: "Shop the whole marketplace",
-      body: "Go beyond your employer's offer. Get plans ranked by risk-adjusted cost, ask anything by text, and carry a Coverage Card you own.",
+      title: "Shop — then never overpay again",
+      body: "Plans ranked by risk-adjusted cost, a real estimate before any procedure, a bill auditor that catches overcharges, an appeal drafter for denials, and a Coverage Card you own.",
       cta: "Find your plan",
     },
     {
@@ -236,12 +237,17 @@ function HowItWorks() {
     {
       icon: LineChart,
       title: "Agents do the shopping",
-      body: "A simulation runs thousands of years of your care through every real plan; a marketplace agent compares it to your employer offer.",
+      body: "Covera ranks every real plan in real time, then simulates your bad-year tail so the cheapest plan isn't mistaken for the right one — and compares it to your employer offer.",
     },
     {
       icon: Store,
       title: "Choose — it acts for you",
       body: "Pick a plan by text. Covera drafts and sends outreach to your employer or hospital, and hands you a Coverage Card you own.",
+    },
+    {
+      icon: ShieldCheck,
+      title: "Then it stays all year",
+      body: "Get your real cost before a procedure, forward a bill to catch overcharges, draft an appeal for a denial, and re-check at every open enrollment.",
     },
   ];
   return (
@@ -252,7 +258,7 @@ function HowItWorks() {
           From a text to the right plan — and beyond.
         </h2>
       </div>
-      <div className="mt-12 grid gap-8 md:grid-cols-3">
+      <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
         {steps.map((s, i) => (
           <div key={s.title} className="relative">
             <div className="flex items-center gap-3">
