@@ -5,7 +5,7 @@ import { sendEmail, emailConfigured } from "@/lib/outreach/email";
 
 // The Outreach sub-agent. Once a patient finalizes a plan, the concierge can ask this
 // agent to compose a professional message to the employer's HR or to a hospital/provider
-// — e.g. confirming an employer would accept a marketplace plan, or asking a hospital
+//: e.g. confirming an employer would accept a marketplace plan, or asking a hospital
 // whether a procedure is in-network and what it will cost. It returns a draft; it only
 // actually sends when email is configured AND the caller opts to send.
 
@@ -19,6 +19,7 @@ function outreachSystemPrompt(target: "employer" | "hospital"): string {
     "Output JSON only: { \"subject\": string, \"body\": string }.",
     "The body should be 4-8 sentences, courteous, specific, and end with a clear ask and a request to reply.",
     "Never invent contact names, policy numbers, or facts not provided. Refer to figures only if given.",
+    "Never use em dashes; use a period, a colon, or parentheses instead.",
     "Sign as 'Sent via Covera on behalf of the member.'",
   ].join("\n");
 }

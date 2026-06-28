@@ -14,7 +14,7 @@
   },
   "frailty": {
     "sigma": 1.5,
-    "note": "Person-year latent multiplier, mean 1 (lognormal). Drawn once per simulated year and applied to the Poisson rate of every acute service line, so a person's risk is correlated across services instead of independent. With mean fixed at 1 it preserves age-band mean spend, while sigma controls how skewed the population is — this is what reproduces the MEPS concentration (top 5% ~ 50% of spend) and the catastrophic-year tail that independent per-service draws cannot. Chronic meds and guaranteed planned events are exempt (they are known, not stochastic)."
+    "note": "Person-year latent multiplier, mean 1 (lognormal). Drawn once per simulated year and applied to the Poisson rate of every acute service line, so a person's risk is correlated across services instead of independent. With mean fixed at 1 it preserves age-band mean spend, while sigma controls how skewed the population is: this is what reproduces the MEPS concentration (top 5% ~ 50% of spend) and the catastrophic-year tail that independent per-service draws cannot. Chronic meds and guaranteed planned events are exempt (they are known, not stochastic)."
   },
   "ageBands": [
     { "key": "0-17", "min": 0, "max": 17, "meanAnnualSpend": 2300 },

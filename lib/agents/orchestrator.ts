@@ -29,7 +29,7 @@ function toMessageParams(messages: ConvoMessage[]): Anthropic.MessageParam[] {
 
 function plansSummaryFor(thread: Thread, plans: Plan[]): string {
   if (thread.status === "intake") {
-    return "Not enough detail yet — gather a couple of facts, then call recommend_plans.";
+    return "Not enough detail yet: gather a couple of facts, then call recommend_plans.";
   }
   const { result } = recommendPlans(thread.profile as PatientProfile, plans);
   return plansSummaryText(result);
@@ -98,7 +98,7 @@ export async function runConcierge(thread: Thread, patientText: string): Promise
     messages.push({ role: "user", content: results });
   }
 
-  if (!finalText) finalText = "Let me look into that — can you say a bit more?";
+  if (!finalText) finalText = "Let me look into that: can you say a bit more?";
   const reply: ConvoMessage = { role: "agent", text: finalText, ts: Date.now(), meta: lastMeta };
   appendMessage(thread, reply);
   return { replies: [reply] };

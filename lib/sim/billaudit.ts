@@ -1,12 +1,12 @@
 import type { ServiceKey } from "@/lib/types";
 import { PROCEDURES } from "@/lib/sim/params";
 
-// Defend — bill auditor.
+// Defend: bill auditor.
 //
 // Up to ~80% of medical bills contain errors. This is a deterministic first pass: it
 // benchmarks each line against the same CMS-aligned reference allowed amounts the cost
 // estimator uses, flags lines billed far above that, and surfaces likely duplicates. It is
-// not legal/billing advice — it tells the patient which lines are worth questioning.
+// not legal/billing advice: it tells the patient which lines are worth questioning.
 //
 // Swap-in point: a real price-transparency feed (CMS / Turquoise machine-readable files)
 // would replace the per-service averages below with facility + payer negotiated rates, for
@@ -40,7 +40,7 @@ export interface BillAudit {
 }
 
 /**
- * Reference *billed* amount per service line — the right benchmark for an audit, since a
+ * Reference *billed* amount per service line: the right benchmark for an audit, since a
  * bill shows submitted charges, not allowed amounts. Uses real CMS national average
  * submitted charges (scripts/ingest_prices.py) for the procedures we can benchmark
  * completely. Facility-dominated procedures are skipped: the CMS physician dataset carries
@@ -94,7 +94,7 @@ export function auditBill(
     const flags: string[] = [];
     if (overchargeRatio != null && overchargeRatio > factor) flags.push("overcharge");
     if ((seen.get(lineKey(l)) ?? 0) > 1) flags.push("possible duplicate");
-    if (serviceKey == null) flags.push("uncoded — could not benchmark");
+    if (serviceKey == null) flags.push("uncoded: could not benchmark");
 
     totalBilled += l.billed;
     if (referenceAllowed != null) totalReference += referenceAllowed;

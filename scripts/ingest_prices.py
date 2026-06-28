@@ -46,7 +46,7 @@ PRICES_PATH = os.path.join(DATA_DIR, "procedure-prices.json")
 
 # procedure id -> (HCPCS/CPT code, preferred place of service, facility-dominated?)
 # "facility" marks procedures whose true cost is dominated by a hospital/ASC fee this
-# physician dataset does not contain — we keep their curated estimate and only attach the
+# physician dataset does not contain: we keep their curated estimate and only attach the
 # professional figures for transparency.
 HCPCS_MAP = {
     "office_pcp": ("99214", "O", False),         # established office visit, level 4
@@ -163,7 +163,7 @@ def main():
     result = {
         "_provenance": {
             "source": (
-                f"{DATASET_TITLE}, data year {year} — CMS open data (data.cms.gov). "
+                f"{DATASET_TITLE}, data year {year}: CMS open data (data.cms.gov). "
                 "Real national average submitted charges and Medicare allowed amounts per HCPCS code."
             ),
             "api": base_url,

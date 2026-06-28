@@ -65,7 +65,7 @@ export function plansSummaryText(result: OptimizeResult): string {
     .slice(0, 5)
     .map((r, i) => {
       const s = r.sim;
-      return `${i + 1}. ${r.plan.marketingName} (${r.plan.metal}) — premium ${usd(
+      return `${i + 1}. ${r.plan.marketingName} (${r.plan.metal}): premium ${usd(
         s.annualPremium,
       )}/yr, expected all-in ${usd(s.expectedTotal)}, bad-year ${usd(s.p90)}, ${Math.round(
         s.probHitOOPMax * 100,

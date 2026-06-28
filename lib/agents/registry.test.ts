@@ -18,7 +18,7 @@ function thread() {
   return t;
 }
 
-describe("dispatchTool — deterministic tools over real TX plans", () => {
+describe("dispatchTool: deterministic tools over real TX plans", () => {
   it("recommend_plans returns a ranking and advances status", async () => {
     const t = thread();
     const out = await dispatchTool("recommend_plans", {}, t, plans);

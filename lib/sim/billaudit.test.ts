@@ -27,7 +27,7 @@ describe("bill audit", () => {
   it("marks uncoded lines as not benchmarkable", () => {
     const a = auditBill([{ description: "misc facility fee", billed: 500 }]);
     expect(a.lines[0].referenceAllowed).toBeNull();
-    expect(a.lines[0].flags).toContain("uncoded — could not benchmark");
+    expect(a.lines[0].flags).toContain("uncoded: could not benchmark");
   });
 
   it("reports a clean bill when charges are reasonable", () => {

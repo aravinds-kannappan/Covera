@@ -1,6 +1,6 @@
 // Optional real delivery for outreach drafts, via Resend's REST API (no SDK, to keep the
 // dependency footprint slim). When RESEND_API_KEY / OUTREACH_FROM_EMAIL are unset, the
-// caller still has a fully composed draft to show and text — it just isn't sent.
+// caller still has a fully composed draft to show and text: it just isn't sent.
 
 const API_KEY = process.env.RESEND_API_KEY;
 const FROM = process.env.OUTREACH_FROM_EMAIL;

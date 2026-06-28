@@ -114,7 +114,7 @@ export const CONCIERGE_TOOLS = [
   },
   {
     name: "estimate_my_cost",
-    description: `Estimate what a specific procedure would cost THIS patient on their own plan (their finalized plan, or the current top recommendation) — both before and after their deductible is met. procedureId must be one of: ${procedureIds.join(", ")}.`,
+    description: `Estimate what a specific procedure would cost THIS patient on their own plan (their finalized plan, or the current top recommendation): both before and after their deductible is met. procedureId must be one of: ${procedureIds.join(", ")}.`,
     input_schema: {
       type: "object",
       properties: { procedureId: { type: "string", enum: procedureIds } },

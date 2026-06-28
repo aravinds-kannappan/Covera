@@ -23,7 +23,7 @@ import { conciergeSystemPrompt } from "@/lib/agents/prompts";
 import { recommendPlans, plansSummaryText } from "@/lib/agents/advisor";
 import type { LlmBenchmarkReport, ModelResult } from "@/lib/benchmark/types";
 
-// Published pricing (USD per 1M tokens) — source: Anthropic model docs.
+// Published pricing (USD per 1M tokens): source: Anthropic model docs.
 const MODELS: { id: string; label: string; inPrice: number; outPrice: number }[] = [
   { id: "claude-opus-4-8", label: "Opus 4.8", inPrice: 5, outPrice: 25 },
   { id: "claude-sonnet-4-6", label: "Sonnet 4.6", inPrice: 3, outPrice: 15 },
@@ -38,10 +38,10 @@ interface Question {
 
 const SUITE: Question[] = [
   { text: "I'm 30, in Texas, make about $40k, no health issues. What plans should I look at?", expectTool: "recommend_plans" },
-  { text: "What if I get pregnant next year — does my best plan change?", expectTool: "recommend_plans" },
+  { text: "What if I get pregnant next year: does my best plan change?", expectTool: "recommend_plans" },
   { text: "My job's plan costs me $350 a month. Should I use it or go to the marketplace?", expectTool: "compare_employer_offer" },
   { text: "How much would an MRI cost me out of pocket?", expectTool: "lookup_procedure_cost" },
-  { text: "I have type 2 diabetes and take metformin daily — factor that in.", expectTool: "update_profile" },
+  { text: "I have type 2 diabetes and take metformin daily: factor that in.", expectTool: "update_profile" },
   { text: "Honestly I'm terrified of getting a surprise hospital bill I can't pay." },
   { text: "Why isn't the cheapest plan always the best choice for me?" },
   { text: "How much does having a baby cost in Texas on these plans?", expectTool: "lookup_procedure_cost" },
@@ -75,7 +75,7 @@ function dollarsIn(text: string): number[] {
   return out;
 }
 
-// Every numeric value appearing anywhere in a tool result — the set of "real" figures.
+// Every numeric value appearing anywhere in a tool result: the set of "real" figures.
 function numbersIn(value: unknown, acc: Set<number> = new Set()): Set<number> {
   if (typeof value === "number") acc.add(Math.round(value));
   else if (Array.isArray(value)) value.forEach((v) => numbersIn(v, acc));

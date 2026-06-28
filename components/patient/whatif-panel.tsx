@@ -32,7 +32,7 @@ export function WhatIfPanel({
         )}
       </div>
       <p className="mt-1 text-xs text-slate-500">
-        Change anything — the ranking re-simulates live.
+        Change anything: the ranking re-simulates live.
       </p>
 
       <Field label="Conditions" className="mt-4">
@@ -68,7 +68,7 @@ export function WhatIfPanel({
       </Field>
 
       <Field
-        label={`Income — ${usd(profile.annualIncome)} (${Math.round(fplRatio * 100)}% FPL)`}
+        label={`Income: ${usd(profile.annualIncome)} (${Math.round(fplRatio * 100)}% FPL)`}
         className="mt-4"
       >
         <input

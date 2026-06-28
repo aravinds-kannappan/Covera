@@ -18,7 +18,7 @@ export const DEMO_SCRIPT: ScriptStep[] = [
     message: {
       role: "agent",
       ts: t(0),
-      text: "Hi, I'm Covera 👋 Tell me a bit about you and I'll find the right health plan from the whole marketplace — not just what an employer hands you.",
+      text: "Hi, I'm Covera 👋 Tell me a bit about you and I'll find the right health plan from the whole marketplace, not just what an employer hands you.",
     },
     caption: {
       eyebrow: "It starts with a text",
@@ -37,7 +37,7 @@ export const DEMO_SCRIPT: ScriptStep[] = [
     message: {
       role: "agent",
       ts: t(2),
-      text: "That fear is so common, and it's exactly what I'm here to protect you from — let's make a bad year survivable, not scary. Here's what I've got so far; tell me if I'm off.",
+      text: "That fear is so common, and it's exactly what I'm here to protect you from. Let's make a bad year survivable, not scary. Here's what I've got so far; tell me if I'm off.",
       meta: {
         kind: "profile",
         data: {
@@ -47,9 +47,9 @@ export const DEMO_SCRIPT: ScriptStep[] = [
       },
     },
     caption: {
-      eyebrow: "Act 1 — It actually listens",
+      eyebrow: "It actually listens",
       title: "It hears you, not just your data",
-      body: "Covera picks up the human stuff — your fears, your constraints, your life — and carries it through every recommendation. It's a companion, not a form.",
+      body: "Covera picks up the human stuff (your fears, your constraints, your life) and carries it through every recommendation. It's a companion, not a form.",
     },
   },
   {
@@ -72,12 +72,12 @@ export const DEMO_SCRIPT: ScriptStep[] = [
           issuers: 15,
           employerOfferMonthly: 420,
           bestMarketplaceMonthly: 246,
-          verdict: "The marketplace wins — about $174/mo cheaper than your employer's offer.",
+          verdict: "The marketplace wins: about $174/mo cheaper than your employer's offer.",
         },
       },
     },
     caption: {
-      eyebrow: "Act 2 — The whole marketplace",
+      eyebrow: "The whole marketplace",
       title: "Not just your employer's two options",
       body: "Covera compares your employer offer against every on-exchange plan in your state, net of the subsidy you actually qualify for.",
     },
@@ -89,7 +89,7 @@ export const DEMO_SCRIPT: ScriptStep[] = [
     message: {
       role: "agent",
       ts: t(6),
-      text: "Given that fear of a bad year, I'd lean you toward the Silver HMO — it keeps your typical year low but still caps the damage if things go sideways. Here are your top three so you can see the tradeoff.",
+      text: "Given that fear of a bad year, I'd lean you toward the Silver HMO: it keeps your typical year low but still caps the damage if things go sideways. Here are your top three so you can see the tradeoff.",
       meta: {
         kind: "plans",
         data: {
@@ -104,9 +104,9 @@ export const DEMO_SCRIPT: ScriptStep[] = [
       },
     },
     caption: {
-      eyebrow: "Act 3 — Real simulation",
+      eyebrow: "Real simulation",
       title: "Ranked on what you'll really pay",
-      body: "A Monte-Carlo engine runs thousands of simulated years of your care through each plan's real cost-sharing rules — then ranks by total risk-adjusted cost.",
+      body: "Covera ranks every real plan in real time, then a Monte-Carlo engine simulates thousands of years of your care to size up the bad-year tail.",
     },
   },
   {
@@ -116,7 +116,7 @@ export const DEMO_SCRIPT: ScriptStep[] = [
     message: {
       role: "agent",
       ts: t(8),
-      text: "Then the math flips toward the Gold plan — its lower out-of-pocket max protects you in a delivery year, even though the premium is higher.",
+      text: "Then the math flips toward the Gold plan: its lower out-of-pocket max protects you in a delivery year, even though the premium is higher.",
       meta: {
         kind: "whatif",
         data: {
@@ -133,7 +133,7 @@ export const DEMO_SCRIPT: ScriptStep[] = [
     caption: {
       eyebrow: "Ask any what-if",
       title: "Re-runs the real numbers, by text",
-      body: "Every \"what if\" — a new condition, a baby, a raise, losing a job — re-runs the simulation and shows how your best plan changes.",
+      body: "Every \"what if\" (a new condition, a baby, a raise, losing a job) re-runs the simulation and shows how your best plan changes.",
     },
   },
   {
@@ -157,7 +157,7 @@ export const DEMO_SCRIPT: ScriptStep[] = [
     message: {
       role: "agent",
       ts: t(12),
-      text: "Locked in. Want me to message your employer's HR to see if they'll reimburse it through an ICHRA? I drafted this — say the word and I'll send it.",
+      text: "Locked in. Want me to message your employer's HR to see if they'll reimburse it through an ICHRA? I drafted this: say the word and I'll send it.",
       meta: {
         kind: "outreach",
         data: {
@@ -170,13 +170,13 @@ export const DEMO_SCRIPT: ScriptStep[] = [
       },
     },
     caption: {
-      eyebrow: "Act 4 — It acts for you",
+      eyebrow: "It acts for you",
       title: "Reaches your employer & hospital",
-      body: "Once you choose, Covera drafts outreach to your employer or hospital — and sends it on your behalf when you approve.",
+      body: "Once you choose, Covera drafts outreach to your employer or hospital and sends it on your behalf when you approve.",
     },
   },
   {
-    message: { role: "patient", ts: t(13), text: "That's the thing though — what happens after I enroll? Last year I got blindsided by bills." },
+    message: { role: "patient", ts: t(13), text: "That's the thing though: what happens after I enroll? Last year I got blindsided by bills." },
   },
   {
     message: {
@@ -198,25 +198,25 @@ export const DEMO_SCRIPT: ScriptStep[] = [
       },
     },
     caption: {
-      eyebrow: "Act 5 — It stays all year",
+      eyebrow: "It stays all year",
       title: "Catches a bad bill",
       body: "Up to 80% of medical bills contain errors. Covera benchmarks each line against real CMS submitted charges and flags overcharges and duplicates worth questioning.",
     },
   },
   {
-    message: { role: "patient", ts: t(15), text: "And my knee MRI got denied — they said 'not medically necessary.'" },
+    message: { role: "patient", ts: t(15), text: "And my knee MRI got denied: they said 'not medically necessary.'" },
   },
   {
     message: {
       role: "agent",
       ts: t(16),
-      text: "That's appealable, and most people never try. I drafted an appeal from your plan and situation — review it and it's ready to send.",
+      text: "That's appealable, and most people never try. I drafted an appeal from your plan and situation: review it and it's ready to send.",
       meta: {
         kind: "appeal",
         data: {
           service: "MRI of the right knee",
           denialReason: "Not medically necessary",
-          subject: "Appeal of denied claim — MRI of the right knee",
+          subject: "Appeal of denied claim: MRI of the right knee",
           letter:
             "To the appeals department,\n\nI am formally appealing the denial of my claim for an MRI of the right knee, denied as \"not medically necessary.\" The imaging was ordered after persistent pain and an inconclusive exam, and is a covered benefit under my plan. I request a full review and a written determination with my further appeal rights.\n\nThank you,\n[Member name] · [Member ID] · [Claim number]\nSent via Covera on behalf of the member.",
           sent: false,
@@ -236,7 +236,7 @@ export const DEMO_SCRIPT: ScriptStep[] = [
     message: {
       role: "agent",
       ts: t(18),
-      text: "Re-ran everything with your new prescription. You've drifted off your best fit — switching saves you real money this year.",
+      text: "Re-ran everything with your new prescription. You've drifted off your best fit: switching saves you real money this year.",
       meta: {
         kind: "recheck",
         data: {
@@ -246,14 +246,14 @@ export const DEMO_SCRIPT: ScriptStep[] = [
           bestExpectedTotal: 5240,
           annualSavings: 940,
           shouldSwitch: true,
-          reason: "Your new medication shifts the math — a Silver plan now covers it for less all-in.",
+          reason: "Your new medication shifts the math: a Silver plan now covers it for less all-in.",
         },
       },
     },
     caption: {
-      eyebrow: "Act 6 — Every open enrollment",
+      eyebrow: "Every open enrollment",
       title: "Re-checks so you don't overpay",
-      body: "Most people never switch, overpaying out of pure inertia. Covera re-ranks every year as your health, meds, and income change — and nudges you only when it's worth it.",
+      body: "Most people never switch, overpaying out of pure inertia. Covera re-ranks every year as your health, meds, and income change, and nudges you only when it's worth it.",
     },
   },
 ];

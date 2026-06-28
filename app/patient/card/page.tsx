@@ -99,7 +99,7 @@ export default function CardPage() {
         Your Coverage Card
       </h1>
       <p className="mt-2 max-w-2xl text-slate-600">
-        A card you own and carry. Hand it to any provider — they see your coverage
+        A card you own and carry. Hand it to any provider: they see your coverage
         and what a visit will cost,{" "}
         <span className="font-medium text-slate-900">without ever pulling your records</span>.
         Everything lives in the link itself; nothing is stored on a server.
@@ -156,7 +156,7 @@ export default function CardPage() {
               <li>• Your plan, deductible, and out-of-pocket max</li>
               <li>• A live cost estimate for any procedure they choose</li>
               <li>• Your medications and their coverage tier</li>
-              <li>• Nothing from your medical records — you control the card</li>
+              <li>• Nothing from your medical records: you control the card</li>
             </ul>
           </div>
         </div>

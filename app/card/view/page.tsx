@@ -54,7 +54,7 @@ export default function CardViewPage() {
               <Stethoscope className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
               <p className="text-sm text-emerald-900">
                 Shared by the patient for point-of-care use. This card shows
-                coverage and estimated costs only — <strong>no medical records
+                coverage and estimated costs only: <strong>no medical records
                 are accessed</strong>.
               </p>
             </div>

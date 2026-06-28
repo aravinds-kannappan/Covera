@@ -34,7 +34,7 @@ describe("closed-form OOP transform", () => {
   });
 });
 
-// Spearman rank correlation — robust to the absolute differences (copays, per-service
+// Spearman rank correlation: robust to the absolute differences (copays, per-service
 // deductibles) the 1-D proxy intentionally smooths over. We only need the RANKING to
 // agree, since the coarse pass just shortlists.
 function spearman(a: number[], b: number[]): number {

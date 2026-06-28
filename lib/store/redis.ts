@@ -1,7 +1,7 @@
 // A tiny key/value store for conversation threads. Uses Upstash Redis over its REST
 // API (no TCP connection pool, so it's safe on serverless / Vercel) when configured,
 // and falls back to an in-process Map otherwise. The Map is per-instance and resets on
-// cold start — acceptable for local dev and the sandbox demo, but set the Upstash env
+// cold start: acceptable for local dev and the sandbox demo, but set the Upstash env
 // vars for anything that needs to survive across requests.
 
 const REST_URL = process.env.UPSTASH_REDIS_REST_URL;

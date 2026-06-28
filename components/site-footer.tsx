@@ -9,7 +9,7 @@ export function SiteFooter() {
             <Logo href={null} />
             <p className="mt-3 text-sm leading-relaxed text-slate-500">
               Covera puts the math behind your coverage in your hands. Every
-              figure traces to public federal data — no guesswork, no fine
+              figure traces to public federal data: no guesswork, no fine
               print left unread.
             </p>
           </div>

@@ -82,7 +82,7 @@ function Hero() {
               <TeaserBubble agent>Hi, I&apos;m Covera 👋 What&apos;s your situation?</TeaserBubble>
               <TeaserBubble>34, Texas, $48k, type 2 diabetes.</TeaserBubble>
               <TeaserBubble agent>
-                Your employer plan is $420/mo — but you qualify for a subsidy. The best marketplace
+                Your employer plan is $420/mo, but you qualify for a subsidy. The best marketplace
                 plan is ~$246/mo. Want the top 3?
               </TeaserBubble>
             </div>
@@ -157,7 +157,7 @@ function Lenses() {
       icon: Stethoscope,
       tone: "emerald" as const,
       eyebrow: "For patients",
-      title: "Shop — then never overpay again",
+      title: "Shop, then never overpay again",
       body: "Plans ranked by risk-adjusted cost, a real estimate before any procedure, a bill auditor that catches overcharges, an appeal drafter for denials, and a Coverage Card you own.",
       cta: "Find your plan",
     },
@@ -167,7 +167,7 @@ function Lenses() {
       tone: "sky" as const,
       eyebrow: "For employers",
       title: "Offer real choice",
-      body: "Model an ICHRA contribution against real marketplace prices and your workforce — and let employees pick what actually fits them.",
+      body: "Model an ICHRA contribution against real marketplace prices and your workforce, and let employees pick what actually fits them.",
       cta: "Open the modeler",
     },
     {
@@ -176,7 +176,7 @@ function Lenses() {
       tone: "violet" as const,
       eyebrow: "For hospitals",
       title: "Cost clarity at the desk",
-      body: "Scan a patient's Coverage Card to see coverage and real point-of-care cost — without ever pulling a record.",
+      body: "Scan a patient's Coverage Card to see coverage and real point-of-care cost, without ever pulling a record.",
       cta: "Try the card reader",
     },
   ];
@@ -192,7 +192,7 @@ function Lenses() {
           </h2>
           <p className="mt-3 text-lg text-slate-600">
             Patients overpay, employers overspend, and hospitals eat the bad debt. Covera lines them
-            up on the same real numbers — and the agent connects them.
+            up on the same real numbers, and the agent connects them.
           </p>
         </div>
         <div className="mt-10 grid gap-6 lg:grid-cols-3">
@@ -232,16 +232,16 @@ function HowItWorks() {
     {
       icon: MessageSquare,
       title: "Text your situation",
-      body: "Age, state, income, conditions, meds — in plain language. An intake agent turns it into a structured profile. No forms.",
+      body: "Age, state, income, conditions, meds: in plain language. An intake agent turns it into a structured profile. No forms.",
     },
     {
       icon: LineChart,
       title: "Agents do the shopping",
-      body: "Covera ranks every real plan in real time, then simulates your bad-year tail so the cheapest plan isn't mistaken for the right one — and compares it to your employer offer.",
+      body: "Covera ranks every real plan in real time, then simulates your bad-year tail so the cheapest plan isn't mistaken for the right one, and compares it to your employer offer.",
     },
     {
       icon: Store,
-      title: "Choose — it acts for you",
+      title: "Choose: it acts for you",
       body: "Pick a plan by text. Covera drafts and sends outreach to your employer or hospital, and hands you a Coverage Card you own.",
     },
     {
@@ -255,7 +255,7 @@ function HowItWorks() {
       <div className="max-w-2xl">
         <Badge tone="neutral">How it works</Badge>
         <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900">
-          From a text to the right plan — and beyond.
+          From a text to the right plan, and beyond.
         </h2>
       </div>
       <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">

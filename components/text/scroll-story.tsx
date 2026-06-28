@@ -59,7 +59,7 @@ export function ScrollStory({ steps = DEMO_SCRIPT }: { steps?: ScriptStep[] }) {
                 </h2>
                 <p className="mt-3 max-w-md text-lg text-slate-600">
                   {caption?.body ??
-                    "Scroll to watch a real conversation unfold — and the product form around it."}
+                    "Scroll to watch a real conversation unfold, and the product form around it."}
                 </p>
               </motion.div>
             </AnimatePresence>

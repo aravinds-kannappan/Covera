@@ -2,10 +2,10 @@ import type { Thread } from "@/lib/agents/types";
 import type { PatientProfile } from "@/lib/types";
 import { MODELS, getAnthropic, anthropicKeyPresent } from "@/lib/anthropic/client";
 
-// Defend — denial appeal drafter.
+// Defend: denial appeal drafter.
 //
 // KFF found ACA marketplace insurers denied ~19% of in-network claims in 2023, yet fewer
-// than 1% of patients ever appeal — even though appeals succeed often. This composes a
+// than 1% of patients ever appeal: even though appeals succeed often. This composes a
 // first-draft appeal letter from the patient's own situation. It degrades gracefully to a
 // safe template when no API key is set (same guard as the rest of the agent), and never
 // invents policy numbers, dates, or clinical facts not provided.
@@ -15,7 +15,7 @@ export interface AppealDraft {
   denialReason: string;
   subject: string;
   letter: string;
-  /** Always false here — sending an appeal is a deliberate, human-confirmed action. */
+  /** Always false here: sending an appeal is a deliberate, human-confirmed action. */
   sent: false;
 }
 
@@ -24,7 +24,8 @@ function appealSystemPrompt(): string {
     "You draft a concise, firm, professional health-insurance claim appeal letter for a patient.",
     'Output JSON only: { "subject": string, "letter": string }.',
     "Structure: state the claim/service and the stated denial reason, explain why it should be covered (medical necessity, plan benefits, or in-network status as applicable), and request a written response with appeal rights.",
-    "8-14 sentences. Courteous but firm. Never invent member IDs, claim numbers, dates, diagnoses, or facts not provided — leave clearly marked [brackets] for the patient to fill.",
+    "8-14 sentences. Courteous but firm. Never invent member IDs, claim numbers, dates, diagnoses, or facts not provided: leave clearly marked [brackets] for the patient to fill.",
+    "Never use em dashes; use a period, a colon, or parentheses instead.",
     "Close with 'Sent via Covera on behalf of the member.'",
   ].join("\n");
 }
@@ -38,7 +39,7 @@ export async function draftAppeal(params: {
   const { thread, service, denialReason, planName } = params;
   const profile = thread.profile as PatientProfile;
 
-  const subjectDefault = `Appeal of denied claim — ${service}`;
+  const subjectDefault = `Appeal of denied claim: ${service}`;
   let subject = subjectDefault;
   let letter =
     `To the appeals department,\n\n` +

@@ -124,7 +124,7 @@ export default function ResultsPage() {
                 </p>
                 <p className="mt-3 text-[15px] leading-relaxed text-slate-600">
                   Lowest risk-adjusted cost across {result?.scenarioCount.toLocaleString()}{" "}
-                  simulated years — about{" "}
+                  simulated years: about{" "}
                   <span className="font-semibold text-slate-900">
                     {usd(top.sim.expectedTotal)}
                   </span>{" "}
@@ -207,7 +207,7 @@ export default function ResultsPage() {
             {result && result.frontier.length > 2 && (
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <h3 className="text-sm font-semibold text-slate-900">
-                  Cost vs. risk — the efficient frontier
+                  Cost vs. risk: the efficient frontier
                 </h3>
                 <p className="mt-1 text-xs text-slate-500">
                   Each dot is a plan. Lower-left is better: cheaper on average and

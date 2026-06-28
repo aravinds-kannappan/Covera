@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Covera — The insurance marketplace that texts you the right plan",
+  title: "Covera: The insurance marketplace that texts you the right plan",
   description:
     "Text Covera your situation and a team of agents searches the entire health-insurance marketplace, simulates what you'd truly pay, answers any what-if, and reaches out to your employer or hospital once you choose.",
 };

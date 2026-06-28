@@ -2,7 +2,7 @@ import type { Plan, ServiceKey, SimSummary } from "@/lib/types";
 import type { Scenario } from "@/lib/sim/utilization";
 import { adjudicate, adjudicateOOP } from "@/lib/sim/costsharing";
 
-/** Mean member OOP across scenarios (coarse pass — fast, no attribution). */
+/** Mean member OOP across scenarios (coarse pass: fast, no attribution). */
 export function meanOOP(plan: Plan, scenarios: Scenario[]): number {
   let s = 0;
   for (let i = 0; i < scenarios.length; i++) s += adjudicateOOP(plan, scenarios[i]);

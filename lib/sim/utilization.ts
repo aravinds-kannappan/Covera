@@ -76,7 +76,7 @@ export function sampleScenario(rng: Rng, model: UtilizationModel): Scenario {
 
   // Person-year frailty: one mean-1, right-skewed multiplier shared across every acute
   // service this year. It makes a year's risk correlated (a bad year is bad across the
-  // board) instead of independent per service — the only way independent Poissons can
+  // board) instead of independent per service: the only way independent Poissons can
   // reproduce the real MEPS concentration (top 5% of people ≈ 50% of spend) and the
   // catastrophic tail. Mean 1 keeps age-band mean spend on target; sigma sets the skew.
   // Parameterized by median so the lognormal's MEAN is exactly 1 (median = e^(-σ²/2)).

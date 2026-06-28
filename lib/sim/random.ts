@@ -3,7 +3,7 @@
 
 export type Rng = () => number;
 
-/** mulberry32 — small, fast, well-distributed PRNG. */
+/** mulberry32: small, fast, well-distributed PRNG. */
 export function makeRng(seed: number): Rng {
   let a = seed >>> 0;
   return function () {
@@ -32,7 +32,7 @@ export function lognormal(rng: Rng, median: number, sigma: number): number {
   return median * Math.exp(sigma * normal(rng));
 }
 
-/** Poisson (Knuth) — fine for the small rates used here. */
+/** Poisson (Knuth): fine for the small rates used here. */
 export function poisson(rng: Rng, lambda: number): number {
   if (lambda <= 0) return 0;
   if (lambda > 30) {

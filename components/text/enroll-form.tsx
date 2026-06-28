@@ -29,7 +29,7 @@ export function EnrollForm() {
         setState("done");
       }
     } catch {
-      setDetail({ message: "Network error — try again." });
+      setDetail({ message: "Network error: try again." });
       setState("error");
     }
   }
@@ -39,8 +39,8 @@ export function EnrollForm() {
       <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
         <p className="text-sm font-medium text-emerald-800">
           {detail.delivered
-            ? "Sent! Check Messages — Covera just texted you. 📱"
-            : "You're on the list. Real texting turns on when an iMessage relay is connected — meanwhile, try the live agent just below. 👇"}
+            ? "Sent! Check Messages: Covera just texted you. 📱"
+            : "You're on the list. Real texting turns on when an iMessage relay is connected: meanwhile, try the live agent just below. 👇"}
         </p>
       </div>
     );

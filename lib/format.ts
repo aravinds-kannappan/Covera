@@ -14,7 +14,7 @@ export const METAL_TONE: Record<Metal, Tone> = {
 
 /** Human-readable member cost share, e.g. "$30", "20% after deductible". */
 export function describeCostShare(cs?: ServiceCostShare): string {
-  if (!cs) return "—";
+  if (!cs) return ": ";
   if (cs.noCharge) return cs.afterDeductible ? "Free after deductible" : "No charge";
   const parts: string[] = [];
   if (cs.copay != null && cs.copay > 0) parts.push(usd(cs.copay));

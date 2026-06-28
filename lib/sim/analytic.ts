@@ -4,7 +4,7 @@ import type { Scenario } from "@/lib/sim/utilization";
 
 // Closed-form cost-sharing transform.
 //
-// Out-of-pocket cost is a monotone, piecewise-linear function of ONE number — a year's
+// Out-of-pocket cost is a monotone, piecewise-linear function of ONE number: a year's
 // total allowed spend: you pay 100% up to the deductible, then a coinsurance slope, capped
 // at the out-of-pocket max. So instead of re-adjudicating thousands of sampled years
 // against every plan (the Monte-Carlo coarse pass), we build the patient's spend
@@ -77,7 +77,7 @@ export function analyticOOP(
   return Math.min(oop, oopMax);
 }
 
-/** Expected member OOP for a plan over a patient's spend grid — no per-plan sampling. */
+/** Expected member OOP for a plan over a patient's spend grid: no per-plan sampling. */
 export function analyticMeanOOP(plan: Plan, grid: SpendGrid): number {
   const coins = effectiveCoinsurance(plan);
   let s = 0;
@@ -95,7 +95,7 @@ export interface AnalyticSummary {
 
 /**
  * Full closed-form risk summary for a plan. Because OOP is monotone in spend, the OOP
- * quantiles are just the spend quantiles transformed — so p90 cost is free, no resampling.
+ * quantiles are just the spend quantiles transformed: so p90 cost is free, no resampling.
  */
 export function analyticSummary(plan: Plan, grid: SpendGrid): AnalyticSummary {
   const coins = effectiveCoinsurance(plan);

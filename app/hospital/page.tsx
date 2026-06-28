@@ -65,8 +65,9 @@ export default function HospitalPage() {
         </h1>
         <p className="mt-3 max-w-2xl text-lg text-slate-600">
           Surprise bills become bad debt. See what a procedure will cost a patient
-          across every marketplace plan, and read a patient&apos;s Coverage Card to
-          quote their cost on the spot — without touching a record.
+          across every marketplace plan, now priced from real CMS Medicare physician
+          data, and read a patient&apos;s Coverage Card to quote their cost on the spot
+          without ever touching a record.
         </p>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_340px]">

@@ -3,7 +3,7 @@
  *
  * Validates the Monte-Carlo engine against the published MEPS aggregates it claims to
  * reproduce, and validates the subsidy math against the ACA formula. No API key or
- * network needed — this is pure simulation vs. real public benchmarks.
+ * network needed: this is pure simulation vs. real public benchmarks.
  *
  *   npm run accuracy   →   writes data/accuracy-report.json
  *

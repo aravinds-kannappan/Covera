@@ -7,7 +7,7 @@ import { loadAccuracyReport, loadLlmBenchmark } from "@/lib/benchmark/load";
 import type { Check } from "@/lib/benchmark/types";
 
 export const metadata: Metadata = {
-  title: "Covera — Accuracy & model benchmarks",
+  title: "Covera: Accuracy & model benchmarks",
   description:
     "How accurate is Covera's simulation against published MEPS aggregates and the ACA subsidy formula, and how do candidate LLMs compare on faithfulness, tool use, latency, and cost.",
 };
@@ -66,7 +66,7 @@ export default function BenchmarkPage() {
         <p className="mt-3 max-w-2xl text-lg text-slate-600">
           Two honest scorecards. First, how the Monte-Carlo simulation holds up against the published
           MEPS aggregates it claims to reproduce and the ACA subsidy formula. Second, how candidate
-          models compare when driving the real agent — on whether they cite real numbers, call the
+          models compare when driving the real agent: on whether they cite real numbers, call the
           right tools, and what they cost.
         </p>
 
@@ -92,10 +92,13 @@ export default function BenchmarkPage() {
                 <CheckGroup title="ACA subsidy formula" checks={accuracy.subsidy} />
               </div>
               <p className="mt-4 max-w-3xl text-sm leading-relaxed text-slate-500">
-                Read honestly: the engine reproduces adult age-band means and the ACA subsidy math
-                tightly, but it <span className="font-medium text-slate-700">compresses the tail</span> —
-                real healthcare spend is more concentrated in the top few percent than the simulation
-                generates. That&apos;s the kind of gap this report exists to surface. Source:{" "}
+                Read honestly: the engine reproduces adult age-band means, the ACA subsidy math, and
+                (after adding a{" "}
+                <span className="font-medium text-slate-700">person-year frailty term</span> that
+                correlates a year&apos;s care across service lines) the real{" "}
+                <span className="font-medium text-slate-700">spend concentration</span> the top few
+                percent of people who drive most healthcare cost. That heavy tail is the hard part to
+                get right, and it is what the bad-year risk you rank on depends on. Source:{" "}
                 {accuracy.source}
               </p>
             </>

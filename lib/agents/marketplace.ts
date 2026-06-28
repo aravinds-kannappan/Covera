@@ -29,9 +29,9 @@ export function compareEmployerOffer(
         ? `With your subsidy, the cheapest marketplace plan runs about $${bestMarketplaceMonthly}/mo. Share what your employer plan costs you and I'll compare.`
         : `The cheapest marketplace plan runs about $${bestMarketplaceMonthly}/mo before any employer comparison.`;
   } else if (bestMarketplaceMonthly < employer) {
-    verdict = `The marketplace wins here — about $${employer - bestMarketplaceMonthly}/mo cheaper than your employer's offer (and you keep the subsidy).`;
+    verdict = `The marketplace wins here: about $${employer - bestMarketplaceMonthly}/mo cheaper than your employer's offer (and you keep the subsidy).`;
   } else {
-    verdict = `Your employer offer is the better deal — about $${bestMarketplaceMonthly - employer}/mo cheaper than the best marketplace option, since employer plans aren't subsidy-eligible for you.`;
+    verdict = `Your employer offer is the better deal: about $${bestMarketplaceMonthly - employer}/mo cheaper than the best marketplace option, since employer plans aren't subsidy-eligible for you.`;
   }
 
   return {

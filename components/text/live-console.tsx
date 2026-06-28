@@ -8,14 +8,14 @@ import { MessageBubble, TypingBubble } from "@/components/text/message-bubble";
 const OPENERS = [
   "I'm 29 in Florida, $35k, pretty healthy",
   "Honestly I'm scared of a huge surprise bill",
-  "My job's plan is $380/mo — is that a rip-off?",
+  "My job's plan is $380/mo, is that a rip-off?",
   "I'm self-employed and my income jumps around",
 ];
 
 const GREETING: ConvoMessage = {
   role: "agent",
   ts: Date.now(),
-  text: "Hey, I'm the real Covera agent — the same one that texts you. Tell me about yourself and what worries you about health costs, and we'll figure out the right plan together. No forms, just talk.",
+  text: "Hey, I'm the real Covera agent: the same one that texts you. Tell me about yourself and what worries you about health costs, and we'll figure out the right plan together. No forms, just talk.",
 };
 
 // Pick follow-up chips that match where the conversation is, so it feels like a real
@@ -70,7 +70,7 @@ export function LiveConsole() {
         if (data.status) setStatus(data.status);
       }
     } catch {
-      setError("Network hiccup — try again.");
+      setError("Network hiccup: try again.");
     } finally {
       setBusy(false);
     }
@@ -117,7 +117,7 @@ export function LiveConsole() {
       <div>
         <h3 className="text-2xl font-semibold tracking-tight text-slate-900">Talk to the real agent</h3>
         <p className="mt-2 max-w-md text-slate-600">
-          This is the genuine multi-agent system — the same one that texts patients. It listens, asks
+          This is the genuine multi-agent system: the same one that texts patients. It listens, asks
           about your life, runs the real CMS-data simulation, and tells you which plan fits you and
           why. Tell it more and it tailors. Tap any plan to ask why. No sign-up.
         </p>
@@ -135,7 +135,7 @@ export function LiveConsole() {
         </div>
         {error && <p className="mt-3 text-sm text-rose-600">{error}</p>}
         <p className="mt-4 text-xs text-slate-400">
-          Want it on your phone for real? Add your number in the hero — Covera texts iMessage users
+          Want it on your phone for real? Add your number in the hero: Covera texts iMessage users
           (blue bubbles) when a relay is configured.
         </p>
       </div>

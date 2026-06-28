@@ -93,9 +93,11 @@ export default function EmployerPage() {
           Make every benefit dollar count
         </h1>
         <p className="mt-3 max-w-2xl text-lg text-slate-600">
-          Fund an <strong>ICHRA</strong> — give employees tax-free dollars to buy
-          their own plan instead of one group plan. Model your contribution
-          against real marketplace prices and see who gets affordable coverage.
+          Fund an <strong>ICHRA</strong> and give employees tax-free dollars to buy
+          their own plan instead of one group plan. Model your contribution against
+          real marketplace prices and see who gets affordable coverage. Every employee
+          gets Covera year-round: a plan they text for, real cost estimates, a bill
+          auditor, and an annual re-check.
         </p>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
@@ -238,7 +240,7 @@ export default function EmployerPage() {
                 </p>
                 <p className="mt-2 text-sm text-emerald-900">
                   {usd(optimal.contribution)}/mo makes coverage affordable for
-                  everyone — about {usd(optimal.annual)}/yr.
+                  everyone: about {usd(optimal.annual)}/yr.
                 </p>
                 <Button
                   size="sm"

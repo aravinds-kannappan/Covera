@@ -63,7 +63,7 @@ export function IntakeForm() {
     setExtracting(false);
     if (error) return setExtractMsg(error);
     if (Object.keys(patch).length === 0)
-      return setExtractMsg("Couldn't pull much from that — add a little more detail.");
+      return setExtractMsg("Couldn't pull much from that: add a little more detail.");
     setForm((f) => ({
       ...f,
       ...patch,
@@ -71,7 +71,7 @@ export function IntakeForm() {
         ? [...f.prescriptions, ...patch.prescriptions]
         : f.prescriptions,
     }));
-    setExtractMsg("Filled in below — review and adjust anything.");
+    setExtractMsg("Filled in below: review and adjust anything.");
   };
 
   const submit = () => {
@@ -90,7 +90,7 @@ export function IntakeForm() {
           </h2>
         </div>
         <p className="mt-1 text-sm text-slate-500">
-          Type or talk — we&apos;ll fill the form for you. Edit anything after.
+          Type or talk: we&apos;ll fill the form for you. Edit anything after.
         </p>
         <div className="relative mt-4">
           <textarea
@@ -203,7 +203,7 @@ export function IntakeForm() {
       <Card className="p-6">
         <h2 className="text-lg font-semibold text-slate-900">Your health</h2>
         <p className="mt-1 text-sm text-slate-500">
-          Pick anything that applies. We use it to model your likely care — it
+          Pick anything that applies. We use it to model your likely care: it
           never leaves your device except to run the math.
         </p>
 

@@ -34,7 +34,7 @@ function buildSummary(result: OptimizeResult): string {
     .slice(0, 8)
     .map(
       (r, i) =>
-        `#${i + 1} ${r.plan.metal} "${r.plan.marketingName}" (${r.plan.issuer}) — ` +
+        `#${i + 1} ${r.plan.metal} "${r.plan.marketingName}" (${r.plan.issuer}): ` +
         `expected ${usd(r.sim.expectedTotal)}/yr, premium ${usd(r.sim.annualPremium)}/yr, ` +
         `bad-year ${usd(r.sim.p90)}, deductible ${usd(r.plan.deductible)}, OOP max ${usd(r.plan.oopMax)}, ` +
         `${Math.round(r.sim.probHitOOPMax * 100)}% chance of hitting the OOP max`,
@@ -138,7 +138,7 @@ export function Assistant({
         {messages.length === 0 ? (
           <div className="py-6 text-center">
             <p className="text-sm text-slate-500">
-              Ask anything about your coverage — or try a scenario.
+              Ask anything about your coverage, or try a scenario.
             </p>
             <div className="mt-4 flex flex-wrap justify-center gap-2">
               {SUGGESTIONS.map((s) => (
