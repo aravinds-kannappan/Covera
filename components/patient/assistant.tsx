@@ -22,6 +22,17 @@ interface Msg {
   scenario?: AgentScenarioResult;
 }
 
+// Covera texts in plain prose, but a model can still slip in markdown. Strip it so the
+// bubble never shows raw ** ** or * bullets (also handles partial tokens mid-stream).
+function cleanText(s: string): string {
+  return s
+    .replace(/^\s*[-*]\s+/gm, "• ") // list markers to a bullet dot
+    .replace(/^#{1,6}\s+/gm, "") // headers
+    .replace(/`([^`]+)`/g, "$1") // inline code
+    .replace(/\*/g, "") // any remaining asterisks (bold/italic/stray)
+    .replace(/_{1,2}([^_]+)_{1,2}/g, "$1"); // underscores emphasis
+}
+
 const SUGGESTIONS = [
   "Why is the top plan best for me?",
   "What if I get pregnant this year?",
@@ -164,7 +175,9 @@ export function Assistant({
                       : "bg-slate-100 text-slate-800",
                   )}
                 >
-                  <span className="whitespace-pre-wrap">{m.content}</span>
+                  <span className="whitespace-pre-wrap">
+                    {m.role === "assistant" ? cleanText(m.content) : m.content}
+                  </span>
                   {m.role === "assistant" && !m.content && streaming && (
                     <span className="inline-flex items-center gap-1 text-slate-400">
                       <Loader2 className="h-3.5 w-3.5 animate-spin" /> thinking…
