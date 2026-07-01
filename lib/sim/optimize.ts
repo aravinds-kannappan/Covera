@@ -9,6 +9,7 @@ import { hashSeed, makeRng } from "@/lib/sim/random";
 import { buildUtilization, sampleScenarios } from "@/lib/sim/utilization";
 import { summarize } from "@/lib/sim/montecarlo";
 import { buildSpendGrid, analyticMeanOOP } from "@/lib/sim/analytic";
+import { drugCoverage, networkCoverage, COVERAGE_PENALTY } from "@/lib/sim/coverage";
 import {
   computeSubsidy,
   netPremium,
@@ -118,13 +119,22 @@ export function optimize(
       subsidyAnnual: annualGross - annualNet,
     });
     const downside = Math.max(0, sim.p90 - sim.expectedTotal);
-    const score = sim.expectedTotal + lambda * downside;
+    // Formulary + network: a plan that drops the patient's drug or doctor is a first-order
+    // mistake, so penalize it heavily (only fires when we have coverage data for the plan).
+    const drug = drugCoverage(plan, profile.prescriptions);
+    const net = networkCoverage(plan, profile.providers);
+    const coveragePenalty =
+      drug.notCovered.length * COVERAGE_PENALTY.drugNotCovered +
+      drug.tierChanges.length * COVERAGE_PENALTY.drugTierBump +
+      net.outOfNetwork.length * COVERAGE_PENALTY.providerOutOfNetwork;
+    const score = sim.expectedTotal + lambda * downside + coveragePenalty;
     ranked.push({
       plan,
       sim,
       score,
       constraints: {
-        coversAllDrugs: true,
+        coversAllDrugs: drug.coversAll,
+        providersInNetwork: net.allInNetwork,
         hsaOk: !profile.requireHsa || plan.hsaEligible,
       },
     });

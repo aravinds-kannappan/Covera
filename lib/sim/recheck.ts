@@ -1,5 +1,5 @@
 import type { Plan, PatientProfile } from "@/lib/types";
-import { optimize } from "@/lib/sim/optimize";
+import { optimizeCached } from "@/lib/sim/cache";
 
 // Optimize: annual re-rank.
 //
@@ -26,7 +26,7 @@ export function recheck(
   opts: { switchThreshold?: number } = {},
 ): RecheckResult {
   const threshold = opts.switchThreshold ?? 300;
-  const { ranked } = optimize(profile, plans);
+  const { ranked } = optimizeCached(profile, plans);
   const best = ranked[0];
   const bestExpectedTotal = Math.round(best.sim.expectedTotal);
   const current = currentPlanId

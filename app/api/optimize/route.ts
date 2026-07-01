@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import type { PatientProfile } from "@/lib/types";
 import { loadPlans } from "@/lib/data/plans";
-import { optimize } from "@/lib/sim/optimize";
+import { optimizeCached } from "@/lib/sim/cache";
 
 export const runtime = "nodejs";
 
@@ -25,6 +25,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const result = optimize(profile, plans);
+  const result = optimizeCached(profile, plans);
   return Response.json(result);
 }

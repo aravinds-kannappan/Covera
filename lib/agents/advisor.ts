@@ -1,7 +1,7 @@
 import type { Plan, PatientProfile } from "@/lib/types";
 import type { OptimizeResult } from "@/lib/sim/optimize";
 import type { PlansMeta } from "@/lib/agents/types";
-import { optimize } from "@/lib/sim/optimize";
+import { optimizeCached } from "@/lib/sim/cache";
 import { usd } from "@/lib/utils";
 
 // The Advisor tool. It is the simulation, not an LLM: given a profile (optionally with a
@@ -54,7 +54,7 @@ export function recommendPlans(
 ): { result: OptimizeResult; meta: PlansMeta } {
   const profile = applyWhatIf(base, opts.whatIf);
   // Slightly lighter sampling than the full web run keeps texting latency snappy.
-  const result = optimize(profile, plans, { nFine: 2500 });
+  const result = optimizeCached(profile, plans, { nFine: 2500 });
   return { result, meta: toPlansMeta(result, opts.label ?? "Your ranked plans") };
 }
 

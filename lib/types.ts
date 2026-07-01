@@ -109,6 +109,13 @@ export interface Plan {
     managingDiabetes?: SbcScenario;
     simpleFracture?: SbcScenario;
   };
+  /**
+   * Optional drug formulary: lowercased drug name to the tier the plan covers it at, or
+   * "notCovered". Present once a formulary source (CMS QHP formulary files) is ingested.
+   */
+  formulary?: Record<string, DrugTier | "notCovered">;
+  /** Optional in-network provider identifiers (names or NPIs), for network matching. */
+  network?: string[];
 }
 
 export interface PlanDataset {
@@ -198,6 +205,7 @@ export interface SimSummary {
 
 export interface ConstraintCheck {
   coversAllDrugs: boolean;
+  providersInNetwork: boolean;
   hsaOk: boolean;
 }
 

@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import type Anthropic from "@anthropic-ai/sdk";
 import type { PatientProfile } from "@/lib/types";
 import { loadPlans } from "@/lib/data/plans";
-import { optimize } from "@/lib/sim/optimize";
+import { optimizeCached } from "@/lib/sim/cache";
 import { usd } from "@/lib/utils";
 import { MODELS, anthropicKeyPresent, getAnthropic } from "@/lib/anthropic/client";
 
@@ -59,7 +59,7 @@ function runScenario(base: PatientProfile, input: Record<string, unknown>, plans
   if (typeof input.riskTolerance === "string") patch.riskTolerance = input.riskTolerance as PatientProfile["riskTolerance"];
   if (typeof input.requireHsa === "boolean") patch.requireHsa = input.requireHsa;
   if (typeof input.age === "number") patch.age = input.age;
-  const res = optimize({ ...base, ...patch }, plans, { nFine: 2500 });
+  const res = optimizeCached({ ...base, ...patch }, plans, { nFine: 2500 });
   return {
     label: typeof input.label === "string" ? input.label : "scenario",
     subsidyMonthly: Math.round(res.subsidy.aptcMonthly),

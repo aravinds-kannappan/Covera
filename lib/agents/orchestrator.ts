@@ -65,9 +65,14 @@ export async function runConcierge(thread: Thread, patientText: string): Promise
   let lastMeta: MessageMeta | undefined;
 
   for (let i = 0; i < MAX_TURNS; i++) {
+    // Model routing: intake is mostly profile capture and acknowledgements, which the
+    // fast model handles well and cheaply. The reasoning-heavy work (ranking tradeoffs,
+    // what-ifs, outreach) runs on the strong model. Status can flip to "advising"
+    // mid-loop right after recommend_plans, so the explanation turn upgrades automatically.
+    const model = thread.status === "intake" ? MODELS.fast : MODELS.reason;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const params: any = {
-      model: MODELS.reason,
+      model,
       max_tokens: 1024,
       system: conciergeSystemPrompt(thread.profile, plansSummaryFor(thread, plans), thread.status, thread.notes),
       tools: CONCIERGE_TOOLS,
