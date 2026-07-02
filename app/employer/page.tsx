@@ -27,12 +27,31 @@ const DEFAULT_WF: Record<string, { count: number; salary: number }> = {
   "60p": { count: 4, salary: 98000 },
 };
 
+// ICHRA lets an employer vary its contribution by age (within the federal 3:1 age band). An
+// age-rated contribution tracks the way premiums themselves rise with age, so it can make
+// coverage affordable for older employees far more cheaply than lifting a flat amount for
+// everyone. Factors are relative to the youngest band (the slider sets that base).
+const AGE_FACTOR: Record<string, number> = {
+  u30: 1.0,
+  "30s": 1.25,
+  "40s": 1.6,
+  "50s": 2.2,
+  "60p": 3.0,
+};
+type Curve = "flat" | "age";
+
 export default function EmployerPage() {
   const [state, setState] = useState("TX");
   const [contribution, setContribution] = useState(400);
+  const [curve, setCurve] = useState<Curve>("flat");
+  const [groupMonthly, setGroupMonthly] = useState(650);
   const [wf, setWf] = useState(DEFAULT_WF);
   const [bands, setBands] = useState<BandData[] | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // The employer's contribution for one band at a given base (youngest-band) amount.
+  const contribAt = (base: number, key: string) =>
+    curve === "flat" ? base : Math.round(base * (AGE_FACTOR[key] ?? 1));
 
   useEffect(() => {
     setLoading(true);
@@ -50,33 +69,49 @@ export default function EmployerPage() {
     if (!bands) return [];
     return bands.map((b) => {
       const { count, salary } = wf[b.key] ?? { count: 0, salary: 60000 };
-      const net = Math.max(0, b.lowestPremium - contribution);
-      const employeeShare = Math.max(0, b.slcsp - contribution);
+      const contrib = contribAt(contribution, b.key);
+      const net = Math.max(0, b.lowestPremium - contrib);
+      const employeeShare = Math.max(0, b.slcsp - contrib);
       const affordable = employeeShare <= AFFORDABILITY * (salary / 12);
-      return { ...b, count, salary, net, affordable };
+      return { ...b, count, salary, contrib, net, affordable };
     });
-  }, [bands, wf, contribution]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bands, wf, contribution, curve]);
 
   const totals = useMemo(() => {
     const head = rows.reduce((s, r) => s + r.count, 0);
-    const employerAnnual = contribution * head * 12;
+    const employerAnnual = rows.reduce((s, r) => s + r.contrib * r.count, 0) * 12;
     const avgNet = head ? rows.reduce((s, r) => s + r.count * r.net, 0) / head : 0;
     const affordableHead = rows.reduce((s, r) => s + (r.affordable ? r.count : 0), 0);
     return { head, employerAnnual, avgNet, pctAffordable: head ? affordableHead / head : 0 };
-  }, [rows, contribution]);
+  }, [rows]);
 
+  // Smallest base contribution that makes coverage affordable for everyone, given the curve.
   const optimal = useMemo(() => {
     if (!bands) return null;
     const maxNeeded = Math.max(...bands.map((b) => b.slcsp));
-    for (let c = 0; c <= maxNeeded; c += 10) {
+    for (let base = 0; base <= maxNeeded; base += 10) {
       const ok = bands.every((b) => {
         const { count, salary } = wf[b.key] ?? { count: 0, salary: 60000 };
-        return count === 0 || b.slcsp - c <= AFFORDABILITY * (salary / 12);
+        return count === 0 || b.slcsp - contribAt(base, b.key) <= AFFORDABILITY * (salary / 12);
       });
-      if (ok) return { contribution: c, annual: c * totals.head * 12 };
+      if (ok) {
+        const annual =
+          bands.reduce((s, b) => s + contribAt(base, b.key) * (wf[b.key]?.count ?? 0), 0) * 12;
+        return { contribution: base, annual };
+      }
     }
     return null;
-  }, [bands, wf, totals.head]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bands, wf, curve]);
+
+  // ICHRA vs the employer's current group plan.
+  const groupCompare = useMemo(() => {
+    if (groupMonthly <= 0 || totals.head === 0) return null;
+    const groupAnnual = groupMonthly * totals.head * 12;
+    const savings = groupAnnual - totals.employerAnnual;
+    return { groupAnnual, savings };
+  }, [groupMonthly, totals.head, totals.employerAnnual]);
 
   const maxPrem = Math.max(...(bands ?? []).map((b) => b.lowestPremium), 1);
   const setWfField = (key: string, field: "count" | "salary", value: number) =>
@@ -107,7 +142,7 @@ export default function EmployerPage() {
               <div className="flex items-end justify-between">
                 <div>
                   <p className="text-sm font-medium text-slate-700">
-                    Monthly ICHRA contribution
+                    {curve === "flat" ? "Monthly ICHRA contribution" : "Base contribution (youngest band)"}
                   </p>
                   <p className="text-3xl font-bold text-slate-900">
                     {usd(contribution)}
@@ -133,6 +168,28 @@ export default function EmployerPage() {
                 onChange={(e) => setContribution(Number(e.target.value))}
                 className="mt-4 w-full accent-emerald-600"
               />
+              <div className="mt-4 flex items-center gap-2">
+                {(["flat", "age"] as Curve[]).map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setCurve(c)}
+                    className={
+                      "flex-1 rounded-xl border px-3 py-2 text-sm font-medium transition-all " +
+                      (curve === c
+                        ? "border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm"
+                        : "border-slate-300 bg-white text-slate-600 hover:border-slate-400")
+                    }
+                  >
+                    {c === "flat" ? "Flat for everyone" : "Age-rated (up to 3×)"}
+                  </button>
+                ))}
+              </div>
+              {curve === "age" && (
+                <p className="mt-2 text-xs text-slate-400">
+                  Older employees get proportionally more, tracking how premiums rise with age.
+                  Often reaches full affordability for less total spend than a flat raise.
+                </p>
+              )}
             </div>
 
             {/* Workforce + bars */}
@@ -159,13 +216,13 @@ export default function EmployerPage() {
                             <div
                               className="absolute inset-y-0 left-0 bg-emerald-500/80"
                               style={{
-                                width: `${(Math.min(contribution, r.lowestPremium) / maxPrem) * 100}%`,
+                                width: `${(Math.min(r.contrib, r.lowestPremium) / maxPrem) * 100}%`,
                               }}
                             />
                             <div
                               className="absolute inset-y-0 bg-slate-400"
                               style={{
-                                left: `${(Math.min(contribution, r.lowestPremium) / maxPrem) * 100}%`,
+                                left: `${(Math.min(r.contrib, r.lowestPremium) / maxPrem) * 100}%`,
                                 width: `${(r.net / maxPrem) * 100}%`,
                               }}
                             />
@@ -251,6 +308,43 @@ export default function EmployerPage() {
                 </Button>
               </div>
             )}
+
+            {/* ICHRA vs current group plan */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <p className="text-sm font-semibold text-slate-900">Compare to your group plan</p>
+              <p className="mt-1 text-xs text-slate-500">
+                What you pay per employee per month for group coverage today.
+              </p>
+              <div className="mt-3 flex items-center gap-2">
+                <span className="text-slate-400">$</span>
+                <input
+                  type="number"
+                  min={0}
+                  step={25}
+                  value={groupMonthly}
+                  onChange={(e) => setGroupMonthly(Number(e.target.value))}
+                  className="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-sm"
+                />
+                <span className="text-xs text-slate-400">/emp/mo</span>
+              </div>
+              {groupCompare && (
+                <div className="mt-3 border-t border-slate-100 pt-3">
+                  <p className="text-xs text-slate-400">
+                    Group plan: {usd(groupCompare.groupAnnual)}/yr · ICHRA: {usd(totals.employerAnnual)}/yr
+                  </p>
+                  <p
+                    className={
+                      "mt-1 text-lg font-bold " +
+                      (groupCompare.savings >= 0 ? "text-emerald-700" : "text-rose-600")
+                    }
+                  >
+                    {groupCompare.savings >= 0 ? "Save " : "Costs "}
+                    {usd(Math.abs(groupCompare.savings))}/yr
+                    <span className="text-xs font-normal text-slate-400"> {groupCompare.savings >= 0 ? "with ICHRA" : "more than group"}</span>
+                  </p>
+                </div>
+              )}
+            </div>
 
             <p className="px-1 text-xs text-slate-400">
               Affordability uses the ACA threshold ({Math.round(AFFORDABILITY * 1000) / 10}% of

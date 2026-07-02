@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RangeBar } from "@/components/charts/range-bar";
 import { DistributionChart } from "@/components/charts/distribution-chart";
+import { CostCdf } from "@/components/charts/cost-cdf";
 import { DriversBar } from "@/components/charts/drivers-bar";
 
 const DETAIL_SERVICES: ServiceKey[] = [
@@ -45,6 +46,8 @@ export function PlanCard({
     .map(([service, oop]) => ({ service: service as ServiceKey, oop: oop! }))
     .sort((a, b) => b.oop - a.oop)
     .slice(0, 5);
+  // Near-certain outcome: the spread is negligible (a patient who maxes out almost every year).
+  const certain = sim.p90 - sim.p10 < Math.max(1, 0.015 * Math.max(1, sim.median));
 
   return (
     <div
@@ -116,12 +119,27 @@ export function PlanCard({
               <p className="mb-2 text-sm font-semibold text-slate-700">
                 Your all-in cost across {sim.histogram.reduce((a, b) => a + b.count, 0).toLocaleString()} simulated years
               </p>
+              {certain ? (
+                <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+                  This plan is close to a <strong>fixed {usd(sim.expectedTotal)}/yr</strong> for
+                  you. Your care reaches the {usd(plan.oopMax)} out-of-pocket max in{" "}
+                  {pct(sim.probHitOOPMax)} of simulated years, so there is little bad-year
+                  variance: it is a near-certain cost, not a gamble.
+                </div>
+              ) : null}
               <DistributionChart sim={sim} />
-              <div className="mt-3 grid grid-cols-4 gap-2 text-center">
+
+              <p className="mb-1 mt-4 text-sm font-semibold text-slate-700">
+                Chance your year stays under a given cost
+              </p>
+              <CostCdf sim={sim} />
+
+              <div className="mt-3 grid grid-cols-2 gap-2 text-center sm:grid-cols-5">
                 {[
                   { k: "Typical (P10)", v: usd(sim.p10), c: "text-emerald-600" },
                   { k: "Median", v: usd(sim.median), c: "text-slate-900" },
                   { k: "Bad year (P90)", v: usd(sim.p90), c: "text-rose-600" },
+                  { k: "Avg bad year", v: usd(sim.cvar90 ?? sim.p90), c: "text-amber-600" },
                   { k: "Hit OOP max", v: pct(sim.probHitOOPMax), c: "text-slate-900" },
                 ].map((s) => (
                   <div key={s.k} className="rounded-lg bg-slate-50 px-2 py-2">

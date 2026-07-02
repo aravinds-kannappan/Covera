@@ -30,9 +30,9 @@ flowchart LR
 | 🛡️ | **Year-round advocate** | It does not stop at enrollment: estimate a procedure before you book it, audit a bill against real charges, draft an appeal for a denied claim, and re-check your plan every open enrollment. |
 | 🏪 | **Marketplace comparator** | Your employer offer vs. the **whole on-exchange market**, net of the subsidy you actually qualify for. |
 | 🪪 | **Coverage Card** | A portable QR/link card: providers see your coverage and a live cost estimate with **zero access to your records** (the card lives in the link). |
-| 🧑‍⚕️ | **Three lenses** | Patient optimizer · Employer ICHRA modeler · Hospital cost desk: one engine, three views. |
+| 🧑‍⚕️ | **Three lenses** | Patient optimizer · Employer ICHRA modeler · Hospital cost desk: one engine, three views. Each is interactive: the **employer** tab models flat vs age-rated contributions and compares ICHRA against your current group plan; the **hospital** tab quotes a procedure on a scanned Coverage Card and runs a browser-side **bill auditor** that flags overcharges. |
 | 📨 | **Outreach** | Drafts (and optionally sends) messages to your employer's HR or a hospital after you finalize a plan. |
-| 📊 | **Benchmarks** | An honest, interactive accuracy scorecard for the simulation and a multi-model LLM benchmark at `/benchmark`. |
+| 📊 | **Benchmarks** | An honest, interactive accuracy scorecard, a multi-model LLM benchmark, and a live **claim-bundle explorer** that runs real episodes of care (a surgery, a maternity year) through the adjudication engine on real plans so you can see the exact math, at `/benchmark`. |
 
 ## Why simulate thousands of years?
 

@@ -7,20 +7,19 @@ import {
   Stethoscope,
   TrendingUp,
 } from "lucide-react";
-import pricesJson from "@/data/procedure-prices.json";
 import { SUPPORTED_STATES } from "@/lib/options";
-import { decodeCard } from "@/lib/card";
+import { decodeCard, estimateProcedure } from "@/lib/card";
+import { PROCEDURES } from "@/lib/sim/params";
 import { usd } from "@/lib/utils";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Field, Select, TextInput } from "@/components/ui/controls";
+import { BillAuditor } from "@/components/hospital/bill-auditor";
+import { DocumentUploader } from "@/components/documents/document-uploader";
 import { METAL_TONE } from "@/lib/format";
 import type { Metal } from "@/lib/types";
-
-const PROCEDURES = (pricesJson as { procedures: { id: string; label: string }[] })
-  .procedures;
 
 interface HospitalResult {
   procedure: { label: string; typicalAllowed: number };
@@ -162,6 +161,16 @@ export default function HospitalPage() {
             </p>
           </div>
         </div>
+
+        {/* Document upload: drop a PDF bill/EOB/plan and structure it */}
+        <div className="mt-6">
+          <DocumentUploader />
+        </div>
+
+        {/* Bill auditor: patient-usable, runs entirely in the browser */}
+        <div className="mt-6">
+          <BillAuditor />
+        </div>
       </main>
       <SiteFooter />
     </>
@@ -198,11 +207,21 @@ function PlanBar({
 
 function CardReader() {
   const [text, setText] = useState("");
+  const [procId, setProcId] = useState(PROCEDURES[0].id);
   const token = useMemo(() => {
     const t = text.trim();
     return t.includes("#") ? t.slice(t.indexOf("#") + 1) : t;
   }, [text]);
   const card = useMemo(() => (token ? decodeCard(token) : null), [token]);
+
+  // Quote the selected procedure for THIS patient's plan: their real cost-sharing applied,
+  // both before and after their deductible is met. No record touched, just their card.
+  const quote = useMemo(() => {
+    if (!card) return null;
+    const proc = PROCEDURES.find((p) => p.id === procId);
+    if (!proc) return null;
+    return { proc, est: estimateProcedure(card.plan, proc) };
+  }, [card, procId]);
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -211,7 +230,8 @@ function CardReader() {
         Coverage Card
       </h2>
       <p className="mt-1 text-xs text-slate-500">
-        Paste the link from the patient&apos;s card (or scan their QR).
+        Paste the link from the patient&apos;s card (or scan their QR) to quote a procedure on
+        their real plan.
       </p>
       <TextInput
         className="mt-3"
@@ -231,6 +251,31 @@ function CardReader() {
           <p className="mt-1 text-xs text-slate-500">
             Deductible {usd(card.plan.deductible)} · OOP max {usd(card.plan.oopMax)}
           </p>
+
+          <div className="mt-3 border-t border-slate-200 pt-3">
+            <Field label="Quote a procedure on this plan">
+              <Select value={procId} onChange={(e) => setProcId(e.target.value)}>
+                {PROCEDURES.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.label}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+            {quote && (
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <div className="rounded-lg bg-white p-2 ring-1 ring-slate-200">
+                  <p className="text-[10px] uppercase tracking-wide text-slate-400">If deductible not met</p>
+                  <p className="text-lg font-bold text-slate-900">{usd(quote.est.beforeDeductible)}</p>
+                </div>
+                <div className="rounded-lg bg-white p-2 ring-1 ring-slate-200">
+                  <p className="text-[10px] uppercase tracking-wide text-slate-400">If deductible met</p>
+                  <p className="text-lg font-bold text-emerald-700">{usd(quote.est.afterDeductible)}</p>
+                </div>
+              </div>
+            )}
+          </div>
+
           <a
             href={`/card/view#${token}`}
             target="_blank"

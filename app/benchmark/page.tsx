@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { loadAccuracyReport, loadLlmBenchmark } from "@/lib/benchmark/load";
 import type { Check } from "@/lib/benchmark/types";
 import { DistributionExplorer } from "@/components/benchmark/distribution-explorer";
+import { BundleExplorer } from "@/components/benchmark/bundle-explorer";
 
 export const metadata: Metadata = {
   title: "Covera: Accuracy & model benchmarks",
@@ -106,6 +107,9 @@ export default function BenchmarkPage() {
           )}
           <div className="mt-6">
             <DistributionExplorer />
+          </div>
+          <div className="mt-6">
+            <BundleExplorer />
           </div>
         </section>
 
