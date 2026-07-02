@@ -2,8 +2,10 @@
 
 **Stuck with your employer's two options, or shopping on your own? Text Covera your
 situation.** A team of AI agents searches the entire marketplace, simulates what you'd
-truly pay, answers any what-if, and (once you choose) reaches out to your employer or
-hospital for you.
+truly pay, and answers any what-if. Once you choose, it reaches out to your employer or
+hospital, and then it stays with you all year: estimating a procedure before you book it,
+auditing a suspicious bill, drafting an appeal for a denial, and re-checking your plan at
+open enrollment.
 
 Every figure traces to public data. No synthetic plans, prices, or claims.
 
@@ -17,17 +19,20 @@ flowchart LR
   D --> E["💬 Ask any<br/>what-if"]
   E --> F["✅ You choose<br/>a plan"]
   F --> G["📨 Agent contacts<br/>employer / hospital"]
+  G --> H["🩺 Then all year:<br/>estimate · audit a bill<br/>appeal a denial · re-check"]
 ```
 
 | | Capability | What you get |
 |---|---|---|
 | 💬 | **Texting concierge** | A warm, multi-agent advisor you text like a person. It remembers your life: your fears, constraints, and preferences, not just your form fields. |
-| 🎲 | **Stochastic cost engine** | Plans ranked by **risk-adjusted all-in cost** (premium + out-of-pocket), with best/worst case, the odds you hit your OOP max, and the cost-vs-risk frontier. |
+| 🎲 | **Real-time cost engine** | Every real plan ranked in closed form (milliseconds), then a Monte-Carlo pass sizes your bad-year tail. **Risk-adjusted all-in cost** (premium + out-of-pocket) with best/worst case, the odds you hit your OOP max, and the cost-vs-risk frontier. |
+| 💊 | **Fits your drugs & doctors** | Real CMS formulary matching: a plan that drops one of your medications takes a ranking penalty and gets flagged, so "cheapest" never quietly means "does not cover your drug." |
+| 🛡️ | **Year-round advocate** | It does not stop at enrollment: estimate a procedure before you book it, audit a bill against real charges, draft an appeal for a denied claim, and re-check your plan every open enrollment. |
 | 🏪 | **Marketplace comparator** | Your employer offer vs. the **whole on-exchange market**, net of the subsidy you actually qualify for. |
 | 🪪 | **Coverage Card** | A portable QR/link card: providers see your coverage and a live cost estimate with **zero access to your records** (the card lives in the link). |
 | 🧑‍⚕️ | **Three lenses** | Patient optimizer · Employer ICHRA modeler · Hospital cost desk: one engine, three views. |
 | 📨 | **Outreach** | Drafts (and optionally sends) messages to your employer's HR or a hospital after you finalize a plan. |
-| 📊 | **Benchmarks** | An honest accuracy scorecard for the simulation and a multi-model LLM benchmark at `/benchmark`. |
+| 📊 | **Benchmarks** | An honest, interactive accuracy scorecard for the simulation and a multi-model LLM benchmark at `/benchmark`. |
 
 ## Why simulate thousands of years?
 
@@ -126,8 +131,10 @@ deterministic ones (advisor, marketplace, hospital) call the simulation so every
 real, and the LLM sub-agents (intake, outreach) handle extraction and drafting. The channel
 adapter makes delivery pluggable: real iMessage or the on-page sandbox.
 
-**Code map:** `lib/agents/` (orchestrator + specialists) · `lib/channel/` (sandbox /
-loopmessage) · `lib/store/` (Redis + memory fallback) · `lib/sim/` (Monte-Carlo engine) ·
+**Code map:** `lib/agents/` (orchestrator + specialists: advisor, marketplace, hospital,
+outreach, appeals) · `lib/sim/` (analytic closed-form ranker, Monte-Carlo engine + frailty
+calibration, formulary/network matching, bill audit, annual re-check, ranking cache) ·
+`lib/channel/` (sandbox / loopmessage) · `lib/store/` (Redis + memory fallback) ·
 `lib/benchmark/` · `components/text/` (iMessage UI, scroll story, live console) ·
 `app/api/sms/` · `scripts/{accuracy,benchmark}/`.
 
@@ -155,9 +162,11 @@ gracefully when one is absent (exactly like the existing `ANTHROPIC_API_KEY` gua
 npm test          # engine + agent unit tests
 npm run typecheck # tsc --noEmit
 npm run build     # production build
-npm run accuracy  # data/accuracy-report.json   (no key needed)
-npm run benchmark # data/llm-benchmark.json      (needs ANTHROPIC_API_KEY)
-npm run ingest    # rebuild data/plans.*.json from the CMS PUFs (~700MB download)
+npm run accuracy         # data/accuracy-report.json   (no key needed)
+npm run benchmark        # data/llm-benchmark.json      (needs ANTHROPIC_API_KEY)
+npm run ingest           # rebuild data/plans.*.json from the CMS PUFs (~700MB download)
+npm run ingest:prices    # real CMS Medicare physician prices into data/procedure-prices.json
+npm run ingest:formulary # real CMS QHP drug formularies onto each plan
 ```
 
 ## Real data sources
@@ -168,6 +177,7 @@ npm run ingest    # rebuild data/plans.*.json from the CMS PUFs (~700MB download
 | Care utilization & expenditure calibration | **AHRQ Medical Expenditure Panel Survey (MEPS)** |
 | Premium subsidies | ACA **APTC** via the second-lowest-cost silver benchmark |
 | Procedure prices (billed & Medicare-allowed) | **CMS Medicare Physician & Other Practitioners by Geography and Service** (data.cms.gov), via `npm run ingest:prices` |
+| Drug formularies (per-plan tier by drug) | **CMS QHP machine-readable formularies** (Machine-Readable URL PUF, PY2026 → issuer `index.json` → `drugs.json`), via `npm run ingest:formulary` |
 
 Bundled states: **TX, FL, NC, OH** (federal-exchange markets, ~1,600 real plans).
 
@@ -176,9 +186,11 @@ Bundled states: **TX, FL, NC, OH** (federal-exchange markets, ~1,600 real plans)
 Two honest scorecards answer "how accurate is this, really?":
 
 - **Simulation accuracy**: validates the engine against the MEPS aggregates it claims to
-  reproduce (mean spend by age band, spend concentration) and the ACA subsidy formula. It
-  shows both where the engine is accurate (adult means, subsidy math) and where it diverges
-  (it compresses the heavy right tail). → `data/accuracy-report.json`
+  reproduce (mean spend by age band, spend concentration) and the ACA subsidy formula. A
+  person-year frailty term correlates a year's care across service lines, so the simulation
+  reproduces the real spend concentration (the top few percent who drive most cost), not
+  just the means. An interactive explorer runs the real sampler live in your browser for any
+  age band and condition. → `data/accuracy-report.json`
 - **LLM model benchmark**: runs a fixed question suite through `claude-opus-4-8`,
   `claude-sonnet-4-6`, and `claude-haiku-4-5` driving the real agent tools, scoring
   faithfulness (cites real numbers vs. hallucinates), tool-use accuracy, quality (LLM
@@ -194,9 +206,11 @@ multi-agent loop to the on-page live console: fully exercisable with no third-pa
 ## Tech
 
 Next.js 16 (App Router) · TypeScript · Tailwind v4 · `motion` for scroll/entry animation ·
-hand-built SVG charts · Anthropic Claude (`claude-opus-4-8` concierge/advisor,
-`claude-haiku-4-5` intake) · Upstash Redis · LoopMessage · Resend · Web Speech API · Vercel.
-The simulation engine is pure TypeScript in `lib/sim/` and unit-tested.
+hand-built SVG charts · Anthropic Claude with model routing (`claude-haiku-4-5` for intake,
+`claude-opus-4-8` for advising and what-ifs) · Upstash Redis · LoopMessage · Resend · Web
+Speech API · Vercel. The engine is pure TypeScript in `lib/sim/`: a closed-form analytic
+ranker (real-time), a Monte-Carlo pass for the bad-year tail, formulary/network matching,
+and a ranking cache. Fully unit-tested.
 
 ## How the data is built
 
@@ -205,6 +219,12 @@ Cost-Sharing PUFs, filters to the bundled states, parses the human-readable cost
 strings (e.g. `"20% Coinsurance after deductible"`) into a typed schema, and emits the
 compact `data/plans.<state>.json` the app ships. Raw downloads are gitignored; only the
 normalized JSON is committed.
+
+Two more ingesters enrich that data with real numbers. `scripts/ingest_prices.py` pulls CMS
+Medicare physician submitted charges and allowed amounts per HCPCS code (data.cms.gov).
+`scripts/ingest_formulary.py` walks the CMS machine-readable formulary files (the
+Machine-Readable URL PUF, then each issuer's `index.json`, then its `drugs.json`) and writes
+each plan's drug tiers for common maintenance drugs. Both are stdlib-only and verify TLS.
 
 ---
 
