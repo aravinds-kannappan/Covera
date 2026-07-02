@@ -10,7 +10,6 @@ import {
   ShieldCheck,
   TrendingDown,
 } from "lucide-react";
-import type { RankedPlan } from "@/lib/types";
 import { useCovera } from "@/lib/store";
 import { postOptimize } from "@/lib/api";
 import { usd } from "@/lib/utils";
@@ -33,6 +32,7 @@ export default function ResultsPage() {
   const [recalc, setRecalc] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
@@ -63,6 +63,7 @@ export default function ResultsPage() {
   }, [key]);
 
   const ranked = result?.ranked ?? [];
+  const shortlist = result?.shortlist ?? [];
   const scale = useMemo(() => {
     if (ranked.length === 0) return { min: 0, max: 1 };
     return {
@@ -71,6 +72,18 @@ export default function ResultsPage() {
     };
   }, [ranked]);
 
+  // Default view: the curated, de-duplicated set of genuinely different plans. "See all"
+  // falls back to the full analyzed ranking, tagging any plan that also earned a role.
+  const tagById = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const c of shortlist) if (c.tag) m.set(c.ranked.plan.id, c.tag);
+    return m;
+  }, [shortlist]);
+  const displayList = showAll
+    ? ranked.map((r) => ({ ranked: r, tag: tagById.get(r.plan.id) }))
+    : shortlist;
+  const hasMore = ranked.length > shortlist.length;
+
   if (!mounted) return <LoadingShell />;
   if (!profile) {
     router.replace("/patient");
@@ -78,10 +91,6 @@ export default function ResultsPage() {
   }
 
   const top = ranked[0];
-  const safest = ranked.reduce<RankedPlan | null>(
-    (best, r) => (!best || r.sim.p90 < best.sim.p90 ? r : best),
-    null,
-  );
   const maxExpected = Math.max(...ranked.map((r) => r.sim.expectedTotal), 0);
   const savings = top ? maxExpected - top.sim.expectedTotal : 0;
 
@@ -182,26 +191,38 @@ export default function ResultsPage() {
 
           <div className="space-y-6">
             <div className="space-y-3">
-              {ranked.map((r, i) => (
+              {!showAll && shortlist.length > 0 && (
+                <p className="text-xs text-slate-500">
+                  {shortlist.length} distinct picks, curated from {ranked.length} close
+                  contenders so you compare real choices, not near-identical plans.
+                </p>
+              )}
+              {displayList.map((item, i) => (
                 <PlanCard
-                  key={r.plan.id}
-                  ranked={r}
+                  key={item.ranked.plan.id}
+                  ranked={item.ranked}
                   rank={i + 1}
                   scale={scale}
-                  expanded={expandedId === r.plan.id}
+                  expanded={expandedId === item.ranked.plan.id}
                   onToggle={() =>
-                    setExpandedId((cur) => (cur === r.plan.id ? null : r.plan.id))
+                    setExpandedId((cur) =>
+                      cur === item.ranked.plan.id ? null : item.ranked.plan.id,
+                    )
                   }
-                  tag={
-                    i === 0
-                      ? "Best overall"
-                      : safest && r.plan.id === safest.plan.id
-                        ? "Lowest risk"
-                        : undefined
-                  }
-                  onMakeCard={() => makeCard(r.plan.id)}
+                  tag={item.tag}
+                  onMakeCard={() => makeCard(item.ranked.plan.id)}
                 />
               ))}
+              {hasMore && (
+                <button
+                  onClick={() => setShowAll((v) => !v)}
+                  className="w-full rounded-xl border border-slate-200 bg-white py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50"
+                >
+                  {showAll
+                    ? "Show the curated shortlist"
+                    : `See all ${ranked.length} plans considered`}
+                </button>
+              )}
             </div>
 
             {result && result.frontier.length > 2 && (
@@ -247,7 +268,7 @@ function StatStrip({ result }: { result: NonNullable<ReturnType<typeof useCovera
     {
       label: "Plans simulated",
       value: result.consideredCount.toLocaleString(),
-      hint: `${result.ranked.length} shortlisted`,
+      hint: `${result.shortlist.length} distinct picks shown`,
     },
     {
       label: "Benchmark (SLCSP)",

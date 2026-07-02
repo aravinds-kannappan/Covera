@@ -45,7 +45,7 @@ export const CONCIERGE_TOOLS = [
   {
     name: "recommend_plans",
     description:
-      "Run the real Monte-Carlo optimizer over real CMS plans for this patient and return the top-ranked plans. Use for the first recommendation, a re-rank, or any 'what if' (pass only the changed fields in whatif).",
+      "Run the variance-reduced (antithetic) Monte-Carlo optimizer over real CMS plans for this patient, then pass the shortlist through the actor/critic safety layer, and return the top-ranked plans. The #1 plan is the critic-approved recommendation, which may not be the raw cheapest if the cheapest dropped a required drug/doctor, was unaffordable, or was too risky. Use for the first recommendation, a re-rank, or any 'what if' (pass only the changed fields in whatif).",
     input_schema: {
       type: "object",
       properties: {

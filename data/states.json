@@ -3,28 +3,73 @@
   "source": "CMS Health Insurance Exchange Public Use Files, PY2026 (data.healthcare.gov)",
   "states": [
     {
-      "state": "TX",
-      "planCount": 800,
+      "state": "AK",
+      "planCount": 15,
       "issuers": [
-        "Ambetter from Superior HealthPlan",
-        "Baylor Scott and White Health Plan",
-        "Blue Cross and Blue Shield of Texas",
-        "CHRISTUS Health Plan",
-        "Cigna Healthcare",
-        "Community First",
-        "Community Health Choice",
-        "Harbor Health",
-        "Imperial Insurance Companies, Inc.",
         "Moda Health Plan, Inc.",
-        "Molina Healthcare",
-        "Oscar Insurance Company",
-        "Sendero Health Plans, Local Nonprofit",
-        "UnitedHealthcare",
-        "WellPoint"
+        "Premera Blue Cross Blue Shield of Alaska"
       ],
       "premiumRange40": [
-        347,
-        1182
+        664,
+        1070
+      ]
+    },
+    {
+      "state": "AL",
+      "planCount": 52,
+      "issuers": [
+        "Ambetter of Alabama",
+        "Blue Cross and Blue Shield of Alabama",
+        "Oscar Insurance Company",
+        "UnitedHealthcare"
+      ],
+      "premiumRange40": [
+        414,
+        886
+      ]
+    },
+    {
+      "state": "AR",
+      "planCount": 46,
+      "issuers": [
+        "Ambetter from Arkansas Health & Wellness",
+        "Arkansas Blue Cross and Blue Shield",
+        "Health Advantage",
+        "Octave"
+      ],
+      "premiumRange40": [
+        356,
+        879
+      ]
+    },
+    {
+      "state": "AZ",
+      "planCount": 197,
+      "issuers": [
+        "Ambetter from Arizona Complete Health",
+        "Antidote Health Plan of Arizona, Inc.",
+        "Blue Cross Blue Shield of Arizona",
+        "Cigna HealthCare of Arizona, Inc",
+        "Imperial Insurance Companies, Inc.",
+        "Oscar Health Plan, Inc.",
+        "UnitedHealthcare"
+      ],
+      "premiumRange40": [
+        353,
+        1312
+      ]
+    },
+    {
+      "state": "DE",
+      "planCount": 39,
+      "issuers": [
+        "Ambetter Health of Delaware",
+        "AmeriHealth Caritas Next",
+        "Highmark Blue Cross Blue Shield Delaware"
+      ],
+      "premiumRange40": [
+        468,
+        1020
       ]
     },
     {
@@ -53,6 +98,143 @@
       ]
     },
     {
+      "state": "HI",
+      "planCount": 13,
+      "issuers": [
+        "HMSA",
+        "Kaiser Permanente"
+      ],
+      "premiumRange40": [
+        297,
+        695
+      ]
+    },
+    {
+      "state": "IA",
+      "planCount": 121,
+      "issuers": [
+        "Ambetter Health",
+        "Avera Health Plans",
+        "Medica",
+        "Oscar Insurance Company",
+        "UnitedHealthcare",
+        "Wellmark Health Plan of Iowa, Inc."
+      ],
+      "premiumRange40": [
+        318,
+        893
+      ]
+    },
+    {
+      "state": "IN",
+      "planCount": 76,
+      "issuers": [
+        "Ambetter Health",
+        "Anthem Blue Cross and Blue Shield",
+        "CareSource",
+        "Cigna Healthcare",
+        "UnitedHealthcare"
+      ],
+      "premiumRange40": [
+        401,
+        941
+      ]
+    },
+    {
+      "state": "KS",
+      "planCount": 62,
+      "issuers": [
+        "Ambetter from Sunflower Health Plan",
+        "Blue Cross and Blue Shield of Kansas City",
+        "Blue Cross and Blue Shield of Kansas, Inc.",
+        "Medica",
+        "Oscar Insurance Company",
+        "UnitedHealthcare"
+      ],
+      "premiumRange40": [
+        444,
+        946
+      ]
+    },
+    {
+      "state": "LA",
+      "planCount": 96,
+      "issuers": [
+        "Ambetter from Louisiana Healthcare Connections",
+        "AmeriHealth Caritas Next",
+        "Blue Cross and Blue Shield of Louisiana",
+        "CHRISTUS Health Plan",
+        "HMO Louisiana",
+        "UnitedHealthcare"
+      ],
+      "premiumRange40": [
+        419,
+        1061
+      ]
+    },
+    {
+      "state": "MI",
+      "planCount": 109,
+      "issuers": [
+        "Ambetter from Meridian",
+        "Blue Care Network of Michigan",
+        "Blue Cross Blue Shield of Michigan Mutual Insurance Company",
+        "McLaren Health Plan Community",
+        "Oscar Insurance Company",
+        "Priority Health",
+        "UnitedHealthcare"
+      ],
+      "premiumRange40": [
+        347,
+        996
+      ]
+    },
+    {
+      "state": "MO",
+      "planCount": 117,
+      "issuers": [
+        "Ambetter from Home State Health",
+        "Anthem Blue Cross and Blue Shield",
+        "Blue Cross and Blue Shield of Kansas City",
+        "Cox HealthPlans",
+        "Medica",
+        "Oscar Insurance Company",
+        "UnitedHealthcare"
+      ],
+      "premiumRange40": [
+        431,
+        982
+      ]
+    },
+    {
+      "state": "MS",
+      "planCount": 48,
+      "issuers": [
+        "Ambetter from Magnolia Health",
+        "Cigna Healthcare",
+        "Molina Healthcare",
+        "Oscar Health Plan, Inc.",
+        "UnitedHealthcare"
+      ],
+      "premiumRange40": [
+        591,
+        1064
+      ]
+    },
+    {
+      "state": "MT",
+      "planCount": 90,
+      "issuers": [
+        "Blue Cross and Blue Shield of Montana",
+        "Mountain Health CO-OP",
+        "PacificSource Health Plans"
+      ],
+      "premiumRange40": [
+        325,
+        903
+      ]
+    },
+    {
       "state": "NC",
       "planCount": 206,
       "issuers": [
@@ -66,6 +248,48 @@
       "premiumRange40": [
         446,
         1164
+      ]
+    },
+    {
+      "state": "ND",
+      "planCount": 59,
+      "issuers": [
+        "Blue Cross Blue Shield of North Dakota",
+        "Medica",
+        "Sanford Health Plan"
+      ],
+      "premiumRange40": [
+        315,
+        863
+      ]
+    },
+    {
+      "state": "NE",
+      "planCount": 162,
+      "issuers": [
+        "Ambetter Health",
+        "Blue Cross and Blue Shield of Nebraska",
+        "Medica",
+        "Oscar Insurance Company",
+        "UnitedHealthcare"
+      ],
+      "premiumRange40": [
+        494,
+        1343
+      ]
+    },
+    {
+      "state": "NH",
+      "planCount": 45,
+      "issuers": [
+        "Ambetter from NH Healthy Families",
+        "Anthem Blue Cross and Blue Shield",
+        "Harvard Pilgrim Health Care",
+        "WellSense Health Plan"
+      ],
+      "premiumRange40": [
+        278,
+        716
       ]
     },
     {
@@ -87,6 +311,171 @@
       "premiumRange40": [
         388,
         1002
+      ]
+    },
+    {
+      "state": "OK",
+      "planCount": 183,
+      "issuers": [
+        "Ambetter of Oklahoma",
+        "Blue Cross and Blue Shield of Oklahoma",
+        "CommunityCare",
+        "Medica",
+        "Mending Health",
+        "Oscar Insurance Company",
+        "UnitedHealthcare"
+      ],
+      "premiumRange40": [
+        304,
+        1300
+      ]
+    },
+    {
+      "state": "OR",
+      "planCount": 58,
+      "issuers": [
+        "BridgeSpan Health Company",
+        "Kaiser Permanente",
+        "Moda Health Plan, Inc.",
+        "PacificSource Health Plans",
+        "Providence Health Plan",
+        "Regence BlueCross BlueShield of Oregon"
+      ],
+      "premiumRange40": [
+        469,
+        857
+      ]
+    },
+    {
+      "state": "SC",
+      "planCount": 125,
+      "issuers": [
+        "Ambetter from Absolute Total Care",
+        "BlueCross BlueShield of South Carolina",
+        "First Choice Next",
+        "InStil Health",
+        "Molina Healthcare",
+        "UnitedHealthcare"
+      ],
+      "premiumRange40": [
+        372,
+        810
+      ]
+    },
+    {
+      "state": "SD",
+      "planCount": 67,
+      "issuers": [
+        "Avera Health Plans",
+        "Sanford Health Plan",
+        "Wellmark of South Dakota, Inc."
+      ],
+      "premiumRange40": [
+        294,
+        879
+      ]
+    },
+    {
+      "state": "TN",
+      "planCount": 155,
+      "issuers": [
+        "Alliant Health Plans, Inc.",
+        "Ambetter of Tennessee",
+        "BlueCross BlueShield of Tennessee",
+        "Cigna Healthcare",
+        "Oscar Insurance Company",
+        "UnitedHealthcare"
+      ],
+      "premiumRange40": [
+        466,
+        1046
+      ]
+    },
+    {
+      "state": "TX",
+      "planCount": 800,
+      "issuers": [
+        "Ambetter from Superior HealthPlan",
+        "Baylor Scott and White Health Plan",
+        "Blue Cross and Blue Shield of Texas",
+        "CHRISTUS Health Plan",
+        "Cigna Healthcare",
+        "Community First",
+        "Community Health Choice",
+        "Harbor Health",
+        "Imperial Insurance Companies, Inc.",
+        "Moda Health Plan, Inc.",
+        "Molina Healthcare",
+        "Oscar Insurance Company",
+        "Sendero Health Plans, Local Nonprofit",
+        "UnitedHealthcare",
+        "WellPoint"
+      ],
+      "premiumRange40": [
+        347,
+        1182
+      ]
+    },
+    {
+      "state": "UT",
+      "planCount": 55,
+      "issuers": [
+        "BridgeSpan Health Company",
+        "Imperial Health Plan of the Southwest, Inc.",
+        "Molina Healthcare",
+        "Regence BlueCross BlueShield of Utah",
+        "Select Health",
+        "University of Utah Health Plans"
+      ],
+      "premiumRange40": [
+        485,
+        1206
+      ]
+    },
+    {
+      "state": "WI",
+      "planCount": 308,
+      "issuers": [
+        "Anthem Blue Cross and Blue Shield",
+        "Aspirus Health Plan",
+        "CareSource (Common Ground Healthcare)",
+        "Dean Health Plan",
+        "Group Health Cooperative-SCW",
+        "HealthPartners",
+        "Medica",
+        "MercyCare Health Plans",
+        "Network Health",
+        "Quartz",
+        "Security Health Plan",
+        "UnitedHealthcare"
+      ],
+      "premiumRange40": [
+        354,
+        1091
+      ]
+    },
+    {
+      "state": "WV",
+      "planCount": 35,
+      "issuers": [
+        "CareSource",
+        "Highmark Blue Cross Blue Shield West Virginia"
+      ],
+      "premiumRange40": [
+        599,
+        1139
+      ]
+    },
+    {
+      "state": "WY",
+      "planCount": 23,
+      "issuers": [
+        "Blue Cross Blue Shield of Wyoming",
+        "UnitedHealthcare"
+      ],
+      "premiumRange40": [
+        769,
+        1186
       ]
     }
   ]

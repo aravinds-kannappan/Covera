@@ -59,6 +59,56 @@ actually bankrupts people. Covera ranks plans on **expected cost + a downside-ri
 (p90 cost, probability of hitting your OOP max), which is why the "cheapest" plan often
 isn't the right one once your real risk is on the table.
 
+## Past plain Monte-Carlo: a variance-reduced estimator + an actor/critic decision layer
+
+Plain Monte-Carlo just resamples and averages. That is fine for a rough mean and a
+histogram, but for a real decision it wastes draws and it can hand you a headline plan that
+is technically cheapest yet quietly wrong. Covera scales the engine on two axes.
+
+**1. The simulation now measures more than it resamples** (`lib/sim/estimators.ts`,
+`lib/sim/utilization.ts`):
+
+- **Antithetic sampling.** A whole year's cost hinges on one latent factor: person-year
+  frailty. We now draw years as mirror-image pairs (frailty `+Z` and `-Z`), which cancels
+  the dominant noise term in the mean. Same draw count, tighter estimate: on a real TX
+  profile, 4,000 antithetic draws carry the precision of ~5,700 plain draws (a measured
+  1.4x), and the ratio is reported, not assumed.
+- **Coherent tail risk (CVaR).** p90 is a single point. **CVaR / expected shortfall** is the
+  average cost across the *whole* worst-10%-of-years tail, and it is a coherent risk measure
+  (convex, sub-additive) so ranking risk-averse patients on it is sound. On that same
+  profile, p90 reads ~$7.5k while the true bad-year (CVaR90) is ~$10.3k.
+- **Error bars.** Every headline number now ships a standard error (mean and p90), so two
+  plans can be judged a genuine tie instead of flipping on sampling noise.
+
+None of this is an LLM or a trained model: it is deterministic estimator math over the draws.
+
+**2. Plan selection is an actor/critic/memory loop, not a bare `argmin`** (`lib/agents/selection/`).
+This is the 7-step "medical agent from connected screens" roadmap applied to the decision:
+
+| Step | Roadmap | In Covera |
+| --- | --- | --- |
+| 1 | Start with the real goal | Lowest risk-adjusted cost that keeps the patient's drugs and doctors, bounds the bad year, and stays affordable |
+| 2 | Each screen is state | A decision walks connected screens: frame goal → shortlist → assess → check coverage → check tail risk → check affordability → substitute → finalize |
+| 3 | Ground the screen with tools | The simulation is the tool: each screen reads real simulated numbers and coverage facts |
+| 4 | Actor agent | Proposes **one** next pick at a time, best-first, and never finalizes before the checks |
+| 5 | Critic agent | Blocks a pick that drops a required drug or doctor, prices the patient out, or leaves a risk-averse person a brutal CVaR; on a hard veto the actor substitutes the next plan |
+| 6 | Memory | Short-term: the running trajectory. Long-term: critic-approved paths cached by situation and replayed for an identical patient (honest memoization, **not** training) |
+| 7 | Runtime agent | `runSelection` drives actor→critic→memory to a governed pick plus a full, auditable decision path |
+
+The critic is deterministic and reasons over the simulated numbers; the LLM concierge sits
+above it and explains the verdict. When the critic hard-vetoes the raw cheapest, that plan is
+demoted and the concierge is told exactly why, so the patient hears the reason instead of a
+silent swap.
+
+**3. The results view shows distinct choices, not near-duplicates** (`lib/sim/diversify.ts`).
+A real marketplace is full of near-identical products, so ranking 24 plans hands the user a
+wall of options clustered within $50 of each other. The curator first collapses twins (same
+issuer, metal, and plan type at effectively the same deductible/OOP-max), then picks a small
+set that seats the roles a shopper actually reasons in (best overall, safest bad year, lowest
+premium, best HSA) and fills the rest by maximizing spread across the cost/risk plane, capped
+per metal. On a real state that turns ~25 ranked plans into 5-6 genuinely different picks,
+each with a one-line reason to exist; "see all" still reveals the full ranking.
+
 ## System design
 
 ```mermaid
@@ -90,7 +140,8 @@ flowchart TB
     OUTR["Outreach"]
   end
 
-  SIM[["Monte-Carlo engine"]]
+  SIM[["Variance-reduced Monte-Carlo engine<br/>antithetic draws · CVaR · error bars"]]
+  GOV{{"Actor / Critic / Memory<br/>governed plan selection"}}
   STORE[("Upstash Redis<br/>/ in-memory")]
   EMAIL["Resend email"]
 
@@ -120,6 +171,8 @@ flowchart TB
   MARKET --> SIM
   HOSP --> SIM
   OUTR --> EMAIL
+  SIM --> GOV
+  GOV --> CMS & MEPS
   SIM --> CMS & MEPS
   ORCH -. reply .-> HOOK & SENDR
   ACC --> SIM
@@ -132,8 +185,10 @@ real, and the LLM sub-agents (intake, outreach) handle extraction and drafting. 
 adapter makes delivery pluggable: real iMessage or the on-page sandbox.
 
 **Code map:** `lib/agents/` (orchestrator + specialists: advisor, marketplace, hospital,
-outreach, appeals) · `lib/sim/` (analytic closed-form ranker, Monte-Carlo engine + frailty
-calibration, formulary/network matching, bill audit, annual re-check, ranking cache) ·
+outreach, appeals; `selection/` = actor/critic/memory governance) · `lib/sim/` (analytic
+closed-form ranker, variance-reduced Monte-Carlo engine + antithetic sampling, `estimators`
+= CVaR + error bars, frailty calibration, formulary/network matching, bill audit, annual
+re-check, ranking cache) ·
 `lib/channel/` (sandbox / loopmessage) · `lib/store/` (Redis + memory fallback) ·
 `lib/benchmark/` · `components/text/` (iMessage UI, scroll story, live console) ·
 `app/api/sms/` · `scripts/{accuracy,benchmark}/`.
@@ -179,7 +234,13 @@ npm run ingest:formulary # real CMS QHP drug formularies onto each plan
 | Procedure prices (billed & Medicare-allowed) | **CMS Medicare Physician & Other Practitioners by Geography and Service** (data.cms.gov), via `npm run ingest:prices` |
 | Drug formularies (per-plan tier by drug) | **CMS QHP machine-readable formularies** (Machine-Readable URL PUF, PY2026 → issuer `index.json` → `drugs.json`), via `npm run ingest:formulary` |
 
-Bundled states: **TX, FL, NC, OH** (federal-exchange markets, ~1,600 real plans).
+Bundled states: **all 30 federal-exchange (HealthCare.gov) states** the PY2026 PUF covers:
+AK, AL, AR, AZ, DE, FL, HI, IA, IN, KS, LA, MI, MO, MS, MT, NC, ND, NE, NH, OH, OK, OR, SC,
+SD, TN, TX, UT, WI, WV, WY (~3,900 real plans). State-based exchanges (CA, NY, and other SBM
+states) are not in the federal PUF, so they are genuinely out of scope for this data source.
+The supported set is data-driven: `python3 scripts/ingest_pufs.py <STATE...>` writes
+`data/states.json`, and the loader and the state picker read from it, so adding a state is an
+ingest + rebuild with no code change.
 
 ## Benchmarks (`/benchmark`)
 

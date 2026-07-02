@@ -61,15 +61,29 @@ export function recommendPlans(
 /** A terse, model-readable summary of the current ranking for the system prompt. */
 export function plansSummaryText(result: OptimizeResult): string {
   if (result.ranked.length === 0) return "No plans matched the current filters.";
-  return result.ranked
+  const lines = result.ranked
     .slice(0, 5)
     .map((r, i) => {
       const s = r.sim;
+      // worst-10%-of-years (CVaR) is the number a risk-averse patient should hear; p90 is a
+      // single point, CVaR is the average of the whole bad tail beyond it.
+      const badYear = usd(s.cvar90 ?? s.p90);
       return `${i + 1}. ${r.plan.marketingName} (${r.plan.metal}): premium ${usd(
         s.annualPremium,
-      )}/yr, expected all-in ${usd(s.expectedTotal)}, bad-year ${usd(s.p90)}, ${Math.round(
+      )}/yr, expected all-in ${usd(s.expectedTotal)}, worst-10%-of-years ${badYear}, ${Math.round(
         s.probHitOOPMax * 100,
       )}% chance of hitting the OOP max.`;
-    })
-    .join("\n");
+    });
+
+  // Surface the governance verdict so the concierge can explain WHY the headline plan may not
+  // be the raw cheapest (it dropped a drug/doctor, priced the patient out, or was too risky).
+  const g = result.governance;
+  if (g.overridden && g.vetoedRawTop.length > 0) {
+    lines.unshift(
+      `Note: the raw cheapest plan was set aside because ${g.vetoedRawTop
+        .map((v) => v.detail)
+        .join(" ")} The plan below (#1) is the safe recommendation.`,
+    );
+  }
+  return lines.join("\n");
 }

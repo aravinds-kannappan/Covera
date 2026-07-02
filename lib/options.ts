@@ -1,11 +1,27 @@
 import type { ConditionKey, DrugTier, PlannedEventKey } from "@/lib/types";
+import { SUPPORTED_STATE_CODES } from "@/lib/data/plans";
 
-export const SUPPORTED_STATES: { code: string; name: string }[] = [
-  { code: "TX", name: "Texas" },
-  { code: "FL", name: "Florida" },
-  { code: "NC", name: "North Carolina" },
-  { code: "OH", name: "Ohio" },
-];
+// Full names for every US state code, so a state added by the ingester automatically shows a
+// friendly label in the picker with no extra edit here.
+const STATE_NAMES: Record<string, string> = {
+  AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California",
+  CO: "Colorado", CT: "Connecticut", DE: "Delaware", FL: "Florida", GA: "Georgia",
+  HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa",
+  KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland",
+  MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi", MO: "Missouri",
+  MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire", NJ: "New Jersey",
+  NM: "New Mexico", NY: "New York", NC: "North Carolina", ND: "North Dakota", OH: "Ohio",
+  OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania", RI: "Rhode Island", SC: "South Carolina",
+  SD: "South Dakota", TN: "Tennessee", TX: "Texas", UT: "Utah", VT: "Vermont",
+  VA: "Virginia", WA: "Washington", WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming",
+  DC: "District of Columbia",
+};
+
+// Every state the app actually has real plan data for, sorted by name. Derived from
+// states.json (written by the ingester), so it never drifts from what can be loaded.
+export const SUPPORTED_STATES: { code: string; name: string }[] = SUPPORTED_STATE_CODES.map(
+  (code) => ({ code, name: STATE_NAMES[code] ?? code }),
+).sort((a, b) => a.name.localeCompare(b.name));
 
 export const CONDITION_OPTIONS: { key: ConditionKey; label: string }[] = [
   { key: "diabetesType2", label: "Type 2 diabetes" },

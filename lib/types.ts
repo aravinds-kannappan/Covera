@@ -201,6 +201,19 @@ export interface SimSummary {
   histogram: { bin: number; count: number }[];
   /** Mean OOP contribution by service line, for the attribution view. */
   oopByService: Partial<Record<ServiceKey, number>>;
+  // ----- Tail risk + estimator precision (see lib/sim/estimators.ts) -----
+  /** Expected all-in cost in the worst 10% of years (CVaR / expected shortfall). */
+  cvar90?: number;
+  /** Expected all-in cost in the worst 5% of years. */
+  cvar95?: number;
+  /** Standard error of expectedTotal, so two plans can be judged a real tie or not. */
+  meanStdErr?: number;
+  /** Standard error of the p90 (bad-year) estimate. */
+  p90StdErr?: number;
+  /** Antithetic variance-reduction ratio (>= 1: how many plain draws each draw is worth). */
+  varianceReductionRatio?: number;
+  /** scenarioCount scaled by the variance-reduction ratio. */
+  effectiveSampleSize?: number;
 }
 
 export interface ConstraintCheck {

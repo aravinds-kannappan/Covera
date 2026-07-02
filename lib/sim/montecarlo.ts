@@ -1,6 +1,12 @@
 import type { Plan, ServiceKey, SimSummary } from "@/lib/types";
 import type { Scenario } from "@/lib/sim/utilization";
 import { adjudicate, adjudicateOOP } from "@/lib/sim/costsharing";
+import {
+  antitheticGain,
+  cvar,
+  meanStdErr,
+  quantileStdErr,
+} from "@/lib/sim/estimators";
 
 /** Mean member OOP across scenarios (coarse pass: fast, no attribution). */
 export function meanOOP(plan: Plan, scenarios: Scenario[]): number {
@@ -47,6 +53,11 @@ export function summarize(
   const oopByService: Partial<Record<ServiceKey, number>> = {};
   for (const k in svcAcc) oopByService[k as ServiceKey] = svcAcc[k as ServiceKey]! / n;
 
+  // Tail risk + estimator precision. `totals` keeps the antithetic pair layout (2j, 2j+1)
+  // so the variance-reduction ratio is measured, not assumed; `sorted` feeds the coherent
+  // tail metrics and the quantile error bar.
+  const gain = antitheticGain(totals);
+
   // Histogram over ~28 bins for the distribution chart.
   const lo = sorted[0];
   const hi = sorted[sorted.length - 1];
@@ -76,5 +87,11 @@ export function summarize(
     maxTotal: Math.round(sorted[sorted.length - 1]),
     histogram,
     oopByService,
+    cvar90: Math.round(cvar(sorted, 0.1)),
+    cvar95: Math.round(cvar(sorted, 0.05)),
+    meanStdErr: Math.round(meanStdErr(totals)),
+    p90StdErr: Math.round(quantileStdErr(sorted, 0.9)),
+    varianceReductionRatio: Number(gain.ratio.toFixed(2)),
+    effectiveSampleSize: Math.round(gain.effectiveSampleSize),
   };
 }

@@ -1,7 +1,7 @@
 import type { PatientProfile, ServiceKey } from "@/lib/types";
 import { SERVICE_KEYS } from "@/lib/types";
 import { MEPS, ageBandKey, type MedAddition } from "@/lib/sim/params";
-import { lognormal, poisson, type Rng } from "@/lib/sim/random";
+import { lognormal, normal, poisson, type Rng } from "@/lib/sim/random";
 
 /** One simulated year: allowed-dollar amounts grouped by service line. */
 export interface Scenario {
@@ -70,8 +70,20 @@ function push(scn: Scenario, service: ServiceKey, allowed: number) {
   scn.totalAllowed += allowed;
 }
 
-/** Draw one simulated year of care from the model. */
-export function sampleScenario(rng: Rng, model: UtilizationModel): Scenario {
+/**
+ * Draw one simulated year of care from the model.
+ *
+ * `frailtyZ` optionally pins the standard-normal draw behind the person-year frailty
+ * multiplier. Leaving it undefined draws a fresh one (plain Monte-Carlo). Supplying it lets
+ * the caller run antithetic pairs (Z and -Z), which is the dominant variance-reduction
+ * lever here: frailty is the single latent factor that a whole year's cost hinges on, so
+ * pairing a bad-luck year with its mirror image collapses the noise in the mean estimate.
+ */
+export function sampleScenario(
+  rng: Rng,
+  model: UtilizationModel,
+  frailtyZ?: number,
+): Scenario {
   const scn: Scenario = { byService: {}, totalAllowed: 0 };
 
   // Person-year frailty: one mean-1, right-skewed multiplier shared across every acute
@@ -81,7 +93,8 @@ export function sampleScenario(rng: Rng, model: UtilizationModel): Scenario {
   // catastrophic tail. Mean 1 keeps age-band mean spend on target; sigma sets the skew.
   // Parameterized by median so the lognormal's MEAN is exactly 1 (median = e^(-σ²/2)).
   const fSigma = MEPS.frailty.sigma;
-  const frailty = lognormal(rng, Math.exp(-(fSigma * fSigma) / 2), fSigma);
+  const z = frailtyZ ?? normal(rng);
+  const frailty = Math.exp(-(fSigma * fSigma) / 2) * Math.exp(fSigma * z);
 
   for (const s of SERVICE_KEYS) {
     const count = poisson(rng, Math.max(0, model.expectedFreq[s] * frailty));
@@ -119,5 +132,25 @@ export function sampleScenarios(
 ): Scenario[] {
   const out: Scenario[] = new Array(n);
   for (let i = 0; i < n; i++) out[i] = sampleScenario(rng, model);
+  return out;
+}
+
+/**
+ * Antithetic variant: draws n years as n/2 mirror-image pairs sharing a frailty draw of
+ * +Z and -Z. Consecutive entries (2j, 2j+1) form one pair, which the estimator layer uses
+ * to report the realized variance reduction. Same expectation as `sampleScenarios`,
+ * lower-variance mean, and still fully deterministic under a seeded rng.
+ */
+export function sampleScenariosAntithetic(
+  rng: Rng,
+  model: UtilizationModel,
+  n: number,
+): Scenario[] {
+  const out: Scenario[] = new Array(n);
+  for (let i = 0; i < n; i += 2) {
+    const z = normal(rng);
+    out[i] = sampleScenario(rng, model, z);
+    if (i + 1 < n) out[i + 1] = sampleScenario(rng, model, -z);
+  }
   return out;
 }

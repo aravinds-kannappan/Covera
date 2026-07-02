@@ -6,7 +6,11 @@ import type {
 } from "@/lib/types";
 import { ageBandKey, MEPS } from "@/lib/sim/params";
 import { hashSeed, makeRng } from "@/lib/sim/random";
-import { buildUtilization, sampleScenarios } from "@/lib/sim/utilization";
+import {
+  buildUtilization,
+  sampleScenarios,
+  sampleScenariosAntithetic,
+} from "@/lib/sim/utilization";
 import { summarize } from "@/lib/sim/montecarlo";
 import { buildSpendGrid, analyticMeanOOP } from "@/lib/sim/analytic";
 import { drugCoverage, networkCoverage, COVERAGE_PENALTY } from "@/lib/sim/coverage";
@@ -16,6 +20,9 @@ import {
   pickPremium,
   type SubsidyResult,
 } from "@/lib/sim/subsidy";
+import { runSelection } from "@/lib/agents/selection/runtime";
+import type { SelectionResult } from "@/lib/agents/selection/types";
+import { curateShortlist, type CuratedPlan } from "@/lib/sim/diversify";
 
 const RISK_LAMBDA: Record<PatientProfile["riskTolerance"], number> = {
   low: 0.6, // risk-averse: penalize bad-year exposure heavily
@@ -39,6 +46,18 @@ export interface OptimizeResult {
   frontier: FrontierPoint[];
   drivers: { service: ServiceKey; oop: number }[];
   spendVsAverage: { simulatedMean: number; mepsAverage: number; ageBand: string };
+  /**
+   * The actor/critic/memory governance layer's verdict over the ranked shortlist: the
+   * recommended plan, whether the critic overrode the raw cheapest, and the full decision
+   * path. See lib/agents/selection.
+   */
+  governance: SelectionResult;
+  /**
+   * A curated, de-duplicated, diverse subset of `ranked` for display: distinct choices that
+   * span the cost/risk tradeoff instead of a wall of near-identical plans. `ranked` still
+   * holds the full analyzed set (for the frontier and "see all"). See lib/sim/diversify.
+   */
+  shortlist: CuratedPlan[];
 }
 
 export interface OptimizeOptions {
@@ -103,7 +122,9 @@ export function optimize(
   for (const p of bestByMetal.values()) chosen.set(p.id, p);
 
   // --- Fine pass: full distribution for the shortlist (common random numbers) ---
-  const fine = sampleScenarios(rng, model, nFine);
+  // Antithetic draws (mirror-image frailty pairs) cut the noise in every plan's mean at the
+  // same sample count; the realized reduction is reported per plan as effectiveSampleSize.
+  const fine = sampleScenariosAntithetic(rng, model, nFine);
   let meanAllowed = 0;
   for (const s of fine) meanAllowed += s.totalAllowed;
   meanAllowed /= fine.length;
@@ -140,6 +161,25 @@ export function optimize(
     });
   }
   ranked.sort((a, b) => a.score - b.score);
+
+  // --- Governance: actor/critic/memory over the shortlist (lib/agents/selection) ---
+  // The scalar score is a good ranker but it can still headline a plan that drops a required
+  // drug, prices out the patient, or leaves a risk-averse person with a brutal bad year. The
+  // critic catches those. When it HARD-vetoes the raw cheapest, we promote the governed pick
+  // to the front so every downstream view (drivers, the concierge summary) leads with a plan
+  // that is actually safe for this patient. Soft flags leave the order alone.
+  const governance = runSelection({ profile, ranked });
+  if (
+    governance.overridden &&
+    governance.vetoedRawTop.length > 0 &&
+    governance.recommendedPlanId
+  ) {
+    const idx = ranked.findIndex((r) => r.plan.id === governance.recommendedPlanId);
+    if (idx > 0) {
+      const [pick] = ranked.splice(idx, 1);
+      ranked.unshift(pick);
+    }
+  }
 
   // Pareto frontier: expected cost (x) vs bad-year risk = p90 (y).
   const frontier: FrontierPoint[] = ranked.map((r) => ({
@@ -182,5 +222,7 @@ export function optimize(
           ?.meanAnnualSpend ?? 0,
       ageBand: ageBandKey(profile.age),
     },
+    governance,
+    shortlist: curateShortlist(ranked, profile),
   };
 }
