@@ -23,6 +23,7 @@ import {
 import { runSelection } from "@/lib/agents/selection/runtime";
 import type { SelectionResult } from "@/lib/agents/selection/types";
 import { curateShortlist, type CuratedPlan } from "@/lib/sim/diversify";
+import { explainRecommendation, type RecommendationExplanation } from "@/lib/sim/explain";
 
 const RISK_LAMBDA: Record<PatientProfile["riskTolerance"], number> = {
   low: 0.6, // risk-averse: penalize bad-year exposure heavily
@@ -58,6 +59,12 @@ export interface OptimizeResult {
    * holds the full analyzed set (for the frontier and "see all"). See lib/sim/diversify.
    */
   shortlist: CuratedPlan[];
+  /**
+   * The plain-English audit view for the recommended plan: cost waterfall, hard facts vs
+   * assumptions, named scenarios, sensitivity crossovers, and the trust/compliance report.
+   * Undefined only when no plan survived the filters. See lib/sim/explain.
+   */
+  explain?: RecommendationExplanation;
 }
 
 export interface OptimizeOptions {
@@ -224,5 +231,18 @@ export function optimize(
     },
     governance,
     shortlist: curateShortlist(ranked, profile),
+    explain: top
+      ? explainRecommendation({
+          top,
+          ranked,
+          profile,
+          model,
+          fine,
+          premiumNetAnnual: netPremium(top.plan, profile.age, subsidy.aptcMonthly) * 12,
+          modeledMeanSpend: meanAllowed,
+          overrodeRawTop: governance.overridden,
+          overrideReasons: governance.vetoedRawTop.map((v) => v.detail),
+        })
+      : undefined,
   };
 }

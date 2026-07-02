@@ -20,6 +20,8 @@ export interface MedAddition {
   tier: DrugTier;
   fillsPerYear: number;
   name: string;
+  /** Where this maintenance med came from: the patient's own list, or implied by a condition. */
+  source?: "patient" | "condition";
 }
 
 export interface ConditionParam {

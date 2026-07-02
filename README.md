@@ -109,6 +109,49 @@ premium, best HSA) and fills the rest by maximizing spread across the cost/risk 
 per metal. On a real state that turns ~25 ranked plans into 5-6 genuinely different picks,
 each with a one-line reason to exist; "see all" still reveals the full ranking.
 
+## Defensible by construction: audit, trust, uploads, workers
+
+A Monte-Carlo number nobody can inspect is not trustworthy. Every recommendation now ships an
+explanation payload (`lib/sim/explain.ts`), surfaced in the results UI as a plain-English trust
+panel:
+
+- **Auditable cost waterfall** (`lib/sim/waterfall.ts`): the headline number decomposed by the
+  exact mechanism that produced it, `premium + deductible phase + coinsurance + copays - OOP-max
+  cap = expected annual`, reconciling to the cent. Each row is tagged as a hard **fact**, a
+  modeling **assumption**, or a **derived** value. A separate view attributes modeled care to
+  its source (your prescriptions, chronic condition care, planned events, everyday care).
+- **Facts vs assumptions** (`lib/sim/facts.ts`): two labeled columns. Premium, deductible,
+  OOP max, coinsurance, and formulary status are contractual facts from the CMS filing;
+  utilization, allowed amounts, and catastrophic risk are assumptions from AHRQ MEPS, each with
+  its source.
+- **Scenario years** (`lib/sim/scenarios.ts`): normal, lighter-than-expected, high-utilization,
+  a surgery year, a pregnancy year, and the worst-case in-network year (capped at the OOP max),
+  each priced on the real plan.
+- **Sensitivity** (`lib/sim/sensitivity.ts`): using the closed-form OOP curve, it states where a
+  different plan overtakes the winner, anchored at the patient's own modeled spend. It is careful
+  to compare cost at a spend level, which is not the same as the simulation's expected cost.
+- **Trust / compliance** (`lib/trust/`): sources, assumptions, drug-coverage flags, network
+  warnings, a precision statement (the mean's standard error and the CVaR bad-year), what could
+  change the recommendation, and a fixed not-advice guardrail.
+- **Deterministic claim bundles** (`lib/sim/bundles.ts`): diabetes meds, cardiology, therapy,
+  arthritis meds, ER, imaging, a surgery episode, a maternity episode, and an inpatient stay,
+  each a fixed fixture with a hand-checked expected out-of-pocket, so a refactor cannot silently
+  change the cost math.
+
+**Uploads feed the simulation** (`lib/documents/`). EOBs, medical bills, employer plan
+summaries, prescription lists, and prior claim history parse into structured fields (extractor
+interface + a labeled LLM extractor, swappable for a dedicated parser), then flow straight into
+the engine: prescriptions merge into the profile, an employer plan becomes a scoreable `Plan`,
+bill/EOB lines run through the deterministic auditor, denied lines become appeal candidates, and
+year-to-date accumulators can refine the estimate. `POST /api/documents` takes a document's text
+and returns the structured result with its extraction confidence.
+
+**Slow work runs off the request path** (`lib/jobs/`). A provider-agnostic `JobQueue` interface
+with an in-process default runner (retries, idempotency, follow-up enqueue) keeps ingestion,
+formulary refreshes, procedure re-pricing, benchmarks, annual re-checks, and long simulations out
+of request handlers. Business logic lives in plain handler functions, so swapping in BullMQ,
+Inngest, Cloud Tasks, or Temporal later is one adapter, not a rewrite.
+
 ## System design
 
 ```mermaid

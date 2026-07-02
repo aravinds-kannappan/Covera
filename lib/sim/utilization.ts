@@ -3,10 +3,33 @@ import { SERVICE_KEYS } from "@/lib/types";
 import { MEPS, ageBandKey, type MedAddition } from "@/lib/sim/params";
 import { lognormal, normal, poisson, type Rng } from "@/lib/sim/random";
 
+/**
+ * Where a dollar of modeled care came from. This lets the cost waterfall attribute spend to
+ * the things a patient recognizes (my meds, a planned surgery) rather than opaque totals.
+ */
+export type CareSource =
+  | "acute" // frequency-sampled visits/labs/ER/imaging/inpatient (incl. condition-elevated rates)
+  | "chronicCare" // maintenance meds a condition implies (e.g. metformin for diabetes)
+  | "prescriptions" // the patient's own listed prescriptions
+  | "plannedEvents"; // guaranteed events from a planned surgery or delivery
+
+export const CARE_SOURCES: CareSource[] = [
+  "acute",
+  "chronicCare",
+  "prescriptions",
+  "plannedEvents",
+];
+
 /** One simulated year: allowed-dollar amounts grouped by service line. */
 export interface Scenario {
   byService: Partial<Record<ServiceKey, number[]>>;
   totalAllowed: number;
+  /**
+   * Allowed dollars this year attributed to each care source (for the audit waterfall).
+   * Optional so hand-built scenarios (tests, synthetic bundles) stay terse; the sampler
+   * always populates it.
+   */
+  bySource?: Record<CareSource, number>;
 }
 
 export interface UtilizationModel {
@@ -48,26 +71,40 @@ export function buildUtilization(profile: PatientProfile): UtilizationModel {
     if (ep.guaranteedEvents) guaranteed.push(...ep.guaranteedEvents);
   }
 
-  // Chronic meds = condition-implied + patient-listed, deduped by name.
+  // Chronic meds = condition-implied + patient-listed, deduped by name. Source is retained so
+  // the audit waterfall can separate "your prescriptions" from meds a condition implies.
   const meds = new Map<string, MedAddition>();
   for (const c of profile.conditions)
     for (const m of MEPS.conditions[c]?.addMeds ?? []) {
       const k = m.name.toLowerCase();
       if (!meds.has(k) || meds.get(k)!.fillsPerYear < m.fillsPerYear)
-        meds.set(k, m);
+        meds.set(k, { ...m, source: "condition" });
     }
   for (const p of profile.prescriptions) {
     const k = p.name.toLowerCase();
-    const m = { tier: p.tier, fillsPerYear: p.fillsPerYear, name: p.name };
-    if (!meds.has(k) || meds.get(k)!.fillsPerYear < m.fillsPerYear) meds.set(k, m);
+    // A drug the patient explicitly listed is "their prescription" even if a condition also
+    // implies it: keep the patient source (and the larger fill count) so the waterfall
+    // attributes it to them rather than folding it into generic chronic care.
+    const existingFills = meds.get(k)?.fillsPerYear ?? 0;
+    meds.set(k, {
+      tier: p.tier,
+      fillsPerYear: Math.max(p.fillsPerYear, existingFills),
+      name: p.name,
+      source: "patient",
+    });
   }
 
   return { expectedFreq, chronicMeds: [...meds.values()], guaranteed };
 }
 
-function push(scn: Scenario, service: ServiceKey, allowed: number) {
+function emptyBySource(): Record<CareSource, number> {
+  return { acute: 0, chronicCare: 0, prescriptions: 0, plannedEvents: 0 };
+}
+
+function push(scn: Scenario, service: ServiceKey, allowed: number, source: CareSource) {
   (scn.byService[service] ??= []).push(allowed);
   scn.totalAllowed += allowed;
+  if (scn.bySource) scn.bySource[source] += allowed;
 }
 
 /**
@@ -84,7 +121,7 @@ export function sampleScenario(
   model: UtilizationModel,
   frailtyZ?: number,
 ): Scenario {
-  const scn: Scenario = { byService: {}, totalAllowed: 0 };
+  const scn: Scenario = { byService: {}, totalAllowed: 0, bySource: emptyBySource() };
 
   // Person-year frailty: one mean-1, right-skewed multiplier shared across every acute
   // service this year. It makes a year's risk correlated (a bad year is bad across the
@@ -101,14 +138,16 @@ export function sampleScenario(
     if (count === 0) continue;
     const { allowedMedian, allowedSigma } = MEPS.services[s];
     for (let i = 0; i < count; i++)
-      push(scn, s, lognormal(rng, allowedMedian, allowedSigma));
+      push(scn, s, lognormal(rng, allowedMedian, allowedSigma), "acute");
   }
 
-  // Chronic meds: deterministic fills, each with sampled allowed amount.
+  // Chronic meds: deterministic fills, each with sampled allowed amount. Patient-listed drugs
+  // are attributed to "prescriptions"; condition-implied maintenance drugs to "chronicCare".
   for (const m of model.chronicMeds) {
     const { allowedMedian, allowedSigma } = MEPS.services[m.tier];
+    const src: CareSource = m.source === "patient" ? "prescriptions" : "chronicCare";
     for (let i = 0; i < m.fillsPerYear; i++)
-      push(scn, m.tier, lognormal(rng, allowedMedian, allowedSigma));
+      push(scn, m.tier, lognormal(rng, allowedMedian, allowedSigma), src);
   }
 
   // Guaranteed events (planned surgery, delivery, ...).
@@ -119,6 +158,7 @@ export function sampleScenario(
         scn,
         g.service,
         g.allowedOverride ?? lognormal(rng, sp.allowedMedian, sp.allowedSigma),
+        "plannedEvents",
       );
   }
 

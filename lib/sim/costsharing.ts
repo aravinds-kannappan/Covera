@@ -139,3 +139,87 @@ export function adjudicate(plan: Plan, scn: Scenario): Adjudication {
   }
   return { oop, byService, hitOopMax };
 }
+
+/**
+ * A member's out-of-pocket cost for one year, decomposed by the MECHANISM that produced each
+ * dollar: money spent under the deductible (paid at 100%), coinsurance above it, flat copays,
+ * and the amount the out-of-pocket max cap saved in a bad year. This is what makes the cost
+ * waterfall auditable: `deductiblePaid + coinsurancePaid + copayPaid - cappedSavings == oop`.
+ */
+export interface ExplainedAdjudication {
+  oop: number;
+  hitOopMax: boolean;
+  deductiblePaid: number; // spend below the deductible, paid in full by the member
+  coinsurancePaid: number; // the member's coinsurance share above the deductible
+  copayPaid: number; // flat per-visit copays (before and after the deductible)
+  cappedSavings: number; // preCap OOP minus the OOP max: what the cap protected you from
+  byService: Partial<Record<ServiceKey, number>>;
+}
+
+export function adjudicateExplained(plan: Plan, scn: Scenario): ExplainedAdjudication {
+  const byService: Partial<Record<ServiceKey, number>> = {};
+  let deductiblePaid = 0;
+  let coinsurancePaid = 0;
+  let copayPaid = 0;
+  let dedSubjectTotal = 0;
+
+  // Pass 1: services not subject to the deductible (flat copays / straight coinsurance).
+  for (const key in scn.byService) {
+    const service = key as ServiceKey;
+    const amounts = scn.byService[service]!;
+    const cs = shareFor(plan, service);
+    if (cs.afterDeductible) {
+      dedSubjectTotal += sum(amounts);
+    } else if (!cs.noCharge) {
+      let add = 0;
+      if (cs.copay != null) {
+        for (let i = 0; i < amounts.length; i++) add += Math.min(cs.copay, amounts[i]);
+        copayPaid += add;
+      } else if (cs.coinsurance != null) {
+        add = cs.coinsurance * sum(amounts);
+        coinsurancePaid += add;
+      }
+      if (add > 0) byService[service] = (byService[service] ?? 0) + add;
+    }
+  }
+
+  // Pass 2: deductible-subject services. The deductible is allocated proportionally across
+  // them; the portion below it is paid at 100%, the portion above at coinsurance/copay.
+  const aboveDed = Math.max(0, dedSubjectTotal - plan.deductible);
+  const fracAbove = dedSubjectTotal > 0 ? aboveDed / dedSubjectTotal : 0;
+  for (const key in scn.byService) {
+    const service = key as ServiceKey;
+    const cs = shareFor(plan, service);
+    if (!cs.afterDeductible) continue;
+    const amounts = scn.byService[service]!;
+    const svcSum = sum(amounts);
+    const svcAbove = svcSum * fracAbove;
+    const belowDed = svcSum - svcAbove; // paid in full (this is the deductible phase)
+    deductiblePaid += belowDed;
+    let svcPay = belowDed;
+    if (cs.noCharge) {
+      /* free above the deductible */
+    } else if (cs.coinsurance != null) {
+      const c = cs.coinsurance * svcAbove;
+      coinsurancePaid += c;
+      svcPay += c;
+    } else if (cs.copay != null) {
+      const c = cs.copay * amounts.length * fracAbove;
+      copayPaid += c;
+      svcPay += c;
+    }
+    byService[service] = (byService[service] ?? 0) + svcPay;
+  }
+
+  const preCap = deductiblePaid + coinsurancePaid + copayPaid;
+  const oop = Math.min(preCap, plan.oopMax);
+  const cappedSavings = preCap - oop;
+  const hitOopMax = preCap >= plan.oopMax;
+  if (hitOopMax && preCap > 0) {
+    // Scale the per-service attribution down to the capped total so it still sums to oop.
+    const scale = plan.oopMax / preCap;
+    for (const k in byService) byService[k as ServiceKey]! *= scale;
+  }
+
+  return { oop, hitOopMax, deductiblePaid, coinsurancePaid, copayPaid, cappedSavings, byService };
+}

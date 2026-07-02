@@ -17,6 +17,7 @@ import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 import { WhatIfPanel } from "@/components/patient/whatif-panel";
 import { PlanCard } from "@/components/patient/plan-card";
+import { TrustPanel } from "@/components/patient/trust-panel";
 import { FrontierChart } from "@/components/charts/frontier-chart";
 import { Assistant } from "@/components/patient/assistant";
 
@@ -170,6 +171,12 @@ export default function ResultsPage() {
             ) : (
               <Loader2 className="h-8 w-8 animate-spin" />
             )}
+          </div>
+        )}
+
+        {result?.explain && (
+          <div className="mt-6">
+            <TrustPanel explain={result.explain} />
           </div>
         )}
 
