@@ -165,6 +165,13 @@ export async function speechToText(sourceUrl: string): Promise<SttResult> {
   if (!/^https?:\/\//i.test(sourceUrl)) {
     return { text: "", source: "error", note: "A public audio URL is required for transcription." };
   }
+  if (/^https?:\/\/(localhost|127\.0\.0\.1)/i.test(sourceUrl)) {
+    return {
+      text: "",
+      source: "error",
+      note: "ElevenLabs can't reach a localhost URL. Cloud speech-to-text needs a deployed, public origin; use the browser fallback locally.",
+    };
+  }
   try {
     const { data } = await orthRun<unknown>("elevenlabs", "/v1/speech-to-text", {
       model_id: STT_MODEL,
