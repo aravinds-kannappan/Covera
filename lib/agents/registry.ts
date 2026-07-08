@@ -9,6 +9,7 @@ import { draftOutreach } from "@/lib/agents/outreach";
 import { draftAppeal } from "@/lib/agents/appeals";
 import { auditBill, type BillLine } from "@/lib/sim/billaudit";
 import { recheck } from "@/lib/sim/recheck";
+import { webSearch } from "@/lib/agents/websearch";
 
 // The tools the Concierge can call, and a dispatcher that runs them. Some tools are
 // deterministic (the simulation advisor, marketplace, hospital); intake and outreach are
@@ -172,6 +173,19 @@ export const CONCIERGE_TOOLS = [
       additionalProperties: false,
     },
   },
+  {
+    name: "web_search",
+    description:
+      "Look up CURRENT external coverage, formulary, or policy facts that are NOT in Covera's CMS plan dataset: e.g. 'does Cigna cover Ozempic in Texas', a drug's prior-authorization rule, or a carrier's mid-year policy change. Returns a short answer with source links from a live web search. Do NOT use this for plan prices, subsidies, or cost estimates: those must come from recommend_plans, estimate_my_cost, or lookup_procedure_cost. When you use it, tell the patient the answer came from a live web search and mention the source; suggest they confirm with the issuer.",
+    input_schema: {
+      type: "object",
+      properties: {
+        query: { type: "string", description: "A specific, self-contained coverage/policy question." },
+      },
+      required: ["query"],
+      additionalProperties: false,
+    },
+  },
 ] as const;
 
 export interface DispatchOutput {
@@ -295,6 +309,12 @@ export async function dispatchTool(
     case "recheck_savings": {
       const res = recheck(thread.profile as PatientProfile, plans, thread.selectedPlanId);
       return { result: res, meta: { kind: "recheck", data: res } };
+    }
+    case "web_search": {
+      // Live external lookup (Tavily). Returned to the model only, with no rich meta panel, so
+      // the concierge weaves the answer and its source into a normal reply and cites it.
+      const res = await webSearch(String(input.query ?? ""));
+      return { result: res };
     }
     default:
       return { result: { error: `Unknown tool ${name}` } };

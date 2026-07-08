@@ -16,7 +16,7 @@ export interface InboundMessage {
  * on-page console; the LoopMessage channel sends real blue-bubble iMessage.
  */
 export interface MessageChannel {
-  readonly name: "sandbox" | "loopmessage";
+  readonly name: "sandbox" | "loopmessage" | "agentphone";
   /** True when the channel has the credentials it needs to actually deliver. */
   ready(): boolean;
   /** Verify an inbound webhook request is authentic (signature/secret check). */

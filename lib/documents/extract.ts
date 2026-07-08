@@ -21,7 +21,7 @@ export interface DocumentExtractor {
   extract(kind: DocumentKind, text: string): Promise<DocumentParse>;
 }
 
-const SCHEMA_HINT: Record<DocumentKind, string> = {
+export const SCHEMA_HINT: Record<DocumentKind, string> = {
   eob: `{ "issuer"?, "planName"?, "memberId"?, "claimNumber"?, "serviceStart"?, "serviceEnd"?, "deductibleMetToDate"?: number, "oopMetToDate"?: number, "lines": [ { "description", "serviceKey"?, "cptOrHcpcs"?, "dateOfService"?, "billed"?: number, "allowed"?: number, "planPaid"?: number, "memberResponsibility"?: number, "denied"?: boolean, "denialReason"? } ] }`,
   medicalBill: `{ "provider"?, "serviceDate"?, "totalBilled"?: number, "lines": [ { "description", "serviceKey"?, "cptOrHcpcs"?, "billed"?: number, "allowed"?: number, "memberResponsibility"?: number } ] }`,
   employerPlan: `{ "issuer"?, "planName"?, "metal"?, "employeeMonthlyPremium"?: number, "deductible"?: number, "oopMax"?: number, "coinsurance"?: number (0..1), "hsaEligible"?: boolean, "copays"?: { serviceKey: number } }`,

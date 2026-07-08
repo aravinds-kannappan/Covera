@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import type { DocumentKind } from "@/lib/documents/types";
 import { documentExtractor } from "@/lib/documents/extract";
+import { scrapeGraphExtractUrl, scrapeGraphReady } from "@/lib/documents/scrapegraph";
 import {
   auditDocument,
   deniedLines,
@@ -19,9 +20,9 @@ const KINDS: DocumentKind[] = ["eob", "medicalBill", "employerPlan", "prescripti
 // contract does not change. Everything is labeled with its extraction confidence.
 
 export async function POST(req: NextRequest) {
-  let body: { kind?: string; text?: string };
+  let body: { kind?: string; text?: string; url?: string };
   try {
-    body = (await req.json()) as { kind?: string; text?: string };
+    body = (await req.json()) as { kind?: string; text?: string; url?: string };
   } catch {
     return Response.json({ error: "Invalid request body" }, { status: 400 });
   }
@@ -30,8 +31,15 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: `kind must be one of ${KINDS.join(", ")}` }, { status: 400 });
   }
   const text = String(body.text ?? "");
+  const url = String(body.url ?? "").trim();
 
-  const parse = await documentExtractor.extract(kind, text);
+  // When the caller supplies a link and ScrapeGraphAI is configured, extract straight from the
+  // page. Otherwise use the local text/PDF extractor. Both return an identical DocumentParse,
+  // so everything downstream is unchanged.
+  const parse =
+    url && scrapeGraphReady()
+      ? await scrapeGraphExtractUrl(kind, url)
+      : await documentExtractor.extract(kind, text);
 
   // Best next action for each document type, using the extracted structure.
   let audit = null;

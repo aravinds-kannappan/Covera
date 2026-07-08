@@ -2,6 +2,7 @@ import type { Thread, OutreachMeta } from "@/lib/agents/types";
 import type { PatientProfile } from "@/lib/types";
 import { MODELS, getAnthropic } from "@/lib/anthropic/client";
 import { sendEmail, emailConfigured } from "@/lib/outreach/email";
+import { verificationEnabled, isContactVerified } from "@/lib/trust/verify";
 
 // The Outreach sub-agent. Once a patient finalizes a plan, the concierge can ask this
 // agent to compose a professional message to the employer's HR or to a hospital/provider
@@ -69,10 +70,19 @@ export async function draftOutreach(params: {
   }
 
   let sent = false;
+  let deliveryNote: string | undefined;
   if (send && to && emailConfigured()) {
-    const res = await sendEmail({ to, subject, body });
-    sent = res.sent;
+    // Identity gate: when verification is enabled, only send on behalf of a member whose
+    // identity was verified. When verification is not configured, behavior is unchanged.
+    if (verificationEnabled() && !(await isContactVerified(thread.id))) {
+      deliveryNote =
+        "Held back: the member's identity is not verified yet. Verify an email at /api/verify before sending on their behalf.";
+    } else {
+      const res = await sendEmail({ to, subject, body });
+      sent = res.sent;
+      if (!res.sent && res.error) deliveryNote = res.error;
+    }
   }
 
-  return { target, to, subject, body, sent };
+  return { target, to, subject, body, sent, note: deliveryNote };
 }

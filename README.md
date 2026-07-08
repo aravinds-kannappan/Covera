@@ -255,6 +255,29 @@ gracefully when one is absent (exactly like the existing `ANTHROPIC_API_KEY` gua
 | **Upstash Redis** `UPSTASH_REDIS_REST_URL` / `_TOKEN` | Optional | Conversation memory that survives across texts and serverless cold starts (else in-memory) | upstash.com |
 | **LoopMessage** `LOOPMESSAGE_*` + `CHANNEL_PROVIDER=loopmessage` | Optional | Real blue-bubble iMessage delivery (else the on-page sandbox console) | loopmessage.com |
 | **Resend** `RESEND_API_KEY` / `OUTREACH_FROM_EMAIL` | Optional | Actually sending outreach to employers/hospitals (else draft-only preview) | resend.com |
+| **Orthogonal** `ORTHOGONAL_API_KEY` | Optional | Omnichannel + live data + identity: AgentPhone SMS, link-based document extraction, live web search, email identity verification (see below) | orthogonal gateway |
+
+### Live data and omnichannel (Orthogonal)
+
+One key (`ORTHOGONAL_API_KEY`) unlocks several capabilities through the Orthogonal Run API,
+each following Covera's existing rule: dormant with no key, and a paid call only ever fires on
+an explicit action (never on page load, in the demo, or during a build). All calls flow through
+one gateway helper (`lib/orthogonal/client.ts`) that holds the key, caches results, and enforces
+an optional soft spend cap (`ORTH_MAX_SPEND_USD`).
+
+| Capability | How to use it | Cost | Seam |
+|---|---|---|---|
+| **AgentPhone SMS** | `tsx scripts/agentphone/setup.ts` once, set `AGENTPHONE_AGENT_ID` + `CHANNEL_PROVIDER=agentphone` | $0.03/SMS sent (inbound free); $0.005 one-time agent create | `lib/channel/agentphone.ts` (same `MessageChannel` contract as LoopMessage) |
+| **AgentPhone voice** | Scaffolded, off. Set `ORTH_ENABLE_VOICE=true` to enable outbound calls | $0.10/call when enabled, else $0 | `lib/channel/agentphone.ts` (`placeVoiceCall`) |
+| **ScrapeGraphAI extract** | `POST /api/documents` with `{ kind, url }` instead of `text` | $0.025 per link (only on a URL; the PDF/text path stays on Anthropic) | `lib/documents/scrapegraph.ts` (same `DocumentParse` as the text extractor) |
+| **Tavily web search** | The concierge's `web_search` tool, for coverage/policy facts outside the CMS dataset | $0.01/query, cached | `lib/agents/websearch.ts` |
+| **Didit email verify** | `POST /api/verify` (`send`, then `check`); verified members can be messaged on their behalf | $0.04 to send a code, check is free | `lib/trust/verify.ts` gating `lib/agents/outreach.ts` |
+| **ScrapeGraphAI monitor** | Opt-in: `tsx scripts/monitor/setup.ts`; ticks post to `/api/monitor/webhook` | $0 until you register monitors | `lib/jobs/monitor.ts` |
+
+Rankings, subsidies, and cost estimates always come from the deterministic simulation over real
+CMS plans. Web search results are labeled as live web lookups and are never blended with
+simulated figures. Phone OTP, database validation, and AML screening are left as disabled,
+documented scaffolds in `lib/trust/verify.ts`.
 
 ```bash
 npm test          # engine + agent unit tests

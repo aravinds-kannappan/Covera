@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { sandboxChannel } from "@/lib/channel/sandbox";
 import { loopMessageChannel } from "@/lib/channel/loopmessage";
+import { agentPhoneChannel } from "@/lib/channel/agentphone";
 import { normalizeId } from "@/lib/store/conversations";
 
 describe("sandbox channel inbound parsing", () => {
@@ -37,6 +38,28 @@ describe("loopmessage channel", () => {
   it("accepts the webhook when no secret is configured (dev)", () => {
     const req = new Request("https://x/api/sms/webhook", { method: "POST" });
     expect(loopMessageChannel.verify(req, "{}".toString())).toBe(true);
+  });
+});
+
+describe("agentphone channel", () => {
+  it("parses an inbound SMS across field-name variants", () => {
+    expect(
+      agentPhoneChannel.parseInbound(
+        JSON.stringify({ type: "message.received", from_number: "+15551234567", body: "what plans do I have?" }),
+      ),
+    ).toEqual({ from: "+15551234567", text: "what plans do I have?" });
+    expect(
+      agentPhoneChannel.parseInbound(JSON.stringify({ from: "+15550000000", text: "hi" })),
+    ).toEqual({ from: "+15550000000", text: "hi" });
+  });
+  it("ignores outbound/status/voice events so they never re-enter the loop", () => {
+    expect(agentPhoneChannel.parseInbound(JSON.stringify({ type: "message.sent", from: "+1", text: "x" }))).toBeNull();
+    expect(agentPhoneChannel.parseInbound(JSON.stringify({ type: "call.completed", from: "+1", text: "x" }))).toBeNull();
+    expect(agentPhoneChannel.parseInbound("not json")).toBeNull();
+  });
+  it("reports not-ready without a key/agent id (falls back to sandbox)", () => {
+    expect(agentPhoneChannel.ready()).toBe(false);
+    expect(agentPhoneChannel.verify(new Request("https://x"), "{}")).toBe(true); // no secret configured
   });
 });
 

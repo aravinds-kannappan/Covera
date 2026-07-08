@@ -64,6 +64,8 @@ export interface OutreachMeta {
   subject: string;
   body: string;
   sent: boolean;
+  /** Optional delivery note, e.g. why a real send was held back (identity not verified). */
+  note?: string;
 }
 
 /** A procedure's cost on the patient's own plan (Use). */
@@ -119,7 +121,7 @@ export interface ConvoMessage {
 
 export interface Thread {
   id: string; // E.164 phone number, or a demo session id
-  channel: "loopmessage" | "sandbox";
+  channel: "loopmessage" | "sandbox" | "agentphone";
   profile: Partial<PatientProfile>;
   /**
    * Free-form, human context the patient shares that doesn't fit the structured profile
