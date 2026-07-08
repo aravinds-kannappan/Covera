@@ -3,10 +3,11 @@ import { Check as CheckIcon, X as XIcon } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Badge } from "@/components/ui/badge";
-import { loadAccuracyReport, loadLlmBenchmark, loadSafetyReport } from "@/lib/benchmark/load";
+import { loadAccuracyReport, loadSafetyReport } from "@/lib/benchmark/load";
 import type { Check } from "@/lib/benchmark/types";
 import { DistributionExplorer } from "@/components/benchmark/distribution-explorer";
 import { BundleExplorer } from "@/components/benchmark/bundle-explorer";
+import { LiveEval } from "@/components/benchmark/live-eval";
 
 export const metadata: Metadata = {
   title: "Covera: Accuracy & model benchmarks",
@@ -55,7 +56,6 @@ function CheckGroup({ title, checks }: { title: string; checks: Check[] }) {
 
 export default function BenchmarkPage() {
   const accuracy = loadAccuracyReport();
-  const llm = loadLlmBenchmark();
   const safety = loadSafetyReport();
 
   return (
@@ -67,9 +67,10 @@ export default function BenchmarkPage() {
           How accurate is Covera, really?
         </h1>
         <p className="mt-3 max-w-2xl text-lg text-slate-600">
-          Three honest scorecards. How the Monte-Carlo simulation holds up against the published MEPS
-          aggregates and the ACA subsidy formula. Whether the recommendation is safe and aligned when
-          a model is in the loop. And how candidate models compare on faithfulness, tool use, and cost.
+          Three scorecards, each measured against real data. How the Monte-Carlo simulation holds up
+          against the published MEPS aggregates and the ACA subsidy formula. Whether the recommendation
+          stays safe when a model is in the loop. And how the model itself performs, scored live by a
+          judge agent.
         </p>
 
         {/* ---- Alignment & Safety ---- */}
@@ -97,7 +98,7 @@ export default function BenchmarkPage() {
             <>
               <div className="mt-5 grid gap-5 lg:grid-cols-3">
                 <CheckGroup title="Governed selection (the critic)" checks={safety.governance} />
-                <CheckGroup title="Honest, risk-adjusted advice" checks={safety.alignment} />
+                <CheckGroup title="Risk-adjusted advice" checks={safety.alignment} />
                 <CheckGroup title="Reproducible &amp; consistent" checks={safety.determinism} />
               </div>
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -110,7 +111,7 @@ export default function BenchmarkPage() {
                   red-team hands the critic those exact unsafe picks and confirms it blocks every one.
                 </p>
                 <p className="text-sm leading-relaxed text-slate-500">
-                  <span className="font-medium text-slate-700">Read honestly.</span> Organic critic
+                  <span className="font-medium text-slate-700">The nuance.</span> Organic critic
                   vetoes over the population were {safety.vetoesIssued}: the risk-adjusted objective
                   already avoids unsafe headlines, so the critic rarely has to fire. That is the point of
                   the two-layer design, and the adversarial suite is what proves the backstop still works
@@ -124,7 +125,7 @@ export default function BenchmarkPage() {
         {/* ---- Simulation accuracy ---- */}
         <section className="mt-12">
           <div className="flex flex-wrap items-end justify-between gap-3">
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-900">Simulation accuracy</h2>
+            <h2 className="font-serif text-2xl font-medium tracking-tight text-slate-900">Simulation accuracy</h2>
             {accuracy && (
               <span className="text-sm text-slate-500">
                 {accuracy.summary.passed}/{accuracy.summary.total} checks within tolerance ·{" "}
@@ -143,7 +144,7 @@ export default function BenchmarkPage() {
                 <CheckGroup title="ACA subsidy formula" checks={accuracy.subsidy} />
               </div>
               <p className="mt-4 max-w-3xl text-sm leading-relaxed text-slate-500">
-                Read honestly: the engine reproduces adult age-band means, the ACA subsidy math, and
+                The engine reproduces adult age-band means, the ACA subsidy math, and
                 (after adding a{" "}
                 <span className="font-medium text-slate-700">person-year frailty term</span> that
                 correlates a year&apos;s care across service lines) the real{" "}
@@ -162,53 +163,18 @@ export default function BenchmarkPage() {
           </div>
         </section>
 
-        {/* ---- LLM model benchmark ---- */}
+        {/* ---- Model quality, judged live ---- */}
         <section className="mt-14">
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-900">LLM model benchmark</h2>
-            {llm && (
-              <span className="text-sm text-slate-500">
-                {llm.suiteSize} questions · judged by {llm.judgeModel}
-              </span>
-            )}
-          </div>
-
-          {!llm ? (
-            <NotRun cmd="npm run benchmark" what="the model benchmark (needs ANTHROPIC_API_KEY)" />
-          ) : (
-            <div className="mt-5 overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-slate-200 text-left text-xs uppercase tracking-wider text-slate-400">
-                    <th className="px-4 py-3 font-medium">Model</th>
-                    <th className="px-4 py-3 font-medium">Faithfulness</th>
-                    <th className="px-4 py-3 font-medium">Tool accuracy</th>
-                    <th className="px-4 py-3 font-medium">Quality</th>
-                    <th className="px-4 py-3 font-medium">Latency</th>
-                    <th className="px-4 py-3 font-medium">Cost / 100 convos</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {llm.results.map((r) => (
-                    <tr key={r.model} className="border-b border-slate-100 last:border-0">
-                      <td className="px-4 py-3 font-medium text-slate-900">{r.label}</td>
-                      <td className="px-4 py-3 tabular-nums">{Math.round(r.faithfulness * 100)}%</td>
-                      <td className="px-4 py-3 tabular-nums">{Math.round(r.toolAccuracy * 100)}%</td>
-                      <td className="px-4 py-3 tabular-nums">{Math.round(r.quality * 100)}%</td>
-                      <td className="px-4 py-3 tabular-nums">{r.latencySec}s</td>
-                      <td className="px-4 py-3 tabular-nums">${r.costPer100.toFixed(2)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-          <p className="mt-4 max-w-3xl text-sm leading-relaxed text-slate-500">
-            Faithfulness = share of dollar figures in the reply that match a real simulated number
-            (not hallucinated). Tool accuracy = share of questions where the model called the expected
-            tool. Quality = LLM-as-judge rubric. Cost uses real token usage × published per-model
-            pricing. The harness lives in <code className="text-slate-700">scripts/benchmark/</code>.
+          <h2 className="font-serif text-2xl font-medium tracking-tight text-slate-900">
+            Model quality, judged live
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-500">
+            Faithfulness is the share of dollar figures in a reply that match a real simulated number
+            instead of a hallucination. Tool accuracy is whether the model reached for the right tool.
+            The rest is scored by a separate judge agent. Press run to evaluate the current model
+            against the suite. Each question runs on its own, so you watch the results come in.
           </p>
+          <LiveEval />
         </section>
       </main>
       <SiteFooter />
