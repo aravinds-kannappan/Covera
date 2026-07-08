@@ -23,10 +23,10 @@ export function WhatIfPanel({
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between">
         <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-          <Wand2 className="h-4 w-4 text-emerald-600" /> Play with your scenario
+          <Wand2 className="h-4 w-4 text-indigo-600" /> Play with your scenario
         </h3>
         {recalculating && (
-          <span className="flex items-center gap-1.5 text-xs text-emerald-600">
+          <span className="flex items-center gap-1.5 text-xs text-indigo-600">
             <Loader2 className="h-3.5 w-3.5 animate-spin" /> recalculating
           </span>
         )}
@@ -78,7 +78,7 @@ export function WhatIfPanel({
           step={1000}
           value={profile.annualIncome}
           onChange={(e) => onPatch({ annualIncome: Number(e.target.value) })}
-          className="w-full accent-emerald-600"
+          className="w-full accent-indigo-600"
         />
       </Field>
 

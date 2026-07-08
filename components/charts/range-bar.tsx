@@ -23,7 +23,7 @@ export function RangeBar({
     <div className="w-full">
       <div className="relative h-2.5 w-full rounded-full bg-slate-100">
         <div
-          className="absolute top-0 h-2.5 rounded-full bg-emerald-200"
+          className="absolute top-0 h-2.5 rounded-full bg-indigo-200"
           style={{ left: `${left}%`, width: `${Math.max(1, width)}%` }}
         />
         <div

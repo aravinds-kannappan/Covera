@@ -38,7 +38,7 @@ function ModeTab({
       aria-pressed={active}
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
-        active ? "bg-emerald-600 text-white shadow-sm" : "text-slate-600 hover:bg-slate-100",
+        active ? "bg-indigo-600 text-white shadow-sm" : "text-slate-600 hover:bg-slate-100",
       )}
     >
       <Icon className="h-4 w-4" />

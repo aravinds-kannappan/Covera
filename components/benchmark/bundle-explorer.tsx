@@ -68,7 +68,7 @@ export function BundleExplorer() {
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-          <FlaskConical className="h-4 w-4 text-emerald-600" /> What real care costs, plan by plan
+          <FlaskConical className="h-4 w-4 text-indigo-600" /> What real care costs, plan by plan
         </h3>
         <Field label="" className="w-44">
           <Select value={state} onChange={(e) => setState(e.target.value)}>
@@ -128,7 +128,7 @@ export function BundleExplorer() {
                           </span>
                           <span className="mt-1 h-1.5 w-full max-w-[72px] overflow-hidden rounded-full bg-slate-100">
                             <span
-                              className="block h-1.5 rounded-full bg-emerald-500/70"
+                              className="block h-1.5 rounded-full bg-indigo-500/70"
                               style={{ width: `${(cell.oop / maxOop) * 100}%` }}
                             />
                           </span>

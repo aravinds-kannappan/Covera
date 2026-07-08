@@ -99,12 +99,12 @@ export function LiveConsole() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Text Covera anything…"
-            className="h-9 flex-1 rounded-full border border-slate-200 bg-slate-50 px-3.5 text-[13px] outline-none focus:border-emerald-400"
+            className="h-9 flex-1 rounded-full border border-slate-200 bg-slate-50 px-3.5 text-[13px] outline-none focus:border-indigo-400"
           />
           <button
             type="submit"
             disabled={busy || !input.trim()}
-            className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-sky-500 to-blue-600 text-white disabled:opacity-40"
+            className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 text-white disabled:opacity-40"
             aria-label="Send"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
@@ -127,7 +127,7 @@ export function LiveConsole() {
               key={s}
               onClick={() => send(s)}
               disabled={busy}
-              className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:border-emerald-300 hover:bg-emerald-50 disabled:opacity-50"
+              className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:border-indigo-300 hover:bg-indigo-50 disabled:opacity-50"
             >
               {s}
             </button>

@@ -146,7 +146,7 @@ export function DocumentUploader() {
             <span className="font-medium text-slate-700">Extraction confidence</span>
             <span className="h-1.5 w-24 overflow-hidden rounded-full bg-slate-100">
               <span
-                className={`block h-1.5 rounded-full ${conf >= 60 ? "bg-emerald-500" : conf > 0 ? "bg-amber-500" : "bg-slate-300"}`}
+                className={`block h-1.5 rounded-full ${conf >= 60 ? "bg-indigo-500" : conf > 0 ? "bg-amber-500" : "bg-slate-300"}`}
                 style={{ width: `${conf}%` }}
               />
             </span>
@@ -167,7 +167,7 @@ export function DocumentUploader() {
             <div className="rounded-xl border border-slate-200 p-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-slate-800">Bill audit</span>
-                <span className={`text-sm font-bold ${result.audit.potentialOvercharge > 0 ? "text-rose-600" : "text-emerald-700"}`}>
+                <span className={`text-sm font-bold ${result.audit.potentialOvercharge > 0 ? "text-rose-600" : "text-indigo-700"}`}>
                   {result.audit.potentialOvercharge > 0 ? `${usd(result.audit.potentialOvercharge)} to question` : "no obvious overcharge"}
                 </span>
               </div>
@@ -208,7 +208,7 @@ export function DocumentUploader() {
           {/* Employer plan -> comparable plan */}
           {result.employerPlan && (
             <div className="flex items-center gap-2 rounded-xl border border-slate-200 p-3 text-sm text-slate-700">
-              <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+              <CheckCircle2 className="h-4 w-4 text-indigo-600" />
               Parsed <span className="font-medium">{result.employerPlan.marketingName}</span>: deductible{" "}
               {usd(result.employerPlan.deductible)}, OOP max {usd(result.employerPlan.oopMax)}. Ready to
               compare against the marketplace.

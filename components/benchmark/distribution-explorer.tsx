@@ -92,7 +92,7 @@ export function DistributionExplorer() {
         </div>
         <button
           onClick={() => setSeed((s) => s + 1)}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600 hover:border-emerald-300 hover:text-emerald-700"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600 hover:border-indigo-300 hover:text-indigo-700"
         >
           <RefreshCw className="h-3.5 w-3.5" /> Resample
         </button>
@@ -106,7 +106,7 @@ export function DistributionExplorer() {
             className={
               "rounded-full px-3 py-1.5 text-xs font-medium transition-colors " +
               (i === bandIdx
-                ? "bg-emerald-600 text-white"
+                ? "bg-indigo-600 text-white"
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200")
             }
           >
@@ -156,7 +156,7 @@ export function DistributionExplorer() {
               width={Math.max(0.5, barW - 1)}
               height={h}
               rx={1.5}
-              className="fill-emerald-500"
+              className="fill-indigo-500"
               opacity={0.85}
             />
           );

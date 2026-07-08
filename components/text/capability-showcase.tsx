@@ -79,14 +79,14 @@ const CAPABILITIES: Capability[] = [
 ];
 
 const toneText: Record<Capability["tone"], string> = {
-  emerald: "bg-emerald-50 text-emerald-600",
-  sky: "bg-sky-50 text-sky-600",
+  emerald: "bg-indigo-50 text-indigo-600",
+  sky: "bg-indigo-50 text-indigo-600",
   violet: "bg-violet-50 text-violet-600",
   amber: "bg-amber-50 text-amber-600",
 };
 const chipTone: Record<Result["tone"], string> = {
-  emerald: "border-emerald-200 bg-emerald-50",
-  sky: "border-sky-200 bg-sky-50",
+  emerald: "border-indigo-200 bg-indigo-50",
+  sky: "border-indigo-200 bg-indigo-50",
   violet: "border-violet-200 bg-violet-50",
   amber: "border-amber-200 bg-amber-50",
 };
@@ -98,7 +98,7 @@ function MiniBubble({ agent, text }: Bubble) {
         className={cn(
           "max-w-[86%] rounded-2xl px-3 py-1.5 text-[12.5px] leading-snug shadow-sm",
           agent
-            ? "rounded-bl-md bg-gradient-to-br from-sky-500 to-blue-600 text-white"
+            ? "rounded-bl-md bg-gradient-to-br from-indigo-500 to-indigo-600 text-white"
             : "rounded-br-md bg-slate-100 text-slate-800",
         )}
       >
@@ -143,7 +143,7 @@ function CapabilityRow({ cap, index }: { cap: Capability; index: number }) {
           </div>
           <div className="flex items-center gap-2 border-t border-slate-100 bg-white p-2.5">
             <div className="h-7 flex-1 rounded-full bg-slate-100" />
-            <div className="h-7 w-7 rounded-full bg-gradient-to-br from-sky-500 to-blue-600" />
+            <div className="h-7 w-7 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600" />
           </div>
         </PhoneFrame>
       </div>

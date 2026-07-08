@@ -58,7 +58,7 @@ export function FeaturePanel({
                       type: "button" as const,
                       onClick: () => onAsk(`Be honest: is ${p.name} the right call for me, and why?`),
                       className:
-                        "w-full text-left rounded-xl border border-slate-100 bg-slate-50/70 p-2.5 transition-colors hover:border-emerald-300 hover:bg-emerald-50/60",
+                        "w-full text-left rounded-xl border border-slate-100 bg-slate-50/70 p-2.5 transition-colors hover:border-indigo-300 hover:bg-indigo-50/60",
                     }
                   : { className: "rounded-xl border border-slate-100 bg-slate-50/70 p-2.5" })}
               >
@@ -76,13 +76,13 @@ export function FeaturePanel({
                     <div>{p.probHitOOPMax}% hit OOP max</div>
                   </div>
                 </div>
-                {onAsk && <div className="mt-1.5 text-[10px] font-medium text-emerald-600">Tap to ask why →</div>}
+                {onAsk && <div className="mt-1.5 text-[10px] font-medium text-indigo-600">Tap to ask why →</div>}
               </Tag>
             );
           })}
         </div>
         {subsidyMonthly > 0 && (
-          <p className="mt-2 text-[11px] text-emerald-700">Includes {usd(subsidyMonthly)}/mo subsidy.</p>
+          <p className="mt-2 text-[11px] text-indigo-700">Includes {usd(subsidyMonthly)}/mo subsidy.</p>
         )}
       </Panel>
     );
@@ -159,7 +159,7 @@ export function FeaturePanel({
             ))}
           </div>
         ) : (
-          <p className="mt-2 text-[11px] text-emerald-700">{d.summary.join(" · ")}</p>
+          <p className="mt-2 text-[11px] text-indigo-700">{d.summary.join(" · ")}</p>
         )}
       </Panel>
     );
@@ -190,7 +190,7 @@ export function FeaturePanel({
         </div>
         <p className="mt-2 text-[11px] text-slate-500">{d.reason}</p>
         {d.shouldSwitch && d.annualSavings != null && (
-          <p className="mt-1 text-[11px] font-medium text-emerald-700">
+          <p className="mt-1 text-[11px] font-medium text-indigo-700">
             Switch to {d.bestPlanName} → save {usd(d.annualSavings)}/yr
           </p>
         )}
@@ -229,7 +229,7 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
 function Stat({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
     <div className="rounded-xl border border-slate-100 bg-slate-50/70 px-2 py-1.5">
-      <div className={`text-sm font-semibold tabular-nums ${highlight ? "text-emerald-700" : "text-slate-900"}`}>
+      <div className={`text-sm font-semibold tabular-nums ${highlight ? "text-indigo-700" : "text-slate-900"}`}>
         {value}
       </div>
       <div className="text-[10px] uppercase tracking-wide text-slate-400">{label}</div>

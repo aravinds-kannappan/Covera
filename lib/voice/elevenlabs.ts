@@ -129,11 +129,13 @@ export async function textToSpeech(text: string, persona: VoicePersona = "concie
   const cacheKey = `covera:tts:${cfg.voiceId}:${TTS_MODEL}:${sha1(JSON.stringify(cfg.settings) + clean)}`;
   try {
     const audioBase64 = await orthCached<string>(cacheKey, 60 * 60 * 24 * 7, async () => {
+      // Body per the ElevenLabs TTS contract. output_format is a query param upstream, so it is
+      // deliberately not in the body (the gateway rejects unexpected body fields); the default is
+      // mp3, matching the audio/mpeg mime above.
       const { data } = await orthRun<unknown>("elevenlabs", `/v1/text-to-speech/${cfg.voiceId}/stream`, {
         text: clean,
         model_id: TTS_MODEL,
         voice_settings: cfg.settings,
-        output_format: "mp3_44100_128",
       });
       return pickAudio(data);
     });
@@ -150,17 +152,20 @@ export interface SttResult {
   note?: string;
 }
 
-/** Transcribe base64-encoded audio. Never throws: degrades to an empty, labeled result. */
-export async function speechToText(audioBase64: string, mime = "audio/webm"): Promise<SttResult> {
+/**
+ * Transcribe base64-encoded audio. The Orthogonal ElevenLabs STT contract wants the audio bytes in
+ * a `file` field (base64) plus a required `model_id`, and rejects `audio_base64`/`mime_type`. Never
+ * throws: degrades to an empty, labeled result.
+ */
+export async function speechToText(audioBase64: string): Promise<SttResult> {
   if (!orthReady()) {
     return { text: "", source: "unconfigured", note: "Transcription is not configured (ORTHOGONAL_API_KEY missing)." };
   }
   if (!audioBase64) return { text: "", source: "error", note: "No audio provided." };
   try {
     const { data } = await orthRun<unknown>("elevenlabs", "/v1/speech-to-text", {
-      audio_base64: audioBase64,
-      mime_type: mime,
       model_id: STT_MODEL,
+      file: audioBase64,
       diarize: false,
     });
     const text = pickText(data);

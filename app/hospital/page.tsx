@@ -59,7 +59,7 @@ export default function HospitalPage() {
         <Badge tone="violet">
           <Stethoscope className="h-3.5 w-3.5" /> For hospitals
         </Badge>
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+        <h1 className="mt-4 font-serif text-3xl font-medium tracking-tight text-slate-900 sm:text-4xl">
           Cost clarity at the front desk
         </h1>
         <p className="mt-3 max-w-2xl text-lg text-slate-600">
@@ -112,7 +112,7 @@ export default function HospitalPage() {
               <>
                 <div className="mt-5 grid grid-cols-3 gap-3 text-center">
                   {[
-                    { k: "Cheapest plan", v: usd(data.stats.min), c: "text-emerald-700" },
+                    { k: "Cheapest plan", v: usd(data.stats.min), c: "text-indigo-700" },
                     { k: "Median", v: usd(data.stats.median), c: "text-slate-900" },
                     { k: "Costliest plan", v: usd(data.stats.max), c: "text-rose-600" },
                   ].map((s) => (
@@ -270,7 +270,7 @@ function CardReader() {
                 </div>
                 <div className="rounded-lg bg-white p-2 ring-1 ring-slate-200">
                   <p className="text-[10px] uppercase tracking-wide text-slate-400">If deductible met</p>
-                  <p className="text-lg font-bold text-emerald-700">{usd(quote.est.afterDeductible)}</p>
+                  <p className="text-lg font-bold text-indigo-700">{usd(quote.est.afterDeductible)}</p>
                 </div>
               </div>
             )}

@@ -58,7 +58,7 @@ export function PlanChoiceModal({
           {meta.topPlans.map((p, i) => (
             <div
               key={`${p.name}-${i}`}
-              className="rounded-2xl border border-slate-200 p-4 transition-colors hover:border-emerald-300 hover:bg-emerald-50/40"
+              className="rounded-2xl border border-slate-200 p-4 transition-colors hover:border-indigo-300 hover:bg-indigo-50/40"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">

@@ -36,8 +36,8 @@ export function EnrollForm() {
 
   if (state === "done") {
     return (
-      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
-        <p className="text-sm font-medium text-emerald-800">
+      <div className="rounded-2xl border border-indigo-200 bg-indigo-50 p-4">
+        <p className="text-sm font-medium text-indigo-800">
           {detail.delivered
             ? "Sent! Check Messages: Covera just texted you. 📱"
             : "You're on the list. Real texting turns on when an iMessage relay is connected: meanwhile, try the live agent just below. 👇"}
@@ -58,12 +58,12 @@ export function EnrollForm() {
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           placeholder="(555) 123-4567"
-          className="h-11 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm outline-none focus:border-emerald-400"
+          className="h-11 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm outline-none focus:border-indigo-400"
         />
         <button
           type="submit"
           disabled={state === "loading" || !phone.trim()}
-          className="h-11 rounded-xl bg-emerald-600 px-5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-emerald-500 disabled:opacity-50"
+          className="h-11 rounded-xl bg-indigo-600 px-5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-500 disabled:opacity-50"
         >
           {state === "loading" ? "Texting…" : "Text me"}
         </button>
@@ -73,7 +73,7 @@ export function EnrollForm() {
           type="checkbox"
           checked={optIn}
           onChange={(e) => setOptIn(e.target.checked)}
-          className="mt-0.5 accent-emerald-600"
+          className="mt-0.5 accent-indigo-600"
         />
         <span>I agree to receive texts from Covera. iPhone/iMessage users for now. Decision support, not insurance advice.</span>
       </label>

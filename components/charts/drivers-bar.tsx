@@ -18,7 +18,7 @@ export function DriversBar({
           </span>
           <div className="h-2.5 w-full rounded-full bg-slate-100">
             <div
-              className="h-2.5 rounded-full bg-gradient-to-r from-emerald-400 to-teal-500"
+              className="h-2.5 rounded-full bg-gradient-to-r from-indigo-400 to-indigo-500"
               style={{ width: `${(d.oop / max) * 100}%` }}
             />
           </div>

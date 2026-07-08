@@ -53,7 +53,7 @@ export function PlanCard({
     <div
       className={cn(
         "rounded-2xl border bg-white shadow-sm transition-all",
-        rank === 1 ? "border-emerald-300 ring-1 ring-emerald-200" : "border-slate-200",
+        rank === 1 ? "border-indigo-300 ring-1 ring-indigo-200" : "border-slate-200",
       )}
     >
       <button
@@ -63,7 +63,7 @@ export function PlanCard({
         <div
           className={cn(
             "mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full text-sm font-bold",
-            rank === 1 ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-500",
+            rank === 1 ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-500",
           )}
         >
           {rank}
@@ -136,7 +136,7 @@ export function PlanCard({
 
               <div className="mt-3 grid grid-cols-2 gap-2 text-center sm:grid-cols-5">
                 {[
-                  { k: "Typical (P10)", v: usd(sim.p10), c: "text-emerald-600" },
+                  { k: "Typical (P10)", v: usd(sim.p10), c: "text-indigo-600" },
                   { k: "Median", v: usd(sim.median), c: "text-slate-900" },
                   { k: "Bad year (P90)", v: usd(sim.p90), c: "text-rose-600" },
                   { k: "Avg bad year", v: usd(sim.cvar90 ?? sim.p90), c: "text-amber-600" },
