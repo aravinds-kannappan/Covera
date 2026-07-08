@@ -5,11 +5,14 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, "Times New Roman", serif;
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #0b1220;
+  /* Parsel-style palette: a calm lavender-white ground, deep navy ink, one muted indigo accent. */
+  --background: #f4f3f8;
+  --foreground: #1c1c29;
+  --accent: #5b5fc7;
 }
 
 body {
@@ -21,19 +24,26 @@ body {
 }
 
 ::selection {
-  background: rgb(16 185 129 / 0.18);
+  background: rgb(91 95 199 / 0.16);
+}
+
+/* Uppercase, letter-spaced monospace labels (nav, meta, taglines). */
+.label-mono {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
 }
 
 /* Subtle dotted grid backdrop for hero / section accents */
 .bg-grid {
-  background-image: radial-gradient(rgb(15 23 42 / 0.05) 1px, transparent 1px);
+  background-image: radial-gradient(rgb(91 95 199 / 0.06) 1px, transparent 1px);
   background-size: 22px 22px;
 }
 
 /* Thin custom scrollbars inside panels */
 .scroll-thin {
   scrollbar-width: thin;
-  scrollbar-color: rgb(203 213 225) transparent;
+  scrollbar-color: rgb(199 199 222) transparent;
 }
 
 @keyframes fade-up {
@@ -49,4 +59,21 @@ body {
 
 .animate-fade-up {
   animation: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* A soft breathing pulse for the voice orb. */
+@keyframes orb-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 0.9;
+  }
+}
+
+.animate-orb-pulse {
+  animation: orb-pulse 2.4s ease-in-out infinite;
 }

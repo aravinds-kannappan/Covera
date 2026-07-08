@@ -112,9 +112,9 @@ export function BillAuditor() {
               <p className="text-[10px] uppercase tracking-wide text-slate-400">Total billed</p>
               <p className="text-xl font-bold text-slate-900">{usd(audit.totalBilled)}</p>
             </div>
-            <div className={`rounded-xl border p-3 ${audit.potentialOvercharge > 0 ? "border-rose-200 bg-rose-50" : "border-emerald-200 bg-emerald-50"}`}>
+            <div className={`rounded-xl border p-3 ${audit.potentialOvercharge > 0 ? "border-rose-200 bg-rose-50" : "border-indigo-200 bg-indigo-50"}`}>
               <p className="text-[10px] uppercase tracking-wide text-slate-400">Potential overcharge</p>
-              <p className={`text-xl font-bold ${audit.potentialOvercharge > 0 ? "text-rose-600" : "text-emerald-700"}`}>
+              <p className={`text-xl font-bold ${audit.potentialOvercharge > 0 ? "text-rose-600" : "text-indigo-700"}`}>
                 {usd(audit.potentialOvercharge)}
               </p>
             </div>

@@ -103,7 +103,7 @@ export function FrontierChart({
       >
         ↑ Bad-year cost (P90)
       </text>
-      <text x={padL} y={padT - 8} className="fill-emerald-600" style={{ fontSize: 11, fontWeight: 600 }}>
+      <text x={padL} y={padT - 8} className="fill-indigo-600" style={{ fontSize: 11, fontWeight: 600 }}>
         ● on the efficient frontier
       </text>
     </svg>

@@ -119,7 +119,7 @@ export default function CardPage() {
 
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="flex items-center gap-2 text-lg font-semibold text-slate-900">
-            <ScanLine className="h-5 w-5 text-emerald-600" /> Share at the front desk
+            <ScanLine className="h-5 w-5 text-indigo-600" /> Share at the front desk
           </h2>
           <p className="mt-1 text-sm text-slate-500">
             Let a provider scan this code to open your read-only card.

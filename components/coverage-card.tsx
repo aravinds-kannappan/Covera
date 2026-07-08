@@ -8,15 +8,15 @@ export function CoverageCardVisual({ card }: { card: CoverageCard }) {
   const memberId = card.plan.id.slice(0, 8).toUpperCase();
   return (
     <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg shadow-slate-900/5">
-      <div className="relative bg-gradient-to-br from-emerald-600 to-teal-700 p-6 text-white">
+      <div className="relative bg-gradient-to-br from-indigo-600 to-indigo-700 p-6 text-white">
         <div className="bg-grid absolute inset-0 opacity-10" aria-hidden />
         <div className="relative flex items-start justify-between">
           <div>
-            <p className="flex items-center gap-1.5 text-sm font-medium text-emerald-50">
+            <p className="flex items-center gap-1.5 text-sm font-medium text-indigo-50">
               <ShieldCheck className="h-4 w-4" /> Covera Coverage Card
             </p>
             <p className="mt-3 text-2xl font-semibold tracking-tight">{card.name}</p>
-            <p className="text-sm text-emerald-100">
+            <p className="text-sm text-indigo-100">
               {card.state} · age {card.age}
             </p>
           </div>
@@ -60,7 +60,7 @@ export function CoverageCardVisual({ card }: { card: CoverageCard }) {
             )}
             {card.meds.length > 0 && (
               <div className="flex flex-wrap items-center gap-1.5">
-                <Pill className="h-4 w-4 text-sky-500" />
+                <Pill className="h-4 w-4 text-indigo-500" />
                 {card.meds.map((m, i) => (
                   <Badge key={i} tone="sky">
                     {m.name}

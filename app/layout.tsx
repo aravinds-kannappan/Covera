@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,10 +12,18 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// A calm, bookish serif for the wordmark and headlines (the Parsel-style clinical voice).
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+});
+
 export const metadata: Metadata = {
-  title: "Covera: The insurance marketplace that texts you the right plan",
+  title: "Covera: the health plan marketplace you talk to",
   description:
-    "Text Covera your situation and a team of agents searches the entire health-insurance marketplace, simulates what you'd truly pay, answers any what-if, and reaches out to your employer or hospital once you choose.",
+    "Talk to Covera, or text it. A team of agents searches the entire health-insurance marketplace, simulates what you'd truly pay, answers any what-if, and reaches out to your employer or hospital once you choose.",
 };
 
 export default function RootLayout({
@@ -24,10 +32,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="min-h-screen bg-white text-slate-900 antialiased">
-        {children}
-      </body>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} ${newsreader.variable}`}
+    >
+      <body className="min-h-screen antialiased">{children}</body>
     </html>
   );
 }

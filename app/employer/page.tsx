@@ -124,7 +124,7 @@ export default function EmployerPage() {
         <Badge tone="sky">
           <Building2 className="h-3.5 w-3.5" /> For employers
         </Badge>
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+        <h1 className="mt-4 font-serif text-3xl font-medium tracking-tight text-slate-900 sm:text-4xl">
           Make every benefit dollar count
         </h1>
         <p className="mt-3 max-w-2xl text-lg text-slate-600">
@@ -166,7 +166,7 @@ export default function EmployerPage() {
                 step={10}
                 value={contribution}
                 onChange={(e) => setContribution(Number(e.target.value))}
-                className="mt-4 w-full accent-emerald-600"
+                className="mt-4 w-full accent-indigo-600"
               />
               <div className="mt-4 flex items-center gap-2">
                 {(["flat", "age"] as Curve[]).map((c) => (
@@ -176,7 +176,7 @@ export default function EmployerPage() {
                     className={
                       "flex-1 rounded-xl border px-3 py-2 text-sm font-medium transition-all " +
                       (curve === c
-                        ? "border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm"
+                        ? "border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm"
                         : "border-slate-300 bg-white text-slate-600 hover:border-slate-400")
                     }
                   >
@@ -214,7 +214,7 @@ export default function EmployerPage() {
                           </span>
                           <div className="relative h-6 flex-1 overflow-hidden rounded-md bg-slate-100">
                             <div
-                              className="absolute inset-y-0 left-0 bg-emerald-500/80"
+                              className="absolute inset-y-0 left-0 bg-indigo-500/80"
                               style={{
                                 width: `${(Math.min(r.contrib, r.lowestPremium) / maxPrem) * 100}%`,
                               }}
@@ -231,7 +231,7 @@ export default function EmployerPage() {
                             {r.net === 0 ? "fully covered" : `${usd(r.net)}/mo`}
                           </span>
                           {r.affordable ? (
-                            <Check className="h-4 w-4 shrink-0 text-emerald-600" />
+                            <Check className="h-4 w-4 shrink-0 text-indigo-600" />
                           ) : (
                             <X className="h-4 w-4 shrink-0 text-rose-500" />
                           )}
@@ -260,7 +260,7 @@ export default function EmployerPage() {
                   ))}
                   <div className="flex items-center gap-4 pt-1 text-xs text-slate-400">
                     <span className="flex items-center gap-1.5">
-                      <span className="h-2.5 w-2.5 rounded-sm bg-emerald-500/80" /> employer covers
+                      <span className="h-2.5 w-2.5 rounded-sm bg-indigo-500/80" /> employer covers
                     </span>
                     <span className="flex items-center gap-1.5">
                       <span className="h-2.5 w-2.5 rounded-sm bg-slate-400" /> employee pays
@@ -291,11 +291,11 @@ export default function EmployerPage() {
             </div>
 
             {optimal && (
-              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
-                <p className="flex items-center gap-1.5 text-sm font-semibold text-emerald-800">
+              <div className="rounded-2xl border border-indigo-200 bg-indigo-50 p-5">
+                <p className="flex items-center gap-1.5 text-sm font-semibold text-indigo-800">
                   <Sparkles className="h-4 w-4" /> Cost-minimizing contribution
                 </p>
-                <p className="mt-2 text-sm text-emerald-900">
+                <p className="mt-2 text-sm text-indigo-900">
                   {usd(optimal.contribution)}/mo makes coverage affordable for
                   everyone: about {usd(optimal.annual)}/yr.
                 </p>
@@ -335,7 +335,7 @@ export default function EmployerPage() {
                   <p
                     className={
                       "mt-1 text-lg font-bold " +
-                      (groupCompare.savings >= 0 ? "text-emerald-700" : "text-rose-600")
+                      (groupCompare.savings >= 0 ? "text-indigo-700" : "text-rose-600")
                     }
                   >
                     {groupCompare.savings >= 0 ? "Save " : "Costs "}
@@ -375,7 +375,7 @@ function Stat({
         className={
           "text-2xl font-bold " +
           (tone === "emerald"
-            ? "text-emerald-700"
+            ? "text-indigo-700"
             : tone === "amber"
               ? "text-amber-600"
               : "text-slate-900")

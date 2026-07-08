@@ -37,12 +37,9 @@ export function ProblemIntro() {
           <Badge tone="rose">
             <AlertTriangle className="h-3.5 w-3.5" /> The one decision nobody helps you make
           </Badge>
-          <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+          <h2 className="mt-5 font-serif text-3xl font-medium tracking-tight text-slate-900 sm:text-4xl">
             You&apos;re asked to bet a year of your life on{" "}
-            <span className="bg-gradient-to-r from-rose-600 to-orange-600 bg-clip-text text-transparent">
-              one number
-            </span>
-            .
+            <span className="italic text-rose-600">one number</span>.
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-slate-600">
             Health plans get sold on the premium: a single monthly figure. But the premium is not
@@ -81,7 +78,7 @@ export function ProblemIntro() {
                   className={`flex-1 rounded-t-sm ${
                     i >= TAIL_START
                       ? "bg-gradient-to-t from-rose-400 to-rose-500"
-                      : "bg-gradient-to-t from-emerald-300 to-emerald-500"
+                      : "bg-gradient-to-t from-indigo-300 to-indigo-500"
                   }`}
                 />
               ))}
@@ -99,7 +96,7 @@ export function ProblemIntro() {
                     m.tone === "rose"
                       ? "border-rose-400"
                       : m.tone === "emerald"
-                        ? "border-emerald-500"
+                        ? "border-indigo-500"
                         : "border-slate-400"
                   }`}
                 />
@@ -121,7 +118,7 @@ export function ProblemIntro() {
               >
                 <p
                   className={`text-xs font-semibold ${
-                    m.tone === "rose" ? "text-rose-600" : m.tone === "emerald" ? "text-emerald-700" : "text-slate-600"
+                    m.tone === "rose" ? "text-rose-600" : m.tone === "emerald" ? "text-indigo-700" : "text-slate-600"
                   }`}
                 >
                   {m.label}
@@ -176,8 +173,8 @@ export function ProblemIntro() {
         <p className="mx-auto mt-14 max-w-2xl text-center text-lg font-medium text-slate-700">
           So Covera does the part no one else will: it simulates your real risk against every real
           plan, and you just{" "}
-          <span className="text-emerald-700">talk to it</span> or{" "}
-          <span className="text-sky-700">text it</span>.
+          <span className="text-indigo-700">talk to it</span> or{" "}
+          <span className="text-indigo-700">text it</span>.
         </p>
       </div>
     </section>

@@ -50,9 +50,9 @@ export default function CardViewPage() {
           </div>
         ) : (
           <>
-            <div className="mb-6 flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
-              <Stethoscope className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-              <p className="text-sm text-emerald-900">
+            <div className="mb-6 flex items-start gap-3 rounded-2xl border border-indigo-200 bg-indigo-50 p-4">
+              <Stethoscope className="mt-0.5 h-5 w-5 shrink-0 text-indigo-600" />
+              <p className="text-sm text-indigo-900">
                 Shared by the patient for point-of-care use. This card shows
                 coverage and estimated costs only: <strong>no medical records
                 are accessed</strong>.
@@ -70,7 +70,7 @@ export default function CardViewPage() {
                   <select
                     value={procId}
                     onChange={(e) => setProcId(e.target.value)}
-                    className="mt-3 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                    className="mt-3 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
                   >
                     {PROCEDURES.map((p) => (
                       <option key={p.id} value={p.id}>
@@ -88,11 +88,11 @@ export default function CardViewPage() {
                           {usd(estimate.beforeDeductible)}
                         </p>
                       </div>
-                      <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-center">
-                        <p className="text-[11px] uppercase tracking-wide text-emerald-600">
+                      <div className="rounded-xl border border-indigo-200 bg-indigo-50 p-3 text-center">
+                        <p className="text-[11px] uppercase tracking-wide text-indigo-600">
                           If deductible met
                         </p>
-                        <p className="mt-1 text-xl font-bold text-emerald-700">
+                        <p className="mt-1 text-xl font-bold text-indigo-700">
                           {usd(estimate.afterDeductible)}
                         </p>
                       </div>

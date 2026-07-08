@@ -26,7 +26,7 @@ export function MessageBubble({
         className={cn(
           "max-w-[85%] rounded-2xl px-3.5 py-2 text-[13px] leading-snug shadow-sm",
           isAgent
-            ? "rounded-bl-md bg-gradient-to-br from-sky-500 to-blue-600 text-white"
+            ? "rounded-bl-md bg-gradient-to-br from-indigo-500 to-indigo-600 text-white"
             : "rounded-br-md bg-slate-100 text-slate-800",
         )}
       >

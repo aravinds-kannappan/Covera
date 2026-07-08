@@ -123,7 +123,7 @@ export function Assistant({
     <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
       <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
         <div className="flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 text-white">
             <Sparkles className="h-5 w-5" />
           </span>
           <div>
@@ -156,7 +156,7 @@ export function Assistant({
                 <button
                   key={s}
                   onClick={() => send(s)}
-                  className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm text-slate-600 transition-colors hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700"
+                  className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm text-slate-600 transition-colors hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700"
                 >
                   {s}
                 </button>
@@ -171,7 +171,7 @@ export function Assistant({
                   className={cn(
                     "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
                     m.role === "user"
-                      ? "bg-emerald-600 text-white"
+                      ? "bg-indigo-600 text-white"
                       : "bg-slate-100 text-slate-800",
                   )}
                 >
@@ -188,7 +188,7 @@ export function Assistant({
               </div>
             ))}
             {toolRunning && (
-              <div className="flex items-center gap-1.5 text-xs text-emerald-600">
+              <div className="flex items-center gap-1.5 text-xs text-indigo-600">
                 <Wand2 className="h-3.5 w-3.5" /> running a fresh simulation…
               </div>
             )}
@@ -221,12 +221,12 @@ export function Assistant({
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && send(input)}
             placeholder="Ask about your plans, or a what-if…"
-            className="h-10 flex-1 rounded-xl border border-slate-300 bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+            className="h-10 flex-1 rounded-xl border border-slate-300 bg-white px-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
           />
           <button
             onClick={() => send(input)}
             disabled={streaming || !input.trim()}
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-600 text-white transition-colors hover:bg-emerald-500 disabled:opacity-40"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-indigo-600 text-white transition-colors hover:bg-indigo-500 disabled:opacity-40"
           >
             {streaming ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -242,8 +242,8 @@ export function Assistant({
 
 function ScenarioCard({ scenario }: { scenario: AgentScenarioResult }) {
   return (
-    <div className="mt-3 rounded-xl border border-emerald-200 bg-white p-3">
-      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
+    <div className="mt-3 rounded-xl border border-indigo-200 bg-white p-3">
+      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-indigo-700">
         <Wand2 className="h-3.5 w-3.5" /> Simulated: {scenario.label}
       </p>
       <div className="space-y-1.5">

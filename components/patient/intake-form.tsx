@@ -82,9 +82,9 @@ export function IntakeForm() {
 
   return (
     <div className="space-y-6">
-      <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50/60 to-white p-6">
+      <Card className="border-indigo-200 bg-gradient-to-br from-indigo-50/60 to-white p-6">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-emerald-600" />
+          <Sparkles className="h-5 w-5 text-indigo-600" />
           <h2 className="text-lg font-semibold text-slate-900">
             Tell us in your own words
           </h2>
@@ -98,7 +98,7 @@ export function IntakeForm() {
             onChange={(e) => setDesc(e.target.value)}
             rows={3}
             placeholder="e.g. I'm 34 in Texas, make about $52k, my wife and I share a plan. I have type 1 diabetes and take insulin, and we're planning a baby next year."
-            className="w-full resize-none rounded-xl border border-slate-300 bg-white p-3.5 pr-12 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+            className="w-full resize-none rounded-xl border border-slate-300 bg-white p-3.5 pr-12 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
           />
           {speech.supported && (
             <button

@@ -26,8 +26,8 @@ export function Field({
 
 const inputBase =
   "w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 " +
-  "shadow-sm transition-colors placeholder:text-slate-400 focus:border-emerald-500 " +
-  "focus:outline-none focus:ring-2 focus:ring-emerald-500/30";
+  "shadow-sm transition-colors placeholder:text-slate-400 focus:border-indigo-500 " +
+  "focus:outline-none focus:ring-2 focus:ring-indigo-500/30";
 
 export const TextInput = React.forwardRef<
   HTMLInputElement,
@@ -60,7 +60,7 @@ export function Chip({
       className={cn(
         "rounded-full border px-3.5 py-1.5 text-sm font-medium transition-all",
         active
-          ? "border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm"
+          ? "border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm"
           : "border-slate-300 bg-white text-slate-600 hover:border-slate-400 hover:bg-slate-50",
         className,
       )}
@@ -88,14 +88,14 @@ export function Segmented<T extends string>({
           className={cn(
             "rounded-xl border px-3 py-2.5 text-center transition-all",
             value === o.key
-              ? "border-emerald-500 bg-emerald-50 shadow-sm"
+              ? "border-indigo-500 bg-indigo-50 shadow-sm"
               : "border-slate-300 bg-white hover:border-slate-400",
           )}
         >
           <span
             className={cn(
               "block text-sm font-semibold",
-              value === o.key ? "text-emerald-700" : "text-slate-700",
+              value === o.key ? "text-indigo-700" : "text-slate-700",
             )}
           >
             {o.label}
@@ -130,7 +130,7 @@ export function Toggle({
       <span
         className={cn(
           "relative h-6 w-11 rounded-full transition-colors",
-          checked ? "bg-emerald-500" : "bg-slate-300",
+          checked ? "bg-indigo-500" : "bg-slate-300",
         )}
       >
         <span

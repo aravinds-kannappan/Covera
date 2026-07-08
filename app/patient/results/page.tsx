@@ -120,7 +120,7 @@ export default function ResultsPage() {
 
         {/* Recommendation hero */}
         {top ? (
-          <div className="mt-4 overflow-hidden rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-6 shadow-sm sm:p-8">
+          <div className="mt-4 overflow-hidden rounded-3xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-white p-6 shadow-sm sm:p-8">
             <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
               <div className="max-w-xl">
                 <Badge tone="emerald">
@@ -147,14 +147,14 @@ export default function ResultsPage() {
               </div>
               <div className="shrink-0 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
                 <p className="text-xs text-slate-400">Expected total / year</p>
-                <p className="text-4xl font-bold tracking-tight text-emerald-700">
+                <p className="text-4xl font-bold tracking-tight text-indigo-700">
                   {usd(top.sim.expectedTotal)}
                 </p>
                 <div className="mt-2 space-y-0.5 text-sm text-slate-600">
                   <p>{usd(top.sim.annualPremium)} premium after subsidy</p>
                   <p>{usd(top.sim.expectedOOP)} expected care costs</p>
                   {savings > 0 && (
-                    <p className="flex items-center gap-1 font-medium text-emerald-700">
+                    <p className="flex items-center gap-1 font-medium text-indigo-700">
                       <TrendingDown className="h-3.5 w-3.5" /> saves ~{usd(savings)} vs the costliest option
                     </p>
                   )}
@@ -284,7 +284,7 @@ function StatStrip({ result }: { result: NonNullable<ReturnType<typeof useCovera
     },
   ];
   return (
-    <div className="mt-6 grid grid-cols-2 gap-3 border-t border-emerald-100 pt-5 sm:grid-cols-4">
+    <div className="mt-6 grid grid-cols-2 gap-3 border-t border-indigo-100 pt-5 sm:grid-cols-4">
       {items.map((it) => (
         <div key={it.label}>
           <p className="text-xs text-slate-400">{it.label}</p>

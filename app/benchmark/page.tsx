@@ -26,7 +26,7 @@ function CheckRow({ c }: { c: Check }) {
     <div className="flex items-center justify-between gap-3 border-b border-slate-100 py-2.5 last:border-0">
       <div className="flex items-center gap-2">
         <span
-          className={`grid h-5 w-5 place-items-center rounded-full ${c.pass ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-600"}`}
+          className={`grid h-5 w-5 place-items-center rounded-full ${c.pass ? "bg-indigo-100 text-indigo-700" : "bg-rose-100 text-rose-600"}`}
         >
           {c.pass ? <CheckIcon className="h-3.5 w-3.5" /> : <XIcon className="h-3.5 w-3.5" />}
         </span>
@@ -62,7 +62,7 @@ export default function BenchmarkPage() {
       <SiteHeader />
       <main className="mx-auto max-w-5xl px-4 py-14 sm:px-6">
         <Badge tone="emerald">Methodology & benchmarks</Badge>
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+        <h1 className="mt-4 font-serif text-3xl font-medium tracking-tight text-slate-900 sm:text-4xl">
           How accurate is Covera, really?
         </h1>
         <p className="mt-3 max-w-2xl text-lg text-slate-600">

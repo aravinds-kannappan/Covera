@@ -56,7 +56,7 @@ export function TrustPanel({ explain }: { explain: RecommendationExplanation }) 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex items-center gap-2">
-        <ShieldCheck className="h-4 w-4 text-emerald-600" />
+        <ShieldCheck className="h-4 w-4 text-indigo-600" />
         <h3 className="text-sm font-semibold text-slate-900">Why we recommend this, in plain English</h3>
       </div>
       <p className="mt-1 text-xs text-slate-500">
@@ -73,7 +73,7 @@ export function TrustPanel({ explain }: { explain: RecommendationExplanation }) 
                   <Badge tone={BASIS[s.basis].tone}>{BASIS[s.basis].label}</Badge>
                   {s.label}
                 </span>
-                <span className={`font-medium tabular-nums ${s.amount < 0 ? "text-emerald-600" : "text-slate-900"}`}>
+                <span className={`font-medium tabular-nums ${s.amount < 0 ? "text-indigo-600" : "text-slate-900"}`}>
                   {s.amount < 0 ? "-" : "+"}
                   {usd(Math.abs(s.amount))}
                 </span>
@@ -81,7 +81,7 @@ export function TrustPanel({ explain }: { explain: RecommendationExplanation }) 
             ))}
             <div className="mt-1 flex items-center justify-between border-t border-slate-200 pt-2 text-sm font-semibold">
               <span>Expected total per year</span>
-              <span className="tabular-nums text-emerald-700">{usd(waterfall.expectedAnnual)}</span>
+              <span className="tabular-nums text-indigo-700">{usd(waterfall.expectedAnnual)}</span>
             </div>
           </div>
           {waterfall.careBySource.length > 0 && (
@@ -103,7 +103,7 @@ export function TrustPanel({ explain }: { explain: RecommendationExplanation }) 
         <Section icon={<ListChecks className="h-4 w-4" />} title="Known facts vs. estimates" subtitle="what is fixed vs. modeled">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-sky-700">Hard facts</p>
+              <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-indigo-700">Hard facts</p>
               <dl className="space-y-1">
                 {facts.facts.map((f) => (
                   <div key={f.key} className="flex justify-between gap-2 text-xs">

@@ -6,12 +6,12 @@ type Size = "sm" | "md" | "lg";
 
 const base =
   "inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-all " +
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 focus-visible:ring-offset-2 " +
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 focus-visible:ring-offset-2 " +
   "focus-visible:ring-offset-white disabled:pointer-events-none disabled:opacity-50 whitespace-nowrap select-none";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-emerald-600 text-white shadow-sm hover:bg-emerald-500 active:bg-emerald-700",
+    "bg-indigo-600 text-white shadow-sm hover:bg-indigo-500 active:bg-indigo-700",
   secondary:
     "bg-slate-900 text-white shadow-sm hover:bg-slate-800 active:bg-slate-950",
   outline:

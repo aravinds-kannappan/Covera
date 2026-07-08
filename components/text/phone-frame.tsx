@@ -26,7 +26,7 @@ export function PhoneFrame({
         <div className="flex flex-col items-center gap-1 border-b border-slate-100 bg-white/90 px-4 pb-2 pt-3 backdrop-blur">
           <span className="h-1.5 w-20 rounded-full bg-slate-200" aria-hidden />
           <div className="mt-1 flex flex-col items-center">
-            <span className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-sm font-semibold text-white">
+            <span className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 text-sm font-semibold text-white">
               Co
             </span>
             <span className="mt-1 text-[13px] font-semibold text-slate-900">{contactName}</span>
