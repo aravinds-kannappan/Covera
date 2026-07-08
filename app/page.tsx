@@ -17,7 +17,8 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { PhoneFrame } from "@/components/text/phone-frame";
 import { ScrollStory } from "@/components/text/scroll-story";
-import { AutoplayDemo } from "@/components/text/autoplay-demo";
+import { ProblemIntro } from "@/components/story/problem-intro";
+import { DualChannelDemo } from "@/components/story/dual-channel-demo";
 import { CapabilityShowcase } from "@/components/text/capability-showcase";
 import { LiveConsole } from "@/components/text/live-console";
 import { EnrollForm } from "@/components/text/enroll-form";
@@ -29,6 +30,7 @@ export default function Home() {
       <SiteHeader />
       <main>
         <Hero />
+        <ProblemIntro />
         <ScrollStory />
         <DemoSection />
         <TrustBand />
@@ -54,7 +56,7 @@ function Hero() {
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:py-24">
         <div className="animate-fade-up">
           <Badge tone="emerald">
-            <Sparkles className="h-3.5 w-3.5" /> An insurance marketplace you can text
+            <Sparkles className="h-3.5 w-3.5" /> An insurance marketplace you text or talk to
           </Badge>
           <h1 className="mt-5 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
             The health plan marketplace that{" "}
@@ -65,8 +67,9 @@ function Hero() {
           </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-slate-600">
             Stuck with your employer&apos;s two options, or shopping on your own? Text Covera your
-            situation. It searches the entire marketplace, simulates what you&apos;d truly pay, answers
-            any what-if, and can even reach out to your employer or hospital once you choose.
+            situation, or just talk to it. It searches the entire marketplace, simulates what
+            you&apos;d truly pay, answers any what-if, and can even reach out to your employer or
+            hospital once you choose.
           </p>
           <div className="mt-7">
             <EnrollForm />
@@ -83,7 +86,7 @@ function Hero() {
           </div>
           <div className="mt-5 flex items-center gap-2 text-sm text-slate-500">
             <MessageSquare className="h-4 w-4 text-emerald-600" />
-            iMessage for now (blue bubbles). Prefer the web? The full optimizer lives under{" "}
+            iMessage for now (blue bubbles). Prefer the web, or want to talk it through? The full optimizer and voice concierge live under{" "}
             <Link href="/patient" className="font-medium text-emerald-700 underline-offset-2 hover:underline">
               For patients
             </Link>
@@ -173,14 +176,15 @@ function DemoSection() {
             <PlayCircle className="h-3.5 w-3.5" /> The 60-second demo
           </Badge>
           <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900">
-            Press play. Watch Covera do the whole thing.
+            Press play. Watch the agents do the whole thing.
           </h2>
           <p className="mt-3 text-lg text-slate-600">
-            The same real conversation, hands-free: intake, the whole-marketplace comparison, a
-            Monte-Carlo simulation, a what-if, and choosing a plan. All by text.
+            The same real conversation on both channels at once: intake, the whole-marketplace
+            comparison, a Monte-Carlo simulation, a what-if, and choosing a plan. Watch the
+            specialist agents hand off as it moves, by text and by voice.
           </p>
         </div>
-        <AutoplayDemo />
+        <DualChannelDemo />
       </div>
     </section>
   );
