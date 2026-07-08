@@ -20,8 +20,8 @@ Every figure traces to public federal data. There are no synthetic plans, prices
   and cost, without ever pulling a record.
 - Coverage Card. A portable link that shows your coverage and a live estimate. The whole card
   lives in the link.
-- Honest benchmarks at `/benchmark`. Simulation accuracy, an AI safety and alignment scorecard,
-  and a model comparison.
+- Benchmarks at `/benchmark`. Simulation accuracy, an AI safety and alignment scorecard, and a
+  live Agents-as-Judge evaluation you run from the tab.
 
 ## The core idea
 
