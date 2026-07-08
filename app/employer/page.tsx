@@ -8,6 +8,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Field, Select, TextInput } from "@/components/ui/controls";
+import { AgentConsole } from "@/components/mesh/agent-console";
 
 const AFFORDABILITY = 0.0996; // ACA affordability threshold (share of income)
 
@@ -135,7 +136,21 @@ export default function EmployerPage() {
           auditor, and an annual re-check.
         </p>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
+        <section className="mt-8">
+          <Badge tone="emerald">Talk to the desk</Badge>
+          <h2 className="mt-3 font-serif text-2xl font-medium tracking-tight text-slate-900">
+            Ask the benefits desk out loud.
+          </h2>
+          <p className="mt-2 max-w-2xl text-slate-600">
+            HR can just talk to it. It consults the concierge on an employee&apos;s behalf to show
+            what they&apos;d really pay on the marketplace, net of the subsidy they&apos;d qualify for.
+          </p>
+          <div className="mt-5 max-w-xl">
+            <AgentConsole role="employer" state={state} persona="employer" />
+          </div>
+        </section>
+
+        <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_320px]">
           <div className="space-y-6">
             {/* Contribution slider */}
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">

@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Field, Select, TextInput } from "@/components/ui/controls";
 import { BillAuditor } from "@/components/hospital/bill-auditor";
+import { AgentConsole } from "@/components/mesh/agent-console";
 import { DocumentUploader } from "@/components/documents/document-uploader";
 import { METAL_TONE } from "@/lib/format";
 import type { Metal } from "@/lib/types";
@@ -69,7 +70,22 @@ export default function HospitalPage() {
           without ever touching a record.
         </p>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_340px]">
+        <section className="mt-8">
+          <Badge tone="emerald">Talk to the desk</Badge>
+          <h2 className="mt-3 font-serif text-2xl font-medium tracking-tight text-slate-900">
+            Ask the cost desk out loud.
+          </h2>
+          <p className="mt-2 max-w-2xl text-slate-600">
+            A physician or biller can just talk to it. Paste the patient&apos;s Coverage Card and it
+            consults their Covera concierge for real coverage and a live cost estimate: no record
+            pulled, no guessing.
+          </p>
+          <div className="mt-5 max-w-xl">
+            <AgentConsole role="hospital" state={state} persona="clinical" />
+          </div>
+        </section>
+
+        <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_340px]">
           {/* Procedure across plans */}
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-900">

@@ -14,6 +14,7 @@
     "ingest:prices": "python3 scripts/ingest_prices.py",
     "ingest:formulary": "python3 scripts/ingest_formulary.py",
     "accuracy": "tsx scripts/accuracy/run.ts",
+    "safety": "tsx scripts/safety/run.ts",
     "benchmark": "tsx scripts/benchmark/run.ts"
   },
   "dependencies": {
