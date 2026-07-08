@@ -4,6 +4,7 @@ import {
   Building2,
   LineChart,
   MessageSquare,
+  PlayCircle,
   ScanLine,
   ShieldCheck,
   Sparkles,
@@ -16,6 +17,8 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { PhoneFrame } from "@/components/text/phone-frame";
 import { ScrollStory } from "@/components/text/scroll-story";
+import { AutoplayDemo } from "@/components/text/autoplay-demo";
+import { CapabilityShowcase } from "@/components/text/capability-showcase";
 import { LiveConsole } from "@/components/text/live-console";
 import { EnrollForm } from "@/components/text/enroll-form";
 import { cn } from "@/lib/utils";
@@ -27,7 +30,9 @@ export default function Home() {
       <main>
         <Hero />
         <ScrollStory />
+        <DemoSection />
         <TrustBand />
+        <CapabilitiesSection />
         <LiveSection />
         <Lenses />
         <HowItWorks />
@@ -65,6 +70,16 @@ function Hero() {
           </p>
           <div className="mt-7">
             <EnrollForm />
+          </div>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <Link
+              href="#demo"
+              className={buttonVariants({ variant: "outline", className: "group" })}
+            >
+              <PlayCircle className="h-4 w-4 text-emerald-600" />
+              Watch the 60-second demo
+            </Link>
+            <span className="text-xs text-slate-400">No sign-up. Plays itself.</span>
           </div>
           <div className="mt-5 flex items-center gap-2 text-sm text-slate-500">
             <MessageSquare className="h-4 w-4 text-emerald-600" />
@@ -137,6 +152,57 @@ function TrustBand() {
             </span>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+function DemoSection() {
+  return (
+    <section
+      id="demo"
+      className="relative scroll-mt-20 overflow-hidden border-y border-slate-200 bg-slate-50"
+    >
+      <div
+        className="absolute inset-x-0 -top-24 -z-10 h-64 bg-gradient-to-b from-emerald-100/50 to-transparent blur-2xl"
+        aria-hidden
+      />
+      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+        <div className="mx-auto mb-12 max-w-2xl text-center">
+          <Badge tone="emerald">
+            <PlayCircle className="h-3.5 w-3.5" /> The 60-second demo
+          </Badge>
+          <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900">
+            Press play. Watch Covera do the whole thing.
+          </h2>
+          <p className="mt-3 text-lg text-slate-600">
+            The same real conversation, hands-free: intake, the whole-marketplace comparison, a
+            Monte-Carlo simulation, a what-if, and choosing a plan. All by text.
+          </p>
+        </div>
+        <AutoplayDemo />
+      </div>
+    </section>
+  );
+}
+
+function CapabilitiesSection() {
+  return (
+    <section id="capabilities" className="scroll-mt-20">
+      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+        <div className="mx-auto mb-14 max-w-2xl text-center">
+          <Badge tone="sky">
+            <MessageSquare className="h-3.5 w-3.5" /> More than enrollment
+          </Badge>
+          <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900">
+            It stays in your corner all year.
+          </h2>
+          <p className="mt-3 text-lg text-slate-600">
+            Picking a plan is the start. The same text thread keeps working for you every time
+            health costs get confusing.
+          </p>
+        </div>
+        <CapabilityShowcase />
       </div>
     </section>
   );

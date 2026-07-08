@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Play } from "lucide-react";
 import { Logo } from "@/components/brand";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -42,9 +43,18 @@ export function SiteHeader() {
             );
           })}
         </nav>
-        <Link href="/#top" className={buttonVariants({ size: "sm" })}>
-          Text the agent
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/#demo"
+            className={cn(buttonVariants({ variant: "outline", size: "sm" }), "hidden sm:inline-flex")}
+          >
+            <Play className="h-3.5 w-3.5 text-emerald-600" />
+            Demo
+          </Link>
+          <Link href="/#top" className={buttonVariants({ size: "sm" })}>
+            Text the agent
+          </Link>
+        </div>
       </div>
     </header>
   );
