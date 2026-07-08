@@ -17,8 +17,7 @@ export async function POST(req: NextRequest) {
 
   const audioBase64 = String(body.audioBase64 ?? "");
   if (!audioBase64) return Response.json({ error: "audioBase64 is required" }, { status: 400 });
-  const mime = typeof body.mime === "string" && body.mime ? body.mime : "audio/webm";
 
-  const res = await speechToText(audioBase64, mime);
+  const res = await speechToText(audioBase64);
   return Response.json(res);
 }
