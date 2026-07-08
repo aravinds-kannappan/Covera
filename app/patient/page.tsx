@@ -1,7 +1,7 @@
 import { ShieldCheck } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { IntakeForm } from "@/components/patient/intake-form";
+import { PatientExperience } from "@/components/patient/patient-experience";
 import { Badge } from "@/components/ui/badge";
 
 export default function PatientPage() {
@@ -17,12 +17,12 @@ export default function PatientPage() {
             Let&apos;s find your best coverage.
           </h1>
           <p className="mt-3 text-lg text-slate-600">
-            Tell us about your health and money. We&apos;ll simulate thousands of
-            possible years against every real plan in your state and rank them by
+            Tell us about your health and money, by form or just by talking. We&apos;ll simulate
+            thousands of possible years against every real plan in your state and rank them by
             what you&apos;d truly pay.
           </p>
         </div>
-        <IntakeForm />
+        <PatientExperience />
       </main>
       <SiteFooter />
     </>
