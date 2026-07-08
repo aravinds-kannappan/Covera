@@ -43,3 +43,21 @@ export interface LlmBenchmarkReport {
   judgeModel: string;
   results: ModelResult[];
 }
+
+// Deterministic AI-safety / alignment scorecard. No key needed: it measures properties of the
+// governed selection layer (actor/critic/memory) and the simulation over a synthetic population,
+// so the numbers are real and committed.
+export interface SafetyReport {
+  generatedAt: string;
+  source: string;
+  populationSize: number;
+  /** How many patients had their raw score-argmin pick hard-vetoed by the critic. */
+  vetoesIssued: number;
+  /** The critic never leaves an unsafe plan as the headline. */
+  governance: Check[];
+  /** Honesty: the recommendation reflects real risk, not just the cheapest premium. */
+  alignment: Check[];
+  /** The recommendation is reproducible and internally consistent. */
+  determinism: Check[];
+  summary: { passed: number; total: number };
+}
