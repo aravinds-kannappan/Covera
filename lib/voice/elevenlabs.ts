@@ -153,19 +153,22 @@ export interface SttResult {
 }
 
 /**
- * Transcribe base64-encoded audio. The Orthogonal ElevenLabs STT contract wants the audio bytes in
- * a `file` field (base64) plus a required `model_id`, and rejects `audio_base64`/`mime_type`. Never
- * throws: degrades to an empty, labeled result.
+ * Transcribe audio hosted at a public URL. The Orthogonal ElevenLabs STT endpoint can't accept a
+ * multipart file from a JSON body, so it needs a `source_url` it can fetch (plus a required
+ * `model_id`). The transcribe route stashes the clip (lib/voice/audio-store) and passes its URL
+ * here. Never throws: degrades to an empty, labeled result.
  */
-export async function speechToText(audioBase64: string): Promise<SttResult> {
+export async function speechToText(sourceUrl: string): Promise<SttResult> {
   if (!orthReady()) {
     return { text: "", source: "unconfigured", note: "Transcription is not configured (ORTHOGONAL_API_KEY missing)." };
   }
-  if (!audioBase64) return { text: "", source: "error", note: "No audio provided." };
+  if (!/^https?:\/\//i.test(sourceUrl)) {
+    return { text: "", source: "error", note: "A public audio URL is required for transcription." };
+  }
   try {
     const { data } = await orthRun<unknown>("elevenlabs", "/v1/speech-to-text", {
       model_id: STT_MODEL,
-      file: audioBase64,
+      source_url: sourceUrl,
       diarize: false,
     });
     const text = pickText(data);

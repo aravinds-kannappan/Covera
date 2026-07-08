@@ -38,7 +38,7 @@ describe("graceful degradation with no ORTHOGONAL_API_KEY", () => {
   });
 
   it("speechToText reports 'unconfigured'", async () => {
-    const res = await speechToText("YWJj");
+    const res = await speechToText("https://example.com/clip.webm");
     expect(res.source).toBe("unconfigured");
     expect(res.text).toBe("");
   });
