@@ -2,6 +2,7 @@
 import { motion } from "motion/react";
 import type { ConvoMessage } from "@/lib/agents/types";
 import { FeaturePanel } from "@/components/text/feature-panel";
+import { SpeakButton } from "@/components/ui/speak-button";
 import { cn } from "@/lib/utils";
 
 // A single chat row: a blue agent bubble or a gray patient bubble, with the optional
@@ -32,14 +33,19 @@ export function MessageBubble({
         {message.text}
       </div>
       {isAgent && message.meta && (
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15, duration: 0.35 }}
-          className="mt-2 w-full max-w-[92%]"
-        >
-          <FeaturePanel meta={message.meta} onAsk={onAsk} />
-        </motion.div>
+        <>
+          <div className="mt-1">
+            <SpeakButton text={message.text} metaKind={message.meta.kind} label="Listen" />
+          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.35 }}
+            className="mt-1 w-full max-w-[92%]"
+          >
+            <FeaturePanel meta={message.meta} onAsk={onAsk} />
+          </motion.div>
+        </>
       )}
     </motion.div>
   );

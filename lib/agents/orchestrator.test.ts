@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 // the recommend_plans tool, then (after the real simulation runs) returns a final text.
 const create = vi.fn();
 vi.mock("@/lib/anthropic/client", () => ({
-  MODELS: { reason: "claude-opus-4-8", fast: "claude-haiku-4-5" },
+  MODELS: { reason: "claude-sonnet-5", fast: "claude-haiku-4-5" },
   anthropicKeyPresent: () => true,
   getAnthropic: () => ({ messages: { create } }),
   extractJSON: () => null,

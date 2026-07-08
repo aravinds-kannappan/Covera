@@ -173,7 +173,7 @@ flowchart TB
     INAPP["/api/agent · optimize · extract"]
   end
 
-  ORCH{{"Concierge orchestrator<br/>claude-opus-4-8"}}
+  ORCH{{"Concierge orchestrator<br/>Baseten · Sonnet 5"}}
 
   subgraph agents["Specialist agents & tools"]
     INTAKE["Intake<br/>claude-haiku-4-5"]
@@ -273,11 +273,23 @@ an optional soft spend cap (`ORTH_MAX_SPEND_USD`).
 | **Tavily web search** | The concierge's `web_search` tool, for coverage/policy facts outside the CMS dataset | $0.01/query, cached | `lib/agents/websearch.ts` |
 | **Didit email verify** | `POST /api/verify` (`send`, then `check`); verified members can be messaged on their behalf | $0.04 to send a code, check is free | `lib/trust/verify.ts` gating `lib/agents/outreach.ts` |
 | **ScrapeGraphAI monitor** | Opt-in: `tsx scripts/monitor/setup.ts`; ticks post to `/api/monitor/webhook` | $0 until you register monitors | `lib/jobs/monitor.ts` |
+| **ElevenLabs voice** | The `/patient` "Talk it through" tab, or the speaker button on any result | $0.08/reply (TTS, cached per line) + $0.03/clip (STT); browser speech when unset | `lib/voice/elevenlabs.ts`, `app/api/voice/*` |
+| **Baseten brain** | The voice concierge's LLM, via the shared model router (falls back to Claude Sonnet 5) | ~$0.0025 / 4k tokens | `lib/llm/baseten.ts` via `lib/llm/router.ts` |
 
 Rankings, subsidies, and cost estimates always come from the deterministic simulation over real
 CMS plans. Web search results are labeled as live web lookups and are never blended with
 simulated figures. Phone OTP, database validation, and AML screening are left as disabled,
 documented scaffolds in `lib/trust/verify.ts`.
+
+### Voice concierge (`/patient` → "Talk it through")
+
+Beside the quick form, the patient tab has a spoken mode: tap the mic and have a real conversation.
+Speech-to-text (ElevenLabs, $0.03) transcribes you, the concierge brain (a cheap Baseten model,
+falling back to Claude Sonnet 5) runs the same real CMS-data tools, and the reply is spoken back
+with per-agent emotion (ElevenLabs TTS, $0.08, cached per line). Once it has enough, your ranked
+plans pop up in a modal to choose from. With no `ORTHOGONAL_API_KEY` it degrades to the browser's
+built-in speech and Claude, and you can always type. Every cost you hear is a real simulated
+number, never a guess; a speaker button on any result reads the math aloud.
 
 ```bash
 npm test          # engine + agent unit tests
@@ -318,10 +330,11 @@ Two honest scorecards answer "how accurate is this, really?":
   reproduces the real spend concentration (the top few percent who drive most cost), not
   just the means. An interactive explorer runs the real sampler live in your browser for any
   age band and condition. → `data/accuracy-report.json`
-- **LLM model benchmark**: runs a fixed question suite through `claude-opus-4-8`,
-  `claude-sonnet-4-6`, and `claude-haiku-4-5` driving the real agent tools, scoring
-  faithfulness (cites real numbers vs. hallucinates), tool-use accuracy, quality (LLM
-  judge), latency, and **real cost** (token usage × published pricing). → `data/llm-benchmark.json`
+- **LLM model benchmark**: runs a fixed question suite through the shared model router
+  (`lib/llm/`) driving the real agent tools, across Claude Sonnet 5 and Haiku plus the Baseten
+  models (DeepSeek / GLM / Kimi / GPT-OSS) as deployments, scoring faithfulness (cites real
+  numbers vs. hallucinates), tool-use accuracy, quality (LLM judge), latency, and **real cost**
+  (token usage × published pricing). No Opus or Fable. → `data/llm-benchmark.json`
 
 ## Texting setup (real iMessage)
 
@@ -333,9 +346,10 @@ multi-agent loop to the on-page live console: fully exercisable with no third-pa
 ## Tech
 
 Next.js 16 (App Router) · TypeScript · Tailwind v4 · `motion` for scroll/entry animation ·
-hand-built SVG charts · Anthropic Claude with model routing (`claude-haiku-4-5` for intake,
-`claude-opus-4-8` for advising and what-ifs) · Upstash Redis · LoopMessage · Resend · Web
-Speech API · Vercel. The engine is pure TypeScript in `lib/sim/`: a closed-form analytic
+hand-built SVG charts · a provider-agnostic model router (`lib/llm/`): a cheap Baseten chat model
+(DeepSeek / GLM / Kimi / GPT-OSS) for the voice concierge, Claude Sonnet 5 for advising and
+what-ifs, `claude-haiku-4-5` for intake (no Opus or Fable) · ElevenLabs voice · Upstash Redis ·
+LoopMessage · Resend · Web Speech API · Vercel. The engine is pure TypeScript in `lib/sim/`: a closed-form analytic
 ranker (real-time), a Monte-Carlo pass for the bad-year tail, formulary/network matching,
 and a ranking cache. Fully unit-tested.
 

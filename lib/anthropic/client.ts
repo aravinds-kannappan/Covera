@@ -2,7 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 
 // Server-only. Reads ANTHROPIC_API_KEY from the environment.
 export const MODELS = {
-  reason: "claude-opus-4-8", // tradeoff explanations + the agentic loop
+  reason: "claude-sonnet-5", // tradeoff explanations + the agentic loop (Anthropic fallback brain)
   fast: "claude-haiku-4-5", // quick natural-language → profile extraction
 } as const;
 

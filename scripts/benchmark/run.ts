@@ -23,13 +23,14 @@ import { conciergeSystemPrompt } from "@/lib/agents/prompts";
 import { recommendPlans, plansSummaryText } from "@/lib/agents/advisor";
 import type { LlmBenchmarkReport, ModelResult } from "@/lib/benchmark/types";
 
-// Published pricing (USD per 1M tokens): source: Anthropic model docs.
+// Published pricing (USD per 1M tokens): source: Anthropic model docs. Opus and Fable are
+// intentionally excluded (too expensive per the project's cost policy). PR4 extends this list
+// with the Baseten models (DeepSeek / GLM / Kimi / GPT-OSS) via the shared lib/llm router.
 const MODELS: { id: string; label: string; inPrice: number; outPrice: number }[] = [
-  { id: "claude-opus-4-8", label: "Opus 4.8", inPrice: 5, outPrice: 25 },
-  { id: "claude-sonnet-4-6", label: "Sonnet 4.6", inPrice: 3, outPrice: 15 },
+  { id: "claude-sonnet-5", label: "Sonnet 5", inPrice: 3, outPrice: 15 },
   { id: "claude-haiku-4-5", label: "Haiku 4.5", inPrice: 1, outPrice: 5 },
 ];
-const JUDGE_MODEL = "claude-opus-4-8";
+const JUDGE_MODEL = "claude-sonnet-5";
 
 interface Question {
   text: string;
