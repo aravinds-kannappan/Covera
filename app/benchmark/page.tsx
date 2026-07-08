@@ -3,7 +3,7 @@ import { Check as CheckIcon, X as XIcon } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Badge } from "@/components/ui/badge";
-import { loadAccuracyReport, loadLlmBenchmark } from "@/lib/benchmark/load";
+import { loadAccuracyReport, loadLlmBenchmark, loadSafetyReport } from "@/lib/benchmark/load";
 import type { Check } from "@/lib/benchmark/types";
 import { DistributionExplorer } from "@/components/benchmark/distribution-explorer";
 import { BundleExplorer } from "@/components/benchmark/bundle-explorer";
@@ -56,6 +56,7 @@ function CheckGroup({ title, checks }: { title: string; checks: Check[] }) {
 export default function BenchmarkPage() {
   const accuracy = loadAccuracyReport();
   const llm = loadLlmBenchmark();
+  const safety = loadSafetyReport();
 
   return (
     <>
@@ -66,11 +67,59 @@ export default function BenchmarkPage() {
           How accurate is Covera, really?
         </h1>
         <p className="mt-3 max-w-2xl text-lg text-slate-600">
-          Two honest scorecards. First, how the Monte-Carlo simulation holds up against the published
-          MEPS aggregates it claims to reproduce and the ACA subsidy formula. Second, how candidate
-          models compare when driving the real agent: on whether they cite real numbers, call the
-          right tools, and what they cost.
+          Three honest scorecards. How the Monte-Carlo simulation holds up against the published MEPS
+          aggregates and the ACA subsidy formula. Whether the recommendation is safe and aligned when
+          a model is in the loop. And how candidate models compare on faithfulness, tool use, and cost.
         </p>
+
+        {/* ---- Alignment & Safety ---- */}
+        <section className="mt-14">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h2 className="font-serif text-2xl font-medium tracking-tight text-slate-900">Alignment &amp; safety</h2>
+            {safety && (
+              <span className="text-sm text-slate-500">
+                {safety.summary.passed}/{safety.summary.total} checks pass ·{" "}
+                {safety.populationSize.toLocaleString()} patients + a red-team
+              </span>
+            )}
+          </div>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-500">
+            Covera&apos;s recommendation is not a bare argmin. It runs through a deterministic
+            actor/critic/memory governance layer, and the critic is a hard safety backstop: it will not
+            let an unsafe plan be the headline, even when it is the cheapest. This scorecard measures
+            that guarantee over a synthetic population and against an adversarial red-team, with no model
+            in the loop, so every figure is reproducible.
+          </p>
+
+          {!safety ? (
+            <NotRun cmd="npm run safety" what="the safety scorecard" />
+          ) : (
+            <>
+              <div className="mt-5 grid gap-5 lg:grid-cols-3">
+                <CheckGroup title="Governed selection (the critic)" checks={safety.governance} />
+                <CheckGroup title="Honest, risk-adjusted advice" checks={safety.alignment} />
+                <CheckGroup title="Reproducible &amp; consistent" checks={safety.determinism} />
+              </div>
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                <p className="text-sm leading-relaxed text-slate-500">
+                  <span className="font-medium text-slate-700">Why it matters.</span> An LLM that
+                  recommends insurance can quietly steer someone onto a plan that drops their medication
+                  or leaves them exposed to a catastrophic year. Covera puts a deterministic critic
+                  between the model and the recommendation: dropped drugs or doctors, an unmet HSA
+                  requirement, and a brutal bad year for a risk-averse patient are all hard vetoes. The
+                  red-team hands the critic those exact unsafe picks and confirms it blocks every one.
+                </p>
+                <p className="text-sm leading-relaxed text-slate-500">
+                  <span className="font-medium text-slate-700">Read honestly.</span> Organic critic
+                  vetoes over the population were {safety.vetoesIssued}: the risk-adjusted objective
+                  already avoids unsafe headlines, so the critic rarely has to fire. That is the point of
+                  the two-layer design, and the adversarial suite is what proves the backstop still works
+                  when it must. No LLM judged anything here. Source: {safety.source}
+                </p>
+              </div>
+            </>
+          )}
+        </section>
 
         {/* ---- Simulation accuracy ---- */}
         <section className="mt-12">

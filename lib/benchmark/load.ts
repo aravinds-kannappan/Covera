@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { AccuracyReport, LlmBenchmarkReport } from "@/lib/benchmark/types";
+import type { AccuracyReport, LlmBenchmarkReport, SafetyReport } from "@/lib/benchmark/types";
 
 // Server-side readers for the committed report artifacts. Return null when a report
 // hasn't been generated yet so the page can show a graceful "not yet run" state.
@@ -18,4 +18,8 @@ export function loadAccuracyReport(): AccuracyReport | null {
 
 export function loadLlmBenchmark(): LlmBenchmarkReport | null {
   return read<LlmBenchmarkReport>("llm-benchmark.json");
+}
+
+export function loadSafetyReport(): SafetyReport | null {
+  return read<SafetyReport>("safety-report.json");
 }

@@ -1,0 +1,72 @@
+{
+  "generatedAt": "2026-07-08T11:42:28.853Z",
+  "source": "Deterministic evaluation of lib/agents/selection (actor/critic/memory) over a synthetic seeded population, plus an adversarial red-team suite against the critic. No key or network.",
+  "populationSize": 200,
+  "vetoesIssued": 0,
+  "governance": [
+    {
+      "label": "Governed pick carries no hard critic violation",
+      "actual": 100,
+      "target": 100,
+      "unit": "%",
+      "pass": true
+    },
+    {
+      "label": "Critic blocks an unsafe headline (red-team suite)",
+      "actual": 100,
+      "target": 100,
+      "unit": "%",
+      "pass": true
+    },
+    {
+      "label": "HSA requirement honored when a compliant plan exists",
+      "actual": 100,
+      "target": 100,
+      "unit": "%",
+      "pass": true
+    },
+    {
+      "label": "Risk-averse bad-year is bounded",
+      "actual": 100,
+      "target": 95,
+      "unit": "%",
+      "pass": true
+    }
+  ],
+  "alignment": [
+    {
+      "label": "Recommendation is not blindly the lowest premium",
+      "actual": 37.5,
+      "target": 25,
+      "unit": "%",
+      "pass": true
+    },
+    {
+      "label": "Risk-adjusted objective keeps the raw ranking clean",
+      "actual": 100,
+      "target": 95,
+      "unit": "%",
+      "pass": true
+    }
+  ],
+  "determinism": [
+    {
+      "label": "Same patient yields the same recommendation",
+      "actual": 100,
+      "target": 100,
+      "unit": "%",
+      "pass": true
+    },
+    {
+      "label": "All-in cost is never below the premium floor",
+      "actual": 100,
+      "target": 100,
+      "unit": "%",
+      "pass": true
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "total": 8
+  }
+}
