@@ -1,22 +1,28 @@
 /**
  * Simulation-accuracy report.
  *
- * Validates the Monte-Carlo engine against the published MEPS aggregates it claims to
- * reproduce, and validates the subsidy math against the ACA formula. No API key or
- * network needed: this is pure simulation vs. real public benchmarks.
+ * Self-consistency check on the recalibrated engine, plus the ACA subsidy math. The cost
+ * parameters in data/meps-params.json are FIT to real MEPS 2021+2022 microdata
+ * (scripts/calibrate/fit_params.py); this report confirms the engine, run forward, reproduces
+ * the age-band means and concentration those params encode, and that the subsidy formula is
+ * exact. No API key or network needed.
  *
  *   npm run accuracy   →   writes data/accuracy-report.json
  *
- * Methodology notes:
- * - A single synthetic population is simulated whose ages follow rough US shares and whose
- *   chronic conditions follow approximate public (CDC/MEPS) prevalence. MEPS age-band and
- *   concentration figures are population aggregates, so both are measured over this same
- *   population for an apples-to-apples comparison. Prevalences are documented below and are
- *   illustrative population assumptions for validation, not patient data.
+ * The HONEST generalization test is separate: scripts/calibrate/validate_holdout.ts scores the
+ * fitted model against the held-out 2023 MEPS year it never saw (data/calibration-report.json).
+ *
+ * Methodology note:
+ * - The validation population is condition-agnostic (a typical person per age band). The base
+ *   frequencies are fit to the real overall MEPS means and the person-year frailty multiplier is
+ *   fit to the real concentration, so base + frailty alone reproduces both without layering
+ *   synthetic conditions on top (which would double-count spend the base already includes).
+ *   Condition and planned-event multipliers are per-patient clinical adjustments, not part of
+ *   this population aggregate. Ages follow the real MEPS person-weighted shares.
  */
 import { writeFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
-import type { ConditionKey, PatientProfile } from "@/lib/types";
+import type { PatientProfile } from "@/lib/types";
 import { MEPS, ageBandKey } from "@/lib/sim/params";
 import { makeRng } from "@/lib/sim/random";
 import { buildUtilization, sampleScenario } from "@/lib/sim/utilization";
@@ -25,7 +31,7 @@ import type { AccuracyReport, Check } from "@/lib/benchmark/types";
 
 const POPULATION = 80_000;
 
-function baseProfile(age: number, conditions: ConditionKey[] = []): PatientProfile {
+function baseProfile(age: number): PatientProfile {
   return {
     age,
     sex: "female",
@@ -33,7 +39,7 @@ function baseProfile(age: number, conditions: ConditionKey[] = []): PatientProfi
     householdSize: 1,
     annualIncome: 45000,
     tobacco: false,
-    conditions,
+    conditions: [],
     prescriptions: [],
     plannedEvents: [],
     providers: [],
@@ -41,36 +47,18 @@ function baseProfile(age: number, conditions: ConditionKey[] = []): PatientProfi
   };
 }
 
-// Rough US age shares and approximate chronic-condition prevalence by age (public health
-// figures; used only to build a realistic validation population).
+// Real MEPS person-weighted age shares (2021+2022 train split, from data/meps-params.json's
+// source microdata; see scripts/calibrate). Used to build a representative validation population.
 const AGE_SHARES: { key: string; min: number; max: number; share: number }[] = [
-  { key: "0-17", min: 1, max: 17, share: 0.22 },
-  { key: "18-44", min: 18, max: 44, share: 0.36 },
-  { key: "45-64", min: 45, max: 64, share: 0.25 },
-  { key: "65+", min: 65, max: 88, share: 0.17 },
+  { key: "0-17", min: 1, max: 17, share: 0.219 },
+  { key: "18-44", min: 18, max: 44, share: 0.354 },
+  { key: "45-64", min: 45, max: 64, share: 0.248 },
+  { key: "65+", min: 65, max: 88, share: 0.179 },
 ];
 
-function prevalence(age: number): Record<ConditionKey, number> {
-  const senior = age >= 65;
-  const mid = age >= 45;
-  const adult = age >= 18;
-  return {
-    hypertension: senior ? 0.6 : mid ? 0.45 : adult ? 0.1 : 0,
-    diabetesType2: mid ? 0.17 : adult ? 0.04 : 0,
-    diabetesType1: 0.005,
-    highCholesterol: mid ? 0.3 : adult ? 0.08 : 0,
-    asthma: 0.08,
-    copd: mid ? 0.06 : 0,
-    depressionAnxiety: adult ? 0.18 : 0.08,
-    heartDisease: senior ? 0.2 : mid ? 0.07 : 0,
-    cancerActive: senior ? 0.03 : mid ? 0.012 : 0.003,
-    arthritis: senior ? 0.45 : mid ? 0.25 : adult ? 0.07 : 0,
-    migraine: adult ? 0.12 : 0.05,
-    thyroid: adult ? 0.08 : 0.02,
-  };
-}
-
-// Simulate one population of {age, annual spend}, sharing it across all checks.
+// Simulate one condition-agnostic population of {age, annual spend}, shared across all checks.
+// Base frequency + frailty are calibrated to reproduce the real overall means and concentration;
+// conditions are a per-patient adjustment layer and are deliberately not injected here.
 function simulatePopulation(): { age: number; spend: number }[] {
   const rng = makeRng(98765);
   const people: { age: number; spend: number }[] = [];
@@ -85,9 +73,7 @@ function simulatePopulation(): { age: number; spend: number }[] {
       r -= b.share;
     }
     const age = band.min + Math.floor(rng() * (band.max - band.min + 1));
-    const prev = prevalence(age);
-    const conditions = (Object.keys(prev) as ConditionKey[]).filter((c) => rng() < prev[c]);
-    const model = buildUtilization(baseProfile(age, conditions));
+    const model = buildUtilization(baseProfile(age));
     people.push({ age, spend: sampleScenario(rng, model).totalAllowed });
   }
   return people;

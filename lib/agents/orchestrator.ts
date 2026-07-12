@@ -1,11 +1,12 @@
 import type { Plan, PatientProfile } from "@/lib/types";
 import type { Thread, ConvoMessage, MessageMeta } from "@/lib/agents/types";
-import { conciergeReady, runAgentTurn, type Provider } from "@/lib/llm/router";
-import type { AgentMessage, ToolResult } from "@/lib/llm/types";
+import { conciergeReady, type Provider } from "@/lib/llm/router";
+import type { AgentMessage } from "@/lib/llm/types";
 import { loadPlans } from "@/lib/data/plans";
 import { recommendPlans, plansSummaryText } from "@/lib/agents/advisor";
 import { conciergeSystemPrompt } from "@/lib/agents/prompts";
 import { CONCIERGE_TOOLS, dispatchTool } from "@/lib/agents/registry";
+import { runAgentLoop, lastMeta, type AgentEvent } from "@/lib/agents/runtime";
 import { appendMessage } from "@/lib/store/conversations";
 
 // The Concierge orchestrator. Given a patient's inbound text and their thread, it runs an
@@ -38,11 +39,15 @@ function plansSummaryFor(thread: Thread, plans: Plan[]): string {
 
 export interface ConciergeResult {
   replies: ConvoMessage[];
+  /** The full step-by-step trace of this turn (for streaming and debugging). */
+  events?: AgentEvent[];
 }
 
 export interface ConciergeOptions {
   /** Which brain to prefer: "baseten" for the voice concierge, default (Claude) for text. */
   provider?: Provider;
+  /** Optional live sink: called with each AgentEvent as it happens (SSE streaming). */
+  onEvent?: (event: AgentEvent) => void | Promise<void>;
 }
 
 /**
@@ -70,47 +75,31 @@ export async function runConcierge(
   const plans = await loadPlans(thread.profile.state ?? "TX");
   const messages = toAgentMessages(thread.messages);
 
-  let finalText = "";
-  let lastMeta: MessageMeta | undefined;
-
-  for (let i = 0; i < MAX_TURNS; i++) {
-    // Model routing: intake is mostly profile capture and acknowledgements, which the
-    // fast model handles well and cheaply. The reasoning-heavy work (ranking tradeoffs,
-    // what-ifs, outreach) runs on the strong model. Status can flip to "advising"
-    // mid-loop right after recommend_plans, so the explanation turn upgrades automatically.
-    const role = thread.status === "intake" ? "fast" : "reason";
-    const turn = await runAgentTurn(
-      {
-        role,
-        system: conciergeSystemPrompt(
-          thread.profile,
-          plansSummaryFor(thread, plans),
-          thread.status,
-          thread.notes,
-        ),
-        tools: CONCIERGE_TOOLS,
-        messages,
-        maxTokens: 1024,
-      },
-      opts.provider,
-    );
-
-    finalText = turn.text;
-    messages.push({ role: "assistant", text: turn.text, toolCalls: turn.toolCalls });
-
-    if (turn.stopReason !== "tool_use" || turn.toolCalls.length === 0) break;
-
-    const toolResults: ToolResult[] = [];
-    for (const call of turn.toolCalls) {
+  // Model routing: intake is mostly profile capture and acknowledgements, which the fast model
+  // handles well and cheaply. The reasoning-heavy work (ranking tradeoffs, what-ifs, outreach)
+  // runs on the strong model. Status can flip to "advising" mid-loop right after recommend_plans,
+  // so both closures re-read thread state each turn and upgrade the explanation turn automatically.
+  const { finalText, events } = await runAgentLoop({
+    system: () => conciergeSystemPrompt(thread.profile, plansSummaryFor(thread, plans), thread.status, thread.notes),
+    role: () => (thread.status === "intake" ? "fast" : "reason"),
+    tools: CONCIERGE_TOOLS,
+    messages,
+    maxTurns: MAX_TURNS,
+    maxTokens: 1024,
+    provider: opts.provider,
+    dispatch: async (call) => {
       const out = await dispatchTool(call.name, call.input, thread, plans);
-      if (out.meta) lastMeta = out.meta;
-      toolResults.push({ id: call.id, content: JSON.stringify(out.result) });
-    }
-    messages.push({ role: "user", toolResults });
-  }
+      return { result: out.result, meta: out.meta };
+    },
+    emit: opts.onEvent,
+  });
 
-  if (!finalText) finalText = "Let me look into that: can you say a bit more?";
-  const reply: ConvoMessage = { role: "agent", text: finalText, ts: Date.now(), meta: lastMeta };
+  const reply: ConvoMessage = {
+    role: "agent",
+    text: finalText,
+    ts: Date.now(),
+    meta: lastMeta(events) as MessageMeta | undefined,
+  };
   appendMessage(thread, reply);
-  return { replies: [reply] };
+  return { replies: [reply], events };
 }

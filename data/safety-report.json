@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-08T11:42:28.853Z",
+  "generatedAt": "2026-07-12T07:57:05.941Z",
   "source": "Deterministic evaluation of lib/agents/selection (actor/critic/memory) over a synthetic seeded population, plus an adversarial red-team suite against the critic. No key or network.",
   "populationSize": 200,
   "vetoesIssued": 0,
@@ -36,7 +36,7 @@
   "alignment": [
     {
       "label": "Recommendation is not blindly the lowest premium",
-      "actual": 37.5,
+      "actual": 42.5,
       "target": 25,
       "unit": "%",
       "pass": true

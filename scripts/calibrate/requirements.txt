@@ -1,0 +1,5 @@
+# Offline calibration deps (scripts/calibrate/*.py). NOT part of the app runtime
+# or the Vercel bundle: only used locally/CI to regenerate data/meps-params.json.
+#   python3 -m venv .venv && . .venv/bin/activate && pip install -r scripts/calibrate/requirements.txt
+pandas>=2.0
+numpy>=1.24

@@ -21,6 +21,43 @@ export interface AccuracyReport {
   summary: { passed: number; total: number };
 }
 
+// Held-out calibration report. The simulation parameters (data/meps-params.json) are FIT on
+// MEPS 2021+2022 and this report scores the fitted model against the held-out 2023 microdata it
+// never saw. The held-out column is the honest trust metric: it shows the model generalizes,
+// unlike the accuracy report which checks self-consistency against the same aggregates it was
+// tuned to. Produced by scripts/calibrate/validate_holdout.ts (no key needed).
+export interface CalibrationMetric {
+  label: string;
+  /** Value produced by simulating from the fitted params. */
+  simulated: number;
+  /** Real MEPS value for this split. */
+  real: number;
+  unit: "$" | "%";
+  /** |simulated - real| / real, as a fraction. */
+  pctError: number;
+  pass: boolean;
+}
+
+export interface CalibrationReport {
+  generatedAt: string;
+  source: string;
+  trainSplit: string;
+  holdoutSplit: string;
+  populationSize: number;
+  /** Simulated-vs-real on the HELD-OUT year (the generalization test). */
+  holdout: CalibrationMetric[];
+  /** Simulated-vs-real on the train aggregates (fit quality, for reference). */
+  train: CalibrationMetric[];
+  summary: {
+    /** Mean absolute percent error on the held-out split. */
+    holdoutMape: number;
+    /** Mean absolute percent error on the train split. */
+    trainMape: number;
+    passed: number;
+    total: number;
+  };
+}
+
 export interface ModelResult {
   model: string;
   label: string;

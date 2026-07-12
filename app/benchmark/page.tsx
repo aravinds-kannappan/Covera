@@ -3,8 +3,8 @@ import { Check as CheckIcon, X as XIcon } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Badge } from "@/components/ui/badge";
-import { loadAccuracyReport, loadSafetyReport } from "@/lib/benchmark/load";
-import type { Check } from "@/lib/benchmark/types";
+import { loadAccuracyReport, loadCalibrationReport, loadSafetyReport } from "@/lib/benchmark/load";
+import type { Check, CalibrationMetric } from "@/lib/benchmark/types";
 import { DistributionExplorer } from "@/components/benchmark/distribution-explorer";
 import { BundleExplorer } from "@/components/benchmark/bundle-explorer";
 import { LiveEval } from "@/components/benchmark/live-eval";
@@ -54,9 +54,49 @@ function CheckGroup({ title, checks }: { title: string; checks: Check[] }) {
   );
 }
 
+function metricStr(m: CalibrationMetric, field: "simulated" | "real"): string {
+  const v = m[field];
+  return m.unit === "$" ? `$${v.toLocaleString()}` : `${v}%`;
+}
+
+function CalibrationRow({ m }: { m: CalibrationMetric }) {
+  return (
+    <div className="flex items-center justify-between gap-3 border-b border-slate-100 py-2.5 last:border-0">
+      <div className="flex items-center gap-2">
+        <span
+          className={`grid h-5 w-5 place-items-center rounded-full ${m.pass ? "bg-indigo-100 text-indigo-700" : "bg-rose-100 text-rose-600"}`}
+        >
+          {m.pass ? <CheckIcon className="h-3.5 w-3.5" /> : <XIcon className="h-3.5 w-3.5" />}
+        </span>
+        <span className="text-sm text-slate-700">{m.label}</span>
+      </div>
+      <div className="text-right text-sm tabular-nums">
+        <span className="font-semibold text-slate-900">{metricStr(m, "simulated")}</span>
+        <span className="text-slate-400"> vs {metricStr(m, "real")}</span>
+        <span className="ml-2 text-xs text-slate-400">{(m.pctError * 100).toFixed(0)}% off</span>
+      </div>
+    </div>
+  );
+}
+
+function CalibrationGroup({ title, subtitle, metrics }: { title: string; subtitle: string; metrics: CalibrationMetric[] }) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
+      <p className="mt-0.5 text-xs text-slate-500">{subtitle}</p>
+      <div className="mt-2">
+        {metrics.map((m) => (
+          <CalibrationRow key={m.label} m={m} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function BenchmarkPage() {
   const accuracy = loadAccuracyReport();
   const safety = loadSafetyReport();
+  const calibration = loadCalibrationReport();
 
   return (
     <>
@@ -67,11 +107,61 @@ export default function BenchmarkPage() {
           How accurate is Covera, really?
         </h1>
         <p className="mt-3 max-w-2xl text-lg text-slate-600">
-          Three scorecards, each measured against real data. How the Monte-Carlo simulation holds up
-          against the published MEPS aggregates and the ACA subsidy formula. Whether the recommendation
-          stays safe when a model is in the loop. And how the model itself performs, scored live by a
-          judge agent.
+          Four scorecards, each measured against real data. Whether the cost model, trained on past
+          years, predicts a year it has never seen. How the simulation holds up against published MEPS
+          aggregates and the ACA subsidy formula. Whether the recommendation stays safe when a model is
+          in the loop. And how the model itself performs, scored live by a judge agent.
         </p>
+
+        {/* ---- Held-out validation (the trust headline) ---- */}
+        <section className="mt-14">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h2 className="font-serif text-2xl font-medium tracking-tight text-slate-900">
+              Held-out validation
+            </h2>
+            {calibration && (
+              <span className="text-sm text-slate-500">
+                held-out error {(calibration.summary.holdoutMape * 100).toFixed(1)}% · train error{" "}
+                {(calibration.summary.trainMape * 100).toFixed(1)}% · {calibration.summary.passed}/
+                {calibration.summary.total} within tolerance
+              </span>
+            )}
+          </div>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-500">
+            The cost model&apos;s parameters are <span className="font-medium text-slate-700">fit</span>{" "}
+            to real MEPS microdata from {calibration ? calibration.trainSplit : "2021 + 2022"}, then
+            scored against the <span className="font-medium text-slate-700">held-out</span>{" "}
+            {calibration ? calibration.holdoutSplit : "2023"} year it never saw during fitting. This is
+            the honest test: a model can always be tuned to match the numbers it was tuned on, so the
+            question that matters is whether it predicts a year it has not seen. It does, within single
+            digits, and the held-out error is close to the training error, which is what tells you it is
+            not overfit.
+          </p>
+
+          {!calibration ? (
+            <NotRun cmd="npm run calibrate" what="the held-out calibration report" />
+          ) : (
+            <>
+              <div className="mt-5 grid gap-5 lg:grid-cols-2">
+                <CalibrationGroup
+                  title="Held-out 2023 (never seen during fitting)"
+                  subtitle={`Simulated from params fit on ${calibration.trainSplit}, scored vs real ${calibration.holdoutSplit}.`}
+                  metrics={calibration.holdout}
+                />
+                <CalibrationGroup
+                  title="Train fit (reference)"
+                  subtitle={`How well the fitted params reproduce their own ${calibration.trainSplit} source.`}
+                  metrics={calibration.train}
+                />
+              </div>
+              <p className="mt-4 max-w-3xl text-sm leading-relaxed text-slate-500">
+                Each row is the simulated figure vs the real MEPS figure. The model reproduces mean spend
+                by age band and the concentration of spending (the top few percent of people who drive
+                most cost) on a completely unseen year. Source: {calibration.source}
+              </p>
+            </>
+          )}
+        </section>
 
         {/* ---- Alignment & Safety ---- */}
         <section className="mt-14">
@@ -144,8 +234,8 @@ export default function BenchmarkPage() {
                 <CheckGroup title="ACA subsidy formula" checks={accuracy.subsidy} />
               </div>
               <p className="mt-4 max-w-3xl text-sm leading-relaxed text-slate-500">
-                The engine reproduces adult age-band means, the ACA subsidy math, and
-                (after adding a{" "}
+                The engine reproduces the age-band means, the ACA subsidy math, and
+                (via a{" "}
                 <span className="font-medium text-slate-700">person-year frailty term</span> that
                 correlates a year&apos;s care across service lines) the real{" "}
                 <span className="font-medium text-slate-700">spend concentration</span> the top few

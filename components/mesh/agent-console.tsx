@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Loader2, Mic, Send, ShieldCheck, Volume2, VolumeX } from "lucide-react";
 import type { ConciergeConsult } from "@/lib/agents/mesh/consult";
+import type { AgentEvent } from "@/lib/agents/runtime";
 import { useRecorder, usePlayer } from "@/lib/voice/client";
 import { useSpeech } from "@/lib/voice";
 import { usd } from "@/lib/utils";
@@ -36,6 +37,9 @@ export function AgentConsole({
   const [input, setInput] = useState("");
   const [cardToken, setCardToken] = useState("");
   const [busy, setBusy] = useState(false);
+  // The current step in the live agent exchange (e.g. "Consulting the concierge…"), shown while
+  // the SSE stream is mid-flight so the hand-off is visible instead of a blank wait.
+  const [phase, setPhase] = useState<string | null>(null);
   const [transcribing, setTranscribing] = useState(false);
   const [muted, setMuted] = useState(false);
   const [sttFallback, setSttFallback] = useState(false);
@@ -64,32 +68,97 @@ export function AgentConsole({
     }
   }
 
+  // What each tool call means in plain language, for the live status line.
+  function phaseLabel(name: string): string {
+    if (name === "consult_concierge") return "Consulting the patient's concierge…";
+    if (name === "consult_marketplace") return "Asking the concierge on the employee's behalf…";
+    if (name === "procedure_range") return "Looking up the typical cross-plan range…";
+    return "Working…";
+  }
+
   async function sendText(text: string) {
     const trimmed = text.trim();
     if (!trimmed || busy) return;
     setError(null);
     setInput("");
     const history = messages.map((m) => ({ role: m.role, text: m.text }));
-    setMessages((m) => [...m, { role: "user", text: trimmed }]);
+    // Append the user turn plus a placeholder agent message we fill in as events stream in.
+    const agentIndex = messages.length + 1;
+    setMessages((m) => [...m, { role: "user", text: trimmed }, { role: "agent", text: "", consults: [] }]);
     setBusy(true);
+    setPhase(null);
+
+    const patchAgent = (patch: Partial<Msg>) =>
+      setMessages((m) => m.map((msg, i) => (i === agentIndex ? { ...msg, ...patch } : msg)));
+    const dropAgent = () => setMessages((m) => m.filter((_, i) => i !== agentIndex));
+
     try {
-      const res = await fetch("/api/mesh", {
+      const res = await fetch("/api/mesh/stream", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ role, history, text: trimmed, state, cardToken: cardToken.trim() || undefined }),
       });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
+      if (!res.ok || !res.body) {
+        const data = await res.json().catch(() => ({}));
         setError(data.error ?? "The desk agent is unavailable right now.");
-      } else {
-        const reply: Msg = { role: "agent", text: String(data.text ?? ""), consults: data.consults ?? [] };
-        setMessages((m) => [...m, reply]);
-        void speak(reply.text);
+        dropAgent();
+        return;
       }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buf = "";
+      const consults: ConciergeConsult[] = [];
+      let finalText = "";
+
+      // Parse the SSE stream frame by frame (frames are separated by a blank line).
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value, { stream: true });
+        const frames = buf.split("\n\n");
+        buf = frames.pop() ?? "";
+        for (const frame of frames) {
+          const line = frame.trim();
+          if (!line.startsWith("data:")) continue;
+          let payload: { type: string; event?: AgentEvent; text?: string; consults?: ConciergeConsult[]; error?: string };
+          try {
+            payload = JSON.parse(line.slice(5).trim());
+          } catch {
+            continue;
+          }
+          if (payload.type === "event" && payload.event) {
+            const e = payload.event;
+            if (e.kind === "tool_call") setPhase(phaseLabel(e.name));
+            if (e.kind === "tool_result" && e.consult) {
+              consults.push(e.consult);
+              patchAgent({ consults: [...consults] });
+            }
+            if ((e.kind === "assistant" || e.kind === "final") && e.text) {
+              finalText = e.text;
+              patchAgent({ text: e.text });
+              setPhase(null);
+            }
+          } else if (payload.type === "done") {
+            finalText = payload.text ?? finalText;
+            patchAgent({ text: finalText, consults: payload.consults ?? consults });
+            setPhase(null);
+          } else if (payload.type === "error") {
+            setError(payload.error ?? "The desk agent is unavailable right now.");
+            dropAgent();
+            return;
+          }
+        }
+      }
+
+      if (finalText) void speak(finalText);
+      else dropAgent();
     } catch {
       setError("Network hiccup: try again.");
+      dropAgent();
     } finally {
       setBusy(false);
+      setPhase(null);
     }
   }
 
@@ -144,6 +213,8 @@ export function AgentConsole({
   const thinking = busy || transcribing;
   const last = messages[messages.length - 1];
   const consult = last?.role === "agent" ? last.consults?.[0] : undefined;
+  // While streaming, show the live step (or partial reply) instead of a static "one moment".
+  const orbLine = (last?.role === "agent" && last.text) || (thinking ? phase ?? "One moment…" : last?.text ?? "");
 
   return (
     <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
@@ -179,14 +250,14 @@ export function AgentConsole({
         </button>
         <AnimatePresence mode="wait">
           <motion.p
-            key={last?.text}
+            key={orbLine}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.3 }}
             className="mt-4 min-h-[3rem] max-w-md text-center font-serif text-base leading-snug text-slate-800"
           >
-            {thinking ? "One moment…" : last?.text}
+            {orbLine}
           </motion.p>
         </AnimatePresence>
       </div>
