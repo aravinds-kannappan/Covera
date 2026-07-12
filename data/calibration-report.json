@@ -1,0 +1,145 @@
+{
+  "generatedAt": "2026-07-12T07:57:07.685Z",
+  "source": "Real TypeScript simulation (lib/sim) run with params fit on MEPS 2021+2022, scored against held-out MEPS 2023 (HC-251). No key or network.",
+  "trainSplit": "MEPS 2021 + 2022",
+  "holdoutSplit": "MEPS 2023 (HC-251)",
+  "populationSize": 120000,
+  "holdout": [
+    {
+      "label": "Age 0-17 mean spend",
+      "simulated": 1973,
+      "real": 2166,
+      "unit": "$",
+      "pctError": 0.089,
+      "pass": true
+    },
+    {
+      "label": "Age 18-44 mean spend",
+      "simulated": 4263,
+      "real": 3896,
+      "unit": "$",
+      "pctError": 0.094,
+      "pass": true
+    },
+    {
+      "label": "Age 45-64 mean spend",
+      "simulated": 7821,
+      "real": 8689,
+      "unit": "$",
+      "pctError": 0.1,
+      "pass": true
+    },
+    {
+      "label": "Age 65+ mean spend",
+      "simulated": 12353,
+      "real": 13005,
+      "unit": "$",
+      "pctError": 0.05,
+      "pass": true
+    },
+    {
+      "label": "Population mean spend",
+      "simulated": 6123,
+      "real": 6370,
+      "unit": "$",
+      "pctError": 0.039,
+      "pass": true
+    },
+    {
+      "label": "Top 1% share of spend",
+      "simulated": 25.9,
+      "real": 22.5,
+      "unit": "%",
+      "pctError": 0.151,
+      "pass": true
+    },
+    {
+      "label": "Top 5% share of spend",
+      "simulated": 54.1,
+      "real": 52.9,
+      "unit": "%",
+      "pctError": 0.023,
+      "pass": true
+    },
+    {
+      "label": "Top 10% share of spend",
+      "simulated": 69.4,
+      "real": 69.8,
+      "unit": "%",
+      "pctError": 0.006,
+      "pass": true
+    }
+  ],
+  "train": [
+    {
+      "label": "Age 0-17 mean spend",
+      "simulated": 2019,
+      "real": 1787,
+      "unit": "$",
+      "pctError": 0.13,
+      "pass": true
+    },
+    {
+      "label": "Age 18-44 mean spend",
+      "simulated": 4310,
+      "real": 4084,
+      "unit": "$",
+      "pctError": 0.055,
+      "pass": true
+    },
+    {
+      "label": "Age 45-64 mean spend",
+      "simulated": 7487,
+      "real": 7700,
+      "unit": "$",
+      "pctError": 0.028,
+      "pass": true
+    },
+    {
+      "label": "Age 65+ mean spend",
+      "simulated": 12330,
+      "real": 11579,
+      "unit": "$",
+      "pctError": 0.065,
+      "pass": true
+    },
+    {
+      "label": "Population mean spend",
+      "simulated": 6044,
+      "real": 5823,
+      "unit": "$",
+      "pctError": 0.038,
+      "pass": true
+    },
+    {
+      "label": "Top 1% share of spend",
+      "simulated": 25,
+      "real": 25.2,
+      "unit": "%",
+      "pctError": 0.01,
+      "pass": true
+    },
+    {
+      "label": "Top 5% share of spend",
+      "simulated": 53.5,
+      "real": 54.2,
+      "unit": "%",
+      "pctError": 0.013,
+      "pass": true
+    },
+    {
+      "label": "Top 10% share of spend",
+      "simulated": 69,
+      "real": 70.4,
+      "unit": "%",
+      "pctError": 0.019,
+      "pass": true
+    }
+  ],
+  "summary": {
+    "holdoutMape": 0.069,
+    "trainMape": 0.045,
+    "passed": 16,
+    "total": 16
+  }
+}

@@ -1,11 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
+import meshTrace from "@/data/mesh-trace.json";
 
 // The centerpiece: what makes Covera's voice unique. You speak to one Concierge, and behind it a
 // team of agents talks to EACH OTHER, then out to your hospital and employer on your behalf. This
-// animates that flow as a living network of voice, not another phone. Illustrative script; the
-// tabs run the real simulation.
+// animates that flow as a living network of voice, not another phone. The exchange it replays is a
+// REAL captured mesh trace (data/mesh-trace.json, from scripts/mesh/capture-trace.ts): every dollar
+// figure is engine-computed on real CMS plan data, not hand-authored.
 
 type NodeId =
   | "you"
@@ -52,18 +54,24 @@ interface Phase {
   to: NodeId;
   speaker: string;
   line: string;
+  /** True when this line's figures are engine-computed (from the captured trace). */
+  real?: boolean;
 }
 
-// The story: you speak, the agents confer, then reach your employer and hospital for you.
-const PHASES: Phase[] = [
+// Fallback if the captured trace is somehow unavailable (it is committed, so this rarely runs).
+const FALLBACK_PHASES: Phase[] = [
   { from: "you", to: "concierge", speaker: "You", line: "I'm 34, in Texas, and scared of a bill I can't pay." },
   { from: "concierge", to: "advisor", speaker: "Concierge → Advisor", line: "Rank real plans on her bad-year risk, not just premium." },
-  { from: "advisor", to: "concierge", speaker: "Advisor → Concierge", line: "Gold caps her worst year at $8,550. It's the safe pick." },
-  { from: "concierge", to: "marketplace", speaker: "Concierge → Marketplace", line: "Compare that to her employer's offer, net of subsidy." },
-  { from: "concierge", to: "you", speaker: "Concierge → You", line: "The Gold plan fits you. Want me to set it up?" },
-  { from: "advocate", to: "employer", speaker: "Advocate → Employer", line: "Reaching your benefits team to coordinate enrollment." },
-  { from: "costdesk", to: "hospital", speaker: "Cost desk → Hospital", line: "Confirming your procedure's in-network cost, on your card." },
+  { from: "concierge", to: "you", speaker: "Concierge → You", line: "The safe plan fits you. Want me to set it up?" },
 ];
+
+// The story, replayed from a REAL captured mesh exchange (data/mesh-trace.json). Figures are
+// engine-computed; only node ids the layout knows are kept, so a stale trace can't break the SVG.
+const NODE_IDS = new Set<string>(NODES.map((n) => n.id));
+const TRACE_PHASES = (meshTrace.phases as Phase[]).filter(
+  (p) => NODE_IDS.has(p.from) && NODE_IDS.has(p.to),
+);
+const PHASES: Phase[] = TRACE_PHASES.length ? TRACE_PHASES : FALLBACK_PHASES;
 
 const nodeById = (id: NodeId) => NODES.find((n) => n.id === id)!;
 
@@ -176,7 +184,14 @@ export function AgentNetwork() {
 
         <div className="mt-6 rounded-2xl border border-slate-200 bg-white/70 p-5 shadow-sm">
           <motion.div key={phase} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-            <p className="label-mono text-[10px] text-indigo-600">{active.speaker}</p>
+            <p className="label-mono flex items-center gap-1.5 text-[10px] text-indigo-600">
+              {active.speaker}
+              {active.real && (
+                <span className="rounded-full bg-emerald-100 px-1.5 py-0.5 text-[9px] font-medium text-emerald-700">
+                  real figure
+                </span>
+              )}
+            </p>
             <p className="mt-1.5 font-serif text-lg leading-snug text-slate-800">{active.line}</p>
           </motion.div>
           <div className="mt-4 flex gap-1.5">
@@ -190,7 +205,7 @@ export function AgentNetwork() {
         </div>
 
         <p className="mt-4 label-mono text-[10px] text-slate-400">
-          Illustrative · figures come from the real simulation on the tabs
+          A real captured mesh exchange · dollar figures computed on real CMS plan data
         </p>
       </div>
     </div>

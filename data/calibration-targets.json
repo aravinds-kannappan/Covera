@@ -1,0 +1,53 @@
+{
+  "generatedAt": "2026-07-12T07:30:08.642565Z",
+  "note": "Real MEPS aggregates over medical+Rx (OB+OP+ER+IP+RX), person-weighted. The TS validator simulates from the fitted params and compares to these.",
+  "train": {
+    "years": [
+      2021,
+      2022
+    ],
+    "ageBandMean": {
+      "0-17": 1787,
+      "18-44": 4084,
+      "45-64": 7700,
+      "65+": 11579
+    },
+    "ageShares": {
+      "0-17": 0.2187,
+      "18-44": 0.3537,
+      "45-64": 0.2484,
+      "65+": 0.1792
+    },
+    "concentration": {
+      "meanAnnual": 5823,
+      "medianAnnual": 809,
+      "top1pct": 0.252,
+      "top5pct": 0.542,
+      "top10pct": 0.704,
+      "bottom50pct": 0.017
+    }
+  },
+  "holdout": {
+    "year": 2023,
+    "ageBandMean": {
+      "0-17": 2166,
+      "18-44": 3896,
+      "45-64": 8689,
+      "65+": 13005
+    },
+    "ageShares": {
+      "0-17": 0.2162,
+      "18-44": 0.3554,
+      "45-64": 0.2443,
+      "65+": 0.1841
+    },
+    "concentration": {
+      "meanAnnual": 6370,
+      "medianAnnual": 906,
+      "top1pct": 0.225,
+      "top5pct": 0.529,
+      "top10pct": 0.698,
+      "bottom50pct": 0.017
+    }
+  }
+}

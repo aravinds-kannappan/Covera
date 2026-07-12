@@ -1,6 +1,7 @@
 import type { Plan, PatientProfile } from "@/lib/types";
-import { runAgentTurn, type Provider } from "@/lib/llm/router";
-import type { AgentMessage, ToolResult, ToolSpec } from "@/lib/llm/types";
+import type { Provider } from "@/lib/llm/router";
+import type { AgentMessage, ToolSpec } from "@/lib/llm/types";
+import { runAgentLoop, type AgentEvent } from "@/lib/agents/runtime";
 import { loadPlans } from "@/lib/data/plans";
 import { lookupProcedure, PROCEDURE_CHOICES } from "@/lib/agents/hospital";
 import { compareEmployerOffer } from "@/lib/agents/marketplace";
@@ -29,6 +30,8 @@ export interface MeshTurnResult {
   meta?: MeshMeta;
   /** Every cross-agent consult that happened this turn, so the UI can show the exchange. */
   consults: ConciergeConsult[];
+  /** The full step-by-step trace of this turn (for streaming and debugging). */
+  events?: AgentEvent[];
 }
 
 const procedureIds = PROCEDURE_CHOICES.map((p) => p.id);
@@ -160,6 +163,8 @@ export async function runMeshTurn(params: {
   state?: string;
   cardToken?: string;
   provider?: Provider;
+  /** Optional live sink: called with each AgentEvent as it happens (SSE streaming). */
+  onEvent?: (event: AgentEvent) => void | Promise<void>;
 }): Promise<MeshTurnResult> {
   const state = params.state || "TX";
   const plans = await loadPlans(state);
@@ -168,36 +173,24 @@ export async function runMeshTurn(params: {
   const messages = toAgentMessages(params.history);
   messages.push({ role: "user", text: params.text });
 
-  let finalText = "";
   let meta: MeshMeta | undefined;
   const consults: ConciergeConsult[] = [];
 
-  for (let i = 0; i < 4; i++) {
-    const turn = await runAgentTurn(
-      {
-        role: "reason",
-        system: systemPrompt(params.role, state, !!params.cardToken),
-        tools: toolsFor(params.role),
-        messages,
-        maxTokens: 700,
-      },
-      params.provider,
-    );
-    finalText = turn.text;
-    messages.push({ role: "assistant", text: turn.text, toolCalls: turn.toolCalls });
-
-    if (turn.stopReason !== "tool_use" || turn.toolCalls.length === 0) break;
-
-    const results: ToolResult[] = [];
-    for (const call of turn.toolCalls) {
+  const { finalText, events } = await runAgentLoop({
+    system: () => systemPrompt(params.role, state, !!params.cardToken),
+    tools: toolsFor(params.role),
+    messages,
+    maxTurns: 4,
+    maxTokens: 700,
+    provider: params.provider,
+    dispatch: async (call) => {
       const out = dispatchMesh(params.role, call.name, call.input, ctx);
       if (out.meta) meta = out.meta;
       if (out.consult) consults.push(out.consult);
-      results.push({ id: call.id, content: JSON.stringify(out.result) });
-    }
-    messages.push({ role: "user", toolResults: results });
-  }
+      return { result: out.result, meta: out.meta, consult: out.consult };
+    },
+    emit: params.onEvent,
+  });
 
-  if (!finalText) finalText = "Let me look into that: can you say a bit more?";
-  return { text: finalText, meta, consults };
+  return { text: finalText, meta, consults, events };
 }

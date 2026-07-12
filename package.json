@@ -15,7 +15,12 @@
     "ingest:formulary": "python3 scripts/ingest_formulary.py",
     "accuracy": "tsx scripts/accuracy/run.ts",
     "safety": "tsx scripts/safety/run.ts",
-    "benchmark": "tsx scripts/benchmark/run.ts"
+    "benchmark": "tsx scripts/benchmark/run.ts",
+    "calibrate:fetch": "python3 scripts/calibrate/fetch_meps.py",
+    "calibrate:fit": "python3 scripts/calibrate/fit_params.py",
+    "calibrate:validate": "tsx scripts/calibrate/validate_holdout.ts",
+    "calibrate": "npm run calibrate:fetch && npm run calibrate:fit && npm run calibrate:validate",
+    "mesh:trace": "tsx scripts/mesh/capture-trace.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.104.1",
